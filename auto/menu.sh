@@ -1,22 +1,12 @@
 #!/bin/sh
-##
-buf="%{c}"
-#buf="${buf}%{A:terminator --working-dir=~ --command='~/scripts/info.py' &:} INFO %{A}//"
-buf="${buf}%{A:terminator --working-dir=~ --command='~/scripts/log.py' &:} LOG %{A}//"
-buf="${buf}%{A:terminator --working-dir=~ --command='~/scripts/weather.py' &:} WTHR %{A}//"
-buf="${buf}%{A:opencpn &:} OCPN %{A}//"
-buf="${buf}%{A:foxtrotgps &:} FGPS %{A}//"
-buf="${buf}%{A:~/apps/zyGrib/zyGrib &:} GRIB %{A}//"
-buf="${buf}%{A:pcmanfm ~/ &:} HDD %{A}//"
-buf="${buf}%{A:terminator --working-dir=~ --command='cmus' &:} MUS %{A}//"
-buf="${buf}%{A:epiphany-browser &:} WEB %{A}//"
-buf="${buf}%{A:terminator --working-dir=~ --command='slurm -i wlan0' &:} NET %{A}//"
-buf="${buf}%{A:terminator --working-dir=~ --command='htop' &:} CPU %{A}//"
-buf="${buf}%{A:florence show &:}%{A3:florence hide &:} KEY %{A}%{A}//"
-buf="${buf}%{A:sudo poweroff:}%{A3:sudo reboot:}%{F#976B67} OFF %{F-}%{A}%{A}"
-#buf="${buf}%{A:terminator --working-dir=~ --command='mutt' &:} MAIL %{A}//"
-#buf="${buf}%{A:terminator --working-dir=~ &:} TTY %{A}//"
-#buf="${buf}%{A:geany &:} TXT %{A}//"
-#buf="${buf}%{A:terminator --working-dir=~ --command='irssi -c Rizon' &:} IRC %{A}//"
-#buf="${buf}%{A:sudo /home/laserwolf/apps/pisnes/snes9x.gui &:} SNES %{A}//"
-echo $buf
+
+menu="%{c}"
+menu="${menu}%{A:terminator --working-dir=~ --command='~/scripts/log.py' &:}[ LOG ]%{A} "
+menu="${menu}%{A:terminator --working-dir=~ --command='~/scripts/weather.py' &:}[ WTHR ]%{A} "
+menu="${menu}%{A:opencpn &:}[ OCPN ]%{A} "
+menu="${menu}%{A:foxtrotgps &:}[ FGPS ]%{A} "
+menu="${menu}%{A:~/apps/zyGrib/zyGrib &:}[ GRIB ]%{A} "
+menu="${menu}%{A:pcmanfm ~/ &:}[ HDD ]%{A} "
+menu="${menu}%{A:florence show &:}%{A3:florence hide &:}[ KEY ]%{A}%{A} "
+menu="${menu}%{A:sudo poweroff:}%{A3:sudo reboot:}%{F#976B67}[ OFF ]%{F-}%{A}%{A}"
+echo $menu
