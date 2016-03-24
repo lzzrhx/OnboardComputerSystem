@@ -1,11 +1,11 @@
-xsetroot -solid "#3F3F3F" &
+xsetroot -solid "#303030" &
 xset s noblank &
 xset s off &
 xset -dpms &
-unclutter -idle 1 &
-florence &
-sudo kplex &
-(sleep 3 && conky) &
-(sleep 3 && /home/laserwolf/auto/lemonbar01.sh) &
-(sleep 3 &&/home/laserwolf/auto/lemonbar02.sh) &
+(sleep 3 && unclutter -idle 1) &
+(sleep 3 && florence) &
+(sleep 3 && sudo kplex) &
 (sleep 3 && tint2) &
+(sleep 6 && conky) &
+(sleep 9 && /home/laserwolf/.OnboardComputerSystem/lemonbar01.sh) &
+(sleep 9 && /home/laserwolf/.OnboardComputerSystem/lemonbar02.sh) &

@@ -1,0 +1,2 @@
+@reboot   /home/laserwolf/.OnboardComputerSystem/lcd-boot.py
+0 * * * * /home/laserwolf/Scripts/webcam.sh && /home/laserwolf/Scripts/update-server.sh

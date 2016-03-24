@@ -326,7 +326,7 @@
     <!-- screenshot when Print is pressed -->
     <keybind key="Print">
       <action name="Execute">
-        <command>scrot /home/laserwolf/pictures/screenshots/screenshot_%Y-%m-%d_%H%M%S.png</command>
+        <command>scrot /home/laserwolf/screenshot_%Y-%m-%d_%H%M%S.png</command>
       </action>
     </keybind>
   </keyboard>

@@ -3,15 +3,9 @@
 	<menu id="root-menu" label="Openbox 3">
 		<item label="Terminal">
 			<action name="Execute">
-				<execute>x-terminal-emulator</execute>
+				<execute>urxvt</execute>
 			</action>
 		</item>
-		<item label="Text editor">
-			<action name="Execute">
-				<execute>geany</execute>
-			</action>
-		</item>
-		<!-- This requires the presence of the 'menu' package to work -->
 		<item label="Files">
 			<action name="Execute">
 				<execute>pcmanfm</execute>
@@ -19,22 +13,12 @@
 		</item>
 		<item label="Music">
 			<action name="Execute">
-				<execute>terminator -x cmus</execute>
+				<execute>urxvt -name cmus -e cmus</execute>
 			</action>
 		</item>
 		<item label="Internet">
 			<action name="Execute">
 				<execute>epiphany-browser</execute>
-			</action>
-		</item>
-		<item label="Email">
-			<action name="Execute">
-				<execute>terminator --command='mutt'</execute>
-			</action>
-		</item>
-		<item label="IRC">
-			<action name="Execute">
-				<execute>terminator --command='irssi -c Rizon'</execute>
 			</action>
 		</item>
 		<separator/>
@@ -51,46 +35,51 @@
 			</item>
 			<item label="zyGrib">
 				<action name="Execute">
-					<execute>~/apps/zyGrib/zyGrib</execute>
+					<execute>~/Apps/zyGrib/zyGrib</execute>
 				</action>
 			</item>
 			<item label="JTides">
 				<action name="Execute">
-					<execute>java -jar ~/apps/JTides/JTides.jar</execute>
+					<execute>java -jar ~/Apps/JTides/JTides.jar</execute>
 				</action>
 			</item>
 		</menu>
 		<menu id="root-menu-2915" label="Games">
 			<item label="SNES">
 				<action name="Execute">
-					<execute>sudo ~/apps/pisnes/snes9x.gui</execute>
+					<execute>sudo ~/Apps/pisnes/snes9x.gui</execute>
 				</action>
 			</item>
 		</menu>
 		<menu id="root-menu-63234" label="Scripts">
+			<item label="Take screenshot">
+				<action name="Execute">
+					<execute>scrot /home/laserwolf/screenshot_%Y-%m-%d_%H%M%S.png</execute>
+				</action>
+			</item>
 			<item label="Take webcam picture">
 				<action name="Execute">
-					<execute>terminator --command='~/scripts/webcam.sh &amp;&amp; sleep infinity'</execute>
+					<execute>urxvt -hold -name webcam -e ~/Scripts/webcam.sh</execute>
 				</action>
 			</item>
 			<item label="Update server">
 				<action name="Execute">
-					<execute>terminator --command='~/scripts/update_server.sh &amp;&amp; sleep infinity'</execute>
+					<execute>urxvt -hold -name update_server -e ~/Scripts/update-server.sh</execute>
 				</action>
 			</item>
-			<item label="Update">
+			<item label="Update packages">
 				<action name="Execute">
-					<execute>terminator --command='~/scripts/update.sh &amp;&amp; sleep infinity'</execute>
+					<execute>urxvt -hold -name update -e ~/Scripts/update-packages.sh</execute>
 				</action>
 			</item>
 			<item label="Update firmware">
 				<action name="Execute">
-					<execute>terminator --command='~/scripts/firmware.sh &amp;&amp; sleep infinity'</execute>
+					<execute>urxvt -hold -name firmware -e ~/Scripts/update-firmware.sh</execute>
 				</action>
 			</item>
 			<item label="Backup">
 				<action name="Execute">
-					<execute>terminator --command='~/scripts/backup.sh &amp;&amp; sleep infinity'</execute>
+					<execute>urxvt -hold -name backup -e ~/Scripts/backup.sh</execute>
 				</action>
 			</item>
 		</menu>
@@ -103,19 +92,19 @@
 			</item>
 			<item label="Network monitor">
 				<action name="Execute">
-					<execute>terminator --command='slurm -i wlan0'</execute>
+					<execute>urxvt -name slurm -e slurm -i wlan0</execute>
 				</action>
 			</item>
 			<item label="Process monitor">
 				<action name="Execute">
-					<execute>terminator --command='htop'</execute>
+					<execute>urxvt -name htop -e htop</execute>
 				</action>
 			</item>
 		</menu>
 		<menu id="root-menu-75935" label="Settings">
 			<item label="Wi-Fi Settings">
 				<action name="Execute">
-					<execute>terminator --command='wicd-curses'</execute>
+					<execute>urxvt -name wicd-curses -e='wicd-curses'</execute>
 				</action>
 			</item>
 			<item label="Monitor Settings">
@@ -135,27 +124,27 @@
 			</item>
 			<item label="Tint2 Configuration">
 				<action name="Execute">
-					<execute>~/apps/tintwizard/tintwizard.py</execute>
+					<execute>~/Apps/tintwizard/tintwizard.py</execute>
 				</action>
 			</item>
 			<item label="Conky Configuration">
 				<action name="Execute">
-					<execute>geany /etc/conky/conky.conf</execute>
+					<execute>vim /etc/conky/conky.conf</execute>
 				</action>
 			</item>
 			<item label="crontab">
 				<action name="Execute">
-					<execute>terminator --command='crontab -e'</execute>
+					<execute>urxvt -e crontab -e</execute>
 				</action>
 			</item>
 			<item label="Openbox Autostart">
 				<action name="Execute">
-					<execute>geany ~/.config/openbox/autostart</execute>
+					<execute>vim ~/.config/openbox/autostart</execute>
 				</action>
 			</item>
 			<item label="Openbox Settings File">
 				<action name="Execute">
-					<execute>geany ~/.config/openbox/rc.xml</execute>
+					<execute>vim ~/.config/openbox/rc.xml</execute>
 				</action>
 			</item>
 			<item label="Openbox Menu Editor">
@@ -175,12 +164,12 @@
 			</item>
 			<item label="Raspberry Pi Configuration (old)">
 				<action name="Execute">
-					<execute>terminator --command='sudo raspi-config'</execute>
+					<execute>urxvt -e sudo raspi-config</execute>
 				</action>
 			</item>
 			<item label="config.txt">
 				<action name="Execute">
-					<execute>sudo geany /boot/config.txt</execute>
+					<execute>sudo vim /boot/config.txt</execute>
 				</action>
 			</item>
 		</menu>
@@ -192,7 +181,7 @@
 			</item>
 			<item label="Empty">
 				<action name="Execute">
-					<execute>terminator --command='rm -rf ~/.local/share/Trash/*'</execute>
+					<execute>urxvt -hold -e rm -rf ~/.local/share/Trash/*</execute>
 				</action>
 			</item>
 		</menu>
