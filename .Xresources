@@ -15,5 +15,5 @@ URxvt.internalBorder: 25
 URxvt*cursorBlink: true
 URxvt*saveLines: 5000
 URxvt.perl-ext-common:     default,matcher,confirm-paste,selection-to-clipboard
-URxvt.url-launcher:        /usr/bin/firefox
+URxvt.url-launcher:        /usr/bin/epiphany-browser
 URxvt.matcher.button:      1

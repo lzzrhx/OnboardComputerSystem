@@ -1,7 +1,7 @@
 # Onboard Computer System
 
 
-see http://perpetual.voyage/journal/1 for instructions
+http://perpetual.voyage/journal/1
 
 
 ![screenshot_01](screenshot_01.png?raw=true "screenshot_01")
