@@ -15,7 +15,8 @@ print '  | WEATHER HISTORY'
 print '   --------------------------------------------------------------------------------------------'
 
 #Get weather log
-sqlite_file='/home/laserwolf/Databases/weather.db'
+home_dir = os.path.expanduser('~') + '/'
+sqlite_file=home_dir + 'Databases/weather.db'
 conn=sqlite3.connect(sqlite_file)
 c = conn.cursor()
 c.execute("SELECT * FROM WEATHER")

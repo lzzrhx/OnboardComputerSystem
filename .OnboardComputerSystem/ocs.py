@@ -14,36 +14,39 @@ import threading
 import math
 import sqlite3
 
-#Set directories
-home_dir = '/home/laserwolf/'  #Home directory
-db_dir = home_dir + 'Databases/'      #Database directory
-
-#Set database names
-ocsdbname='ocs'                #OCS database
-locationdbname='location'      #GPS log database
-weatherdbname='weather'        #Weather log database
+#Set starting number for total distance travelled (in meters)
+setdiststart=0*1852
 
 #Set temp sensor id
-temp1name='28-0115905a2fff'    #Inside temp
-temp2name='28-0415901b95ff'    #Outside temp
-temp3name='28-01159066d4ff'    #Water temp
+temp1name='28-0115905a2fff'                #Inside temp
+temp2name='28-0415901b95ff'                #Outside temp
+temp3name='28-01159066d4ff'                #Water temp
+
+#Set calibration values (in degrees)
+headingcalibrate=(0)                       #Heading
+clinoxcalibrate=(0)                        #Clinometer X axis
+clinoycalibrate=(0)                        #Clinometer Y Axis
 
 #Set time values (in seconds)
-setwaittime=5                  #Wait before starting
-setrefreshtime=1               #Refresh data
-setgpswaittime=2*60            #Wait for gps at boot
-setdisttime=5*60               #Update distance travelled
-settemptime=15*60              #Update temperature
-setbarotime=15*60              #Update barometer
+setwaittime=5                              #Wait before starting
+setrefreshtime=1                           #Refresh data
+setgpswaittime=2*60                        #Wait for gps at boot
+setdisttime=5*60                           #Update distance travelled
+settemptime=15*60                          #Update temperature
+setbarotime=15*60                          #Update barometer
 
 #Set distance values (in meters)
-setlogdistmin=50               #Distance required for adding new entry to GPS log database
-setdistprevmin=15              #Distance required for updating distance travelled
+setlogdistmin=50                           #Distance required for adding new entry to GPS log database
+setdistprevmin=15                          #Distance required for updating distance travelled
 
-#Set calibration values
-headingcalibrate=(0.0)         #Heading
-clinoxcalibrate=(+3.5)         #Clinometer X axis
-clinoycalibrate=(-1.5)         #Clinometer Y Axis
+#Set directories
+home_dir = os.path.expanduser('~') + '/'   #Home directory
+db_dir = home_dir + 'Databases/'           #Database directory
+
+#Set database names
+ocsdbname='ocs'                            #OCS database
+locationdbname='location'                  #GPS log database
+weatherdbname='weather'                    #Weather log database
 
 #Database stuff
 ocsdb_file = db_dir + ocsdbname + '.db'
@@ -93,7 +96,7 @@ if ocsdbonline is False:
     WINDSPD        TEXT   NOT NULL,
     WINDSPD_MAX    TEXT   NOT NULL
     );""")
-  c.execute("INSERT INTO OCS (ID, TIME, LAT, LON, SPD, SPD_MAX, COG, HEADING, UPTIME, UPTIME_MAX, DIST, DIST_START, BARO, BARO_MIN, BARO_MAX, TEMP1, TEMP1_MIN, TEMP1_MAX, TEMP2, TEMP2_MIN, TEMP2_MAX, TEMP3, TEMP3_MIN, TEMP3_MAX, CLINOX, CLINOX_MIN, CLINOX_MAX, CLINOY, CLINOY_MIN, CLINOY_MAX, WINDDIR, WINDSPD, WINDSPD_MAX) VALUES (1, '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1481600', '0', '999999', '-999999', '0', '999', '-999', '0', '999', '-999', '0', '999', '-999', '0', '0', '0', '0', '0', '0', '0', '0', '0')")
+  c.execute("INSERT INTO OCS (ID, TIME, LAT, LON, SPD, SPD_MAX, COG, HEADING, UPTIME, UPTIME_MAX, DIST, DIST_START, BARO, BARO_MIN, BARO_MAX, TEMP1, TEMP1_MIN, TEMP1_MAX, TEMP2, TEMP2_MIN, TEMP2_MAX, TEMP3, TEMP3_MIN, TEMP3_MAX, CLINOX, CLINOX_MIN, CLINOX_MAX, CLINOY, CLINOY_MIN, CLINOY_MAX, WINDDIR, WINDSPD, WINDSPD_MAX) VALUES (1, '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '{DIST_START}', '0', '999999', '-999999', '0', '999', '-999', '0', '999', '-999', '0', '999', '-999', '0', '0', '0', '0', '0', '0', '0', '0', '0')".format(DIST_START=setdiststart))
   conn.commit()
   conn.close()
 
@@ -597,7 +600,7 @@ if __name__ == '__main__':
         #Output data to conky
         if (conky_update==1):
           conkytext='$alignc CLINO: {CLINO} // HDG: {HDG} // LOG: {LOG} // WIND: {WIND} \n$alignc BARO: {BARO} // INSIDE: {INSIDE} // OUTSIDE: {OUTSIDE} // WATER: {WATER} '.format(HDG=headingformatfull,CLINO=clinoxformatfull,LOG=distformatfull,UPTIME=uptimeformatfull,INSIDE=temp1formatfull,OUTSIDE=temp2formatfull,WATER=temp3formatfull,BARO=baroformatfull,WIND=windformatfull)
-          conkyfile = open(home_dir+'.conkytext.txt', 'w')
+          conkyfile = open(home_dir+'.conkytext', 'w')
           conkyfile.writelines(conkytext)
           conkyfile.close()
           conky_update=0
@@ -675,7 +678,7 @@ if __name__ == '__main__':
         
       #Print data
       print'%{c}',gpsfixformat,' TIME:',currenttime,' // LAT:',gpslatformatfull,' // LON:',gpslonformatfull,' // SPD:',gpsspdformatfull,' // COG:',gpscogformatfull,' ',gpsfixformat
-      #print'time',currenttime,' - hdg:',headingformatfull,' - clinox:',clinox,' - clinoy:',clinoy,' - x:',magx,' - y:',magy,' - z:',magz
+      #print'TIME:',currenttime,' - HDG:',headingformatfull,' - CLINO(X):',clinox,' - CLINO(Y):',clinoy
       
       #Update time
       refreshtime+=0.5

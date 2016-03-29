@@ -28,7 +28,7 @@ use_spacer none
 text_buffer_size 256
 
 TEXT
-${color #807A6C}${font ProggyCleanTT:size=22}${execp sed -n '1{p;q}' /home/laserwolf/.conkytext.txt}
+${color #807A6C}${font ProggyCleanTT:size=22}${execp sed -n '1{p;q}' /home/laserwolf/.conkytext}
 
 ${color #807A6C}${font ProggyCleanTT:size=26}$alignc ---------------------------------------------------- 
 
@@ -36,4 +36,4 @@ ${color #807A6C}${font ProggyCleanTT:size=26}$alignc * O N B O A R D * C O M P U
 
 ${color #807A6C}${font ProggyCleanTT:size=26}$alignc ---------------------------------------------------- 
 
-${color #807A6C}${font ProggyCleanTT:size=22}${execp sed -n '2{p;q}' /home/laserwolf/.conkytext.txt}
+${color #807A6C}${font ProggyCleanTT:size=22}${execp sed -n '2{p;q}' /home/laserwolf/.conkytext}

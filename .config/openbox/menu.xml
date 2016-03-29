@@ -11,26 +11,11 @@
 				<execute>pcmanfm</execute>
 			</action>
 		</item>
-		<item label="Music">
-			<action name="Execute">
-				<execute>urxvt -name cmus -e cmus</execute>
-			</action>
-		</item>
-		<item label="Internet">
-			<action name="Execute">
-				<execute>epiphany-browser</execute>
-			</action>
-		</item>
 		<separator/>
 		<menu id="root-menu-81349" label="Apps">
 			<item label="OpenCPN">
 				<action name="Execute">
 					<execute>opencpn</execute>
-				</action>
-			</item>
-			<item label="FoxtrotGPS">
-				<action name="Execute">
-					<execute>foxtrotgps</execute>
 				</action>
 			</item>
 			<item label="zyGrib">
@@ -43,9 +28,19 @@
 					<execute>java -jar ~/Apps/JTides/JTides.jar</execute>
 				</action>
 			</item>
+			<item label="FoxtrotGPS">
+				<action name="Execute">
+					<execute>foxtrotgps</execute>
+				</action>
+			</item>
+		    <item label="cmus">
+			    <action name="Execute">
+				    <execute>urxvt -name cmus -e cmus</execute>
+			    </action>
+		    </item>
 		</menu>
 		<menu id="root-menu-2915" label="Games">
-			<item label="SNES">
+			<item label="PiSNES">
 				<action name="Execute">
 					<execute>sudo ~/Apps/pisnes/snes9x.gui</execute>
 				</action>
@@ -54,17 +49,12 @@
 		<menu id="root-menu-63234" label="Scripts">
 			<item label="Take screenshot">
 				<action name="Execute">
-					<execute>scrot /home/laserwolf/screenshot_%Y-%m-%d_%H%M%S.png</execute>
+					<execute>~/Scripts/screenshot.sh</execute>
 				</action>
 			</item>
 			<item label="Take webcam picture">
 				<action name="Execute">
 					<execute>urxvt -hold -name webcam -e ~/Scripts/webcam.sh</execute>
-				</action>
-			</item>
-			<item label="Update server">
-				<action name="Execute">
-					<execute>urxvt -hold -name update_server -e ~/Scripts/update-server.sh</execute>
 				</action>
 			</item>
 			<item label="Update packages">
@@ -77,19 +67,18 @@
 					<execute>urxvt -hold -name firmware -e ~/Scripts/update-firmware.sh</execute>
 				</action>
 			</item>
-			<item label="Backup">
+			<item label="Update server">
 				<action name="Execute">
-					<execute>urxvt -hold -name backup -e ~/Scripts/backup.sh</execute>
+					<execute>urxvt -hold -name update_server -e ~/Scripts/update-server.sh</execute>
+				</action>
+			</item>
+			<item label="Backup files">
+				<action name="Execute">
+					<execute>urxvt -hold -name backup -e ~/Scripts/backup-full.sh</execute>
 				</action>
 			</item>
 		</menu>
 		<menu id="root-menu-192254" label="Tools">
-			<menu id="client-list-menu"/>
-			<item label="Add / Remove Software">
-				<action name="Execute">
-					<execute>pi-packages</execute>
-				</action>
-			</item>
 			<item label="Network monitor">
 				<action name="Execute">
 					<execute>urxvt -name slurm -e slurm -i wlan0</execute>
@@ -100,103 +89,21 @@
 					<execute>urxvt -name htop -e htop</execute>
 				</action>
 			</item>
-		</menu>
-		<menu id="root-menu-75935" label="Settings">
 			<item label="Wi-Fi Settings">
 				<action name="Execute">
-					<execute>urxvt -name wicd-curses -e='wicd-curses'</execute>
-				</action>
-			</item>
-			<item label="Monitor Settings">
-				<action name="Execute">
-					<execute>lxrandr</execute>
-				</action>
-			</item>
-			<item label="Mouse and Keyboard Settings">
-				<action name="Execute">
-					<execute>lxinput</execute>
-				</action>
-			</item>
-			<item label="Customise Look and Feel">
-				<action name="Execute">
-					<execute>lxappearance</execute>
-				</action>
-			</item>
-			<item label="Tint2 Configuration">
-				<action name="Execute">
-					<execute>~/Apps/tintwizard/tintwizard.py</execute>
-				</action>
-			</item>
-			<item label="Conky Configuration">
-				<action name="Execute">
-					<execute>vim /etc/conky/conky.conf</execute>
-				</action>
-			</item>
-			<item label="crontab">
-				<action name="Execute">
-					<execute>urxvt -e crontab -e</execute>
-				</action>
-			</item>
-			<item label="Openbox Autostart">
-				<action name="Execute">
-					<execute>vim ~/.config/openbox/autostart</execute>
-				</action>
-			</item>
-			<item label="Openbox Settings File">
-				<action name="Execute">
-					<execute>vim ~/.config/openbox/rc.xml</execute>
-				</action>
-			</item>
-			<item label="Openbox Menu Editor">
-				<action name="Execute">
-					<execute>obmenu</execute>
-				</action>
-			</item>
-			<item label="Openbox Configuration Manager">
-				<action name="Execute">
-					<execute>obconf</execute>
-				</action>
-			</item>
-			<item label="Raspberry Pi Configuration">
-				<action name="Execute">
-					<execute>sudo rc_gui</execute>
-				</action>
-			</item>
-			<item label="Raspberry Pi Configuration (old)">
-				<action name="Execute">
-					<execute>urxvt -e sudo raspi-config</execute>
-				</action>
-			</item>
-			<item label="config.txt">
-				<action name="Execute">
-					<execute>sudo vim /boot/config.txt</execute>
-				</action>
-			</item>
-		</menu>
-		<menu id="root-menu-483134" label="Rubbish">
-			<item label="View">
-				<action name="Execute">
-					<execute>pcmanfm ~/.local/share/Trash</execute>
-				</action>
-			</item>
-			<item label="Empty">
-				<action name="Execute">
-					<execute>urxvt -hold -e rm -rf ~/.local/share/Trash/*</execute>
+					<execute>urxvt -name wicd-curses -e wicd-curses</execute>
 				</action>
 			</item>
 		</menu>
 		<menu id="root-menu-81114" label="Power">
-			<item label="Logout">
-				<action name="Exit"/>
+			<item label="Shutdown">
+				<action name="Execute">
+					<execute>sudo poweroff</execute>
+				</action>
 			</item>
 			<item label="Reboot">
 				<action name="Execute">
 					<execute>sudo reboot</execute>
-				</action>
-			</item>
-			<item label="Shutdown">
-				<action name="Execute">
-					<execute>sudo poweroff</execute>
 				</action>
 			</item>
 		</menu>

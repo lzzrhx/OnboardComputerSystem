@@ -13,7 +13,8 @@ os.system('clear')
 spdmax=0
 uptime=0
 uptimemax=0
-sqlite_file='/home/laserwolf/Databases/ocs.db'
+home_dir = os.path.expanduser('~') + '/'
+sqlite_file=home_dir + 'Databases/ocs.db'
 conn=sqlite3.connect(sqlite_file)
 c = conn.cursor()
 c.execute("SELECT * FROM ocs")

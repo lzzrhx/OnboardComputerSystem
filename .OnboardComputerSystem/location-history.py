@@ -15,7 +15,8 @@ print '  | LOCATION HISTORY'
 print '   --------------------------------------------------------------------------------------------'
 
 #Get gps log
-sqlite_file='/home/laserwolf/Databases/location.db'
+home_dir = os.path.expanduser('~') + '/'
+sqlite_file=home_dir + 'Databases/location.db'
 conn=sqlite3.connect(sqlite_file)
 c = conn.cursor()
 c.execute("SELECT * FROM LOCATION")

@@ -17,6 +17,12 @@ border_width = 0
 background_color = #A9A28F 100
 border_color = #000000 100
 
+# ID 3
+rounded = 0
+border_width = 0
+background_color = #3F3F3F 100
+border_color = #A9A28F 100
+
 # Panel
 panel_monitor = all
 panel_position = top center horizontal
@@ -37,7 +43,7 @@ strut_policy = follow_size
 
 # Taskbar
 taskbar_mode = single_desktop
-taskbar_padding = 0 0 2
+taskbar_padding = 0 0 0
 taskbar_background_id = 0
 taskbar_active_background_id = 0
 
@@ -46,12 +52,12 @@ urgent_nb_of_blink = 8
 task_icon = 0
 task_text = 1
 task_centered = 1
-task_maximum_size = 200 25
+task_maximum_size = %100 25
 task_padding = 5 2
-task_background_id = 0
+task_background_id = 3
 task_active_background_id = 2
 task_urgent_background_id = 2
-task_iconified_background_id = 0
+task_iconified_background_id = 3
 
 # Task Icons
 task_icon_asb = 70 0 0
@@ -68,7 +74,7 @@ task_iconified_font_color = #A9A28F 100
 font_shadow = 0
 
 # System Tray
-systray = 1
+systray = 0
 systray_padding = 10 2 5
 systray_sort = ascending
 systray_background_id = 0

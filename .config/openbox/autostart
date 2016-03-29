@@ -3,7 +3,7 @@ xset s noblank &
 xset s off &
 xset -dpms &
 (sleep 3 && unclutter -idle 1) &
-(sleep 3 && florence) &
+(sleep 3 && florence --use-config /home/laserwolf/.florence.conf) &
 (sleep 3 && sudo kplex) &
 (sleep 3 && tint2) &
 (sleep 6 && conky) &

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="latlon_unit" mtime="1459244648" type="int" value="1"/>
+	<entry name="speed_unit" mtime="1459244648" type="int" value="2"/>
+	<entry name="repos" mtime="1459189379" type="list" ltype="string">
+		<li type="string">
+			<stringvalue>OSM|http://tile.openstreetmap.org/%d/%d/%d.png|/home/laserwolf/.maps/OSM|0</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>Maps-for-free.com|maps-for-free|/home/laserwolf/.maps/maps4free|0</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>OpenCycleMap|http://tile.opencyclemap.org/cycle/%d/%d/%d.png|/home/laserwolf/.maps/opencyclemap|0</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>Google Maps (testing only)|http://mt0.google.com/vt/lyrs=m&amp;hl=en&amp;x=%d&amp;y=%d&amp;z=%d|/home/laserwolf/.maps/googlemaps|1</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>Google Sat (testing only)|http://mt0.google.com/vt/lyrs=s&amp;hl=en&amp;x=%d&amp;y=%d&amp;z=%d|/home/laserwolf/.maps/googlesat|1</stringvalue>
+		</li>
+	</entry>
+	<entry name="gpsd_host" mtime="1459244648" type="string">
+		<stringvalue>localhost</stringvalue>
+	</entry>
+	<entry name="no_redownload" mtime="1459244648" type="bool" value="false"/>
+	<entry name="auto_download" mtime="1459244648" type="bool" value="true"/>
+	<entry name="repo_name" mtime="1459244648" type="string">
+		<stringvalue>OSM</stringvalue>
+	</entry>
+	<entry name="global_zoom" mtime="1459244649" type="int" value="16"/>
+	<entry name="global_y" mtime="1459244649" type="int" value="4939738"/>
+	<entry name="global_x" mtime="1459244649" type="int" value="8873459"/>
+</gconf>
