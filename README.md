@@ -32,3 +32,11 @@ http://perpetual.voyage/journal/1
 ------
 
 ![screenshot_08](screenshot_08.png?raw=true "screenshot_08")
+
+------
+
+![screenshot_09](screenshot_09.png?raw=true "screenshot_09")
+
+------
+
+![screenshot_10](screenshot_10.png?raw=true "screenshot_10")
