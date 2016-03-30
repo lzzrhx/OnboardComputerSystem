@@ -4,7 +4,7 @@ xset s off &
 xset -dpms &
 (sleep 3 && unclutter -idle 1) &
 (sleep 3 && florence --use-config /home/laserwolf/.florence.conf) &
-(sleep 3 && sudo kplex) &
+(sleep 3 && kplex) &
 (sleep 3 && tint2) &
 (sleep 6 && conky) &
 (sleep 9 && /home/laserwolf/.OnboardComputerSystem/lemonbar01.sh) &
