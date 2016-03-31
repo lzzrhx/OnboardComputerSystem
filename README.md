@@ -68,3 +68,27 @@ http://perpetual.voyage/journal/1
 ------
 
 ![ocs_diagram07_buzzer](ocs_diagram07_buzzer.png?raw=true "ocs_diagram07_buzzer")
+
+------
+
+![photo_01](photo_01.png?raw=true "photo_01")
+
+------
+
+![photo_02](photo_02.png?raw=true "photo_02")
+
+------
+
+![photo_03](photo_03.png?raw=true "photo_03")
+
+------
+
+![photo_04](photo_04.png?raw=true "photo_04")
+
+------
+
+![photo_05](photo_05.png?raw=true "photo_05")
+
+------
+
+![photo_06](photo_06.png?raw=true "photo_06")

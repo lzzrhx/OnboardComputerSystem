@@ -33,11 +33,11 @@
 					<execute>foxtrotgps</execute>
 				</action>
 			</item>
-		    <item label="cmus">
-			    <action name="Execute">
-				    <execute>urxvt -name cmus -e cmus</execute>
-			    </action>
-		    </item>
+		  <item label="cmus">
+			  <action name="Execute">
+				  <execute>urxvt -name cmus -e cmus</execute>
+			  </action>
+		  </item>
 		</menu>
 		<menu id="root-menu-2915" label="Games">
 			<item label="PiSNES">
