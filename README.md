@@ -43,6 +43,38 @@ http://perpetual.voyage/journal/1
 
 ------
 
+![ocs_photo_01](ocs_photo_01.jpg?raw=true "ocs_photo_01")
+
+------
+
+![ocs_photo_02](ocs_photo_02.jpg?raw=true "ocs_photo_02")
+
+------
+
+![ocs_photo_03](ocs_photo_03.jpg?raw=true "ocs_photo_03")
+
+------
+
+![ocs_photo_04](ocs_photo_04.jpg?raw=true "ocs_photo_04")
+
+------
+
+![ocs_photo_05](ocs_photo_05.jpg?raw=true "ocs_photo_05")
+
+------
+
+![ocs_photo_06](ocs_photo_06.jpg?raw=true "ocs_photo_06")
+
+------
+
+![ocs_photo_07](ocs_photo_07.jpg?raw=true "ocs_photo_07")
+
+------
+
+![ocs_photo_08](ocs_photo_08.jpg?raw=true "ocs_photo_08")
+
+------
+
 ![ocs_diagram01_12v](ocs_diagram01_12v.png?raw=true "ocs_diagram01_12v")
 
 ------
@@ -68,35 +100,3 @@ http://perpetual.voyage/journal/1
 ------
 
 ![ocs_diagram07_buzzer](ocs_diagram07_buzzer.png?raw=true "ocs_diagram07_buzzer")
-
-------
-
-![ocs_photo_01](ocs_photo_01.jpg?raw=true "ocs_photo_01")
-
-------
-
-![ocs_photo_02](ocs_photo_02.jpg?raw=true "ocs_photo_02")
-
-------
-
-![ocs_photo_03](ocs_photo_03.jpg?raw=true "ocs_photo_03")
-
-------
-
-![ocs_photo_04](ocs_photo_04.jpg?raw=true "ocs_photo_04")
-
-------
-
-![ocs_photo_05](ocs_photo_05.jpg?raw=true "ocs_photo_05")
-
-------
-
-![ocs_photo_06](ocs_photo_06.jpg?raw=true "ocs_photo_06")
-
-------
-
-![ocs_photo_06](ocs_photo_06.jpg?raw=true "ocs_photo_07")
-
-------
-
-![ocs_photo_06](ocs_photo_06.jpg?raw=true "ocs_photo_08")
