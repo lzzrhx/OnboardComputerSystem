@@ -3,43 +3,43 @@
 http://perpetual.voyage/journal/1
 
 
-![screenshot_01](screenshot_01.png?raw=true "screenshot_01")
+![ocs_screenshot_01](ocs_screenshot_01.png?raw=true "ocs_screenshot_01")
 
 ------
 
-![screenshot_02](screenshot_02.png?raw=true "screenshot_02")
+![ocs_screenshot_02](ocs_screenshot_02.png?raw=true "ocs_screenshot_02")
 
 ------
 
-![screenshot_03](screenshot_03.png?raw=true "screenshot_03")
+![ocs_screenshot_03](ocs_screenshot_03.png?raw=true "ocs_screenshot_03")
 
 ------
 
-![screenshot_04](screenshot_04.png?raw=true "screenshot_04")
+![ocs_screenshot_04](ocs_screenshot_04.png?raw=true "ocs_screenshot_04")
 
 ------
 
-![screenshot_05](screenshot_05.png?raw=true "screenshot_05")
+![ocs_screenshot_05](ocs_screenshot_05.png?raw=true "ocs_screenshot_05")
 
 ------
 
-![screenshot_06](screenshot_06.png?raw=true "screenshot_06")
+![ocs_screenshot_06](ocs_screenshot_06.png?raw=true "ocs_screenshot_06")
 
 ------
 
-![screenshot_07](screenshot_07.png?raw=true "screenshot_07")
+![ocs_screenshot_07](ocs_screenshot_07.png?raw=true "ocs_screenshot_07")
 
 ------
 
-![screenshot_08](screenshot_08.png?raw=true "screenshot_08")
+![ocs_screenshot_08](ocs_screenshot_08.png?raw=true "ocs_screenshot_08")
 
 ------
 
-![screenshot_09](screenshot_09.png?raw=true "screenshot_09")
+![ocs_screenshot_09](ocs_screenshot_09.png?raw=true "ocs_screenshot_09")
 
 ------
 
-![screenshot_10](screenshot_10.png?raw=true "screenshot_10")
+![ocs_screenshot_10](ocs_screenshot_10.png?raw=true "ocs_screenshot_10")
 
 ------
 
@@ -71,24 +71,32 @@ http://perpetual.voyage/journal/1
 
 ------
 
-![photo_01](photo_01.jpg?raw=true "photo_01")
+![ocs_photo_01](ocs_photo_01.jpg?raw=true "ocs_photo_01")
 
 ------
 
-![photo_02](photo_02.jpg?raw=true "photo_02")
+![ocs_photo_02](ocs_photo_02.jpg?raw=true "ocs_photo_02")
 
 ------
 
-![photo_03](photo_03.jpg?raw=true "photo_03")
+![ocs_photo_03](ocs_photo_03.jpg?raw=true "ocs_photo_03")
 
 ------
 
-![photo_04](photo_04.jpg?raw=true "photo_04")
+![ocs_photo_04](ocs_photo_04.jpg?raw=true "ocs_photo_04")
 
 ------
 
-![photo_05](photo_05.jpg?raw=true "photo_05")
+![ocs_photo_05](ocs_photo_05.jpg?raw=true "ocs_photo_05")
 
 ------
 
-![photo_06](photo_06.jpg?raw=true "photo_06")
+![ocs_photo_06](ocs_photo_06.jpg?raw=true "ocs_photo_06")
+
+------
+
+![ocs_photo_06](ocs_photo_06.jpg?raw=true "ocs_photo_07")
+
+------
+
+![ocs_photo_06](ocs_photo_06.jpg?raw=true "ocs_photo_08")
