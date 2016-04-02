@@ -1,6 +1,8 @@
 <?php
 
 //Requires a Google Maps API key to work
+//Replace "perpetual.voyage" with your website
+//And "if-location" with the url
 
 $db = new SQLite3('db/location.db');
 $google_maps_api_key='YOUR API KEY HERE';
