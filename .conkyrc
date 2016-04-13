@@ -2,7 +2,7 @@ background yes
 use_xft yes
 xftfont 123:size=8
 xftalpha 0.1
-update_interval 30
+update_interval 1
 total_run_times 0
 own_window yes
 own_window_type normal
@@ -28,12 +28,19 @@ use_spacer none
 text_buffer_size 256
 
 TEXT
-${color #807A6C}${font ProggyCleanTT:size=22}${execp sed -n '1{p;q}' /home/laserwolf/.conkytext}
+${color #A9A28F}${font ProggyCleanTT:size=30}
 
-${color #807A6C}${font ProggyCleanTT:size=26}$alignc ---------------------------------------------------- 
+${execp sed -n '1{p;q}' /home/laserwolf/.conkytext}
 
-${color #807A6C}${font ProggyCleanTT:size=26}$alignc * O N B O A R D * C O M P U T E R * S Y S T E M * ${font ProggyCleanTT:size=26}
+${execp sed -n '2{p;q}' /home/laserwolf/.conkytext}
 
-${color #807A6C}${font ProggyCleanTT:size=26}$alignc ---------------------------------------------------- 
+$alignc ---------------------------------------------------- 
 
-${color #807A6C}${font ProggyCleanTT:size=22}${execp sed -n '2{p;q}' /home/laserwolf/.conkytext}
+$alignc * O N B O A R D * C O M P U T E R * S Y S T E M * ${font ProggyCleanTT:size=26}
+
+$alignc ---------------------------------------------------- 
+
+${execp sed -n '3{p;q}' /home/laserwolf/.conkytext}
+
+${execp sed -n '4{p;q}' /home/laserwolf/.conkytext}
+

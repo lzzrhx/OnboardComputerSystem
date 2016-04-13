@@ -9,6 +9,7 @@ gpu_mem=16
 disable_splash=1
 dtoverlay=w1-gpio
 dtparam=i2c_arm=on
+max_usb_current=1
 #framebuffer_depth=32
 #framebuffer_ignore_alpha=1
 #config_hdmi_boost=4

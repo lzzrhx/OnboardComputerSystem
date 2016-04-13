@@ -13,6 +13,16 @@
 		</item>
 		<separator/>
 		<menu id="root-menu-81349" label="Apps">
+			<item label="Location history">
+				<action name="Execute">
+					<execute>~/.OnboardComputerSystem/location-history-curses.py</execute>
+				</action>
+			</item>
+			<item label="Weather history">
+				<action name="Execute">
+					<execute>~/.OnboardComputerSystem/weather-history-curses.py</execute>
+				</action>
+			</item>
 			<item label="OpenCPN">
 				<action name="Execute">
 					<execute>opencpn</execute>
@@ -98,12 +108,12 @@
 		<menu id="root-menu-81114" label="Power">
 			<item label="Shutdown">
 				<action name="Execute">
-					<execute>sudo poweroff</execute>
+					<execute>~/Scripts/shutdown.sh</execute>
 				</action>
 			</item>
 			<item label="Reboot">
 				<action name="Execute">
-					<execute>sudo reboot</execute>
+					<execute>~/Scripts/reboot.sh</execute>
 				</action>
 			</item>
 		</menu>

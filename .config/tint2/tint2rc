@@ -26,7 +26,7 @@ border_color = #A9A28F 100
 # Panel
 panel_monitor = all
 panel_position = top center horizontal
-panel_size = 100% 25
+panel_size = 100% 40
 panel_margin = 0 40
 panel_padding = 0 0 0
 panel_dock = 0
@@ -52,7 +52,7 @@ urgent_nb_of_blink = 8
 task_icon = 0
 task_text = 1
 task_centered = 1
-task_maximum_size = %100 25
+task_maximum_size = %100 40
 task_padding = 5 2
 task_background_id = 3
 task_active_background_id = 2
@@ -66,7 +66,7 @@ task_urgent_icon_asb = 100 0 0
 task_iconified_icon_asb = 70 0 0
 
 # Fonts
-task_font = ProggyCleanTT 14
+task_font = ProggyCleanTT 18
 task_font_color = #A9A28F 100
 task_active_font_color = #303030 100
 task_urgent_font_color = #303030 100

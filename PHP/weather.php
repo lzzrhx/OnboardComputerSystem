@@ -3,17 +3,17 @@
 //Requires Chart.js (http://www.chartjs.org/) to work
 
 //Stats
-$db = new SQLite3('db/ocs.db');
-$results = $db->query('SELECT * FROM OCS LIMIT 1');
+$db = new SQLite3('db/weather.db');
+$results = $db->query('SELECT MIN(CAST(BARO as decimal)), MAX(CAST(BARO as decimal)), MIN(CAST(TEMP1 as decimal)), MAX(CAST(TEMP1 as decimal)), MIN(CAST(TEMP2 as decimal)), MAX(CAST(TEMP2 as decimal)), MIN(CAST(TEMP3 as decimal)), MAX(CAST(TEMP3 as decimal)) FROM WEATHER');
 while ($row = $results->fetchArray()) {
-$ocs_baromin=$row[13];
-$ocs_baromax=$row[14];
-$ocs_temp1min=$row[16];
-$ocs_temp1max=$row[17];
-$ocs_temp2min=$row[19];
-$ocs_temp2max=$row[20];
-$ocs_temp3min=$row[22];
-$ocs_temp3max=$row[23];
+$ocs_baromin=$row[0];
+$ocs_baromax=$row[1];
+$ocs_temp1min=$row[2];
+$ocs_temp1max=$row[3];
+$ocs_temp2min=$row[4];
+$ocs_temp2max=$row[5];
+$ocs_temp3min=$row[6];
+$ocs_temp3max=$row[7];
 //Format barometer
 $ocs_baromin_format=round($ocs_baromin/100).' mbar';
 $ocs_baromax_format=round($ocs_baromax/100).' mbar';

@@ -65,15 +65,16 @@ echo'<div class="content">';
 $count=1;
 $results = $db->query('SELECT * FROM LOCATION ORDER BY ID DESC');
 while ($row = $results->fetchArray()) {
-$ocs_num=$row[0];
-$ocs_time=$row[1];
-$ocs_lat=$row[2];
-$ocs_lon=$row[3];
-$ocs_speed=$row[4];
-$ocs_cog=$row[5];
-$ocs_hdg=$row[6];
-$ocs_clinox=$row[7];
-$ocs_clinoy=$row[8];
+$ocs_num=$row["ID"];
+$ocs_time=$row["TIME"];
+$ocs_lat=$row["LAT"];
+$ocs_lon=$row["LON"];
+$ocs_speed=$row["SPD"];
+$ocs_cog=$row["COG"];
+$ocs_hdg=$row["HDG"];
+$ocs_clinox=$row["CLINOX"];
+$ocs_clinoy=$row["CLINOY"];
+$ocs_dist=$row["DIST"];
 //Format time
 $ocs_time_format=date('d.m.Y H:i', $ocs_time);
 #Format latitude
@@ -100,13 +101,15 @@ $ocs_clinox_format=round($ocs_clinox).'°';
 //Format clinometer (Y axis)
 if(substr($ocs_clinoy,0,1)=="-"){$ocs_clinoy_dir='forward';$ocs_clinoy=substr($ocs_clinoy,1);}else{$ocs_clinoy_dir='backward';};
 $ocs_clinoy_format=round($ocs_clinoy).'°';
+//Format distance
+$ocs_dist_format=number_format(($ocs_dist*0.000539956803),1).' NM';
 #Format google maps link
 $ocs_location_link='https://www.google.no/maps/search/'.$ocs_lat_deg.'+'.$ocs_lat_min.',+'.$ocs_lon_deg.'+'.$ocs_lon_min.'';
 #Print data
 if($count>1){echo'<div class="seperator_small"></div>';}
 echo'<div class="gps_item">';
 echo'<p><a target="_blank" href="'.$ocs_location_link.'">Entry no. '.sprintf('%04d', $ocs_num).'&nbsp;&nbsp;&#8226;&nbsp;&nbsp;'.$ocs_time_format.'</a></p>';
-echo'<p>LAT: '.$ocs_lat_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LON: '.$ocs_lon_format.'&nbsp;&nbsp; // &nbsp;&nbsp;SPD: '.$ocs_speed_format.'&nbsp;&nbsp; // &nbsp;&nbsp;COG: '.$ocs_cog_format.'&nbsp;&nbsp; // &nbsp;&nbsp;HDG: '.$ocs_hdg_format.'&nbsp;&nbsp; // &nbsp;&nbsp;CLINO: '.$ocs_clinox_format.'</p>';
+echo'<p>LAT: '.$ocs_lat_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LON: '.$ocs_lon_format.'&nbsp;&nbsp; // &nbsp;&nbsp;SPD: '.$ocs_speed_format.'&nbsp;&nbsp; // &nbsp;&nbsp;COG: '.$ocs_cog_format.'&nbsp;&nbsp; // &nbsp;&nbsp;CLINO: '.$ocs_clinox_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LOG: '.$ocs_dist_format.'</p>';
 echo'</div>';$count++;}
 echo'</div>';
 

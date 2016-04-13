@@ -4,29 +4,31 @@
 $db = new SQLite3('db/ocs.db');
 $results = $db->query('SELECT * FROM OCS LIMIT 1');
 while ($row = $results->fetchArray()) {
-$ocs_time=$row[1];
-$ocs_lat=$row[2];
-$ocs_lon=$row[3];
-$ocs_spd=$row[4];
-$ocs_spd_max=$row[5];
-$ocs_cog=$row[6];
-$ocs_hdg=$row[7];
-$ocs_uptime=$row[8];
-$ocs_uptime_max=$row[9];
-$ocs_dist=$row[10];
-$ocs_dist_start=$row[11];
-$ocs_baro=$row[12];
-$ocs_temp1=$row[15];
-$ocs_temp2=$row[18];
-$ocs_temp3=$row[21];
-$ocs_clinox=$row[24];
-$ocs_clinox_min=$row[25];
-$ocs_clinox_max=$row[27];
-$ocs_clinoy=$row[28];
-$ocs_clinoy_min=$row[29];
-$ocs_clinoy_max=$row[30];
-$ocs_winddir=$row[31];
-$ocs_windspd=$row[32];
+$ocs_time=$row["TIME"];
+$ocs_lat=$row["LAT"];
+$ocs_lon=$row["LON"];
+$ocs_spd=$row["SPD"];
+$ocs_spd_max=$row["SPD_MAX"];
+$ocs_cog=$row["COG"];
+$ocs_hdg=$row["HDG"];
+$ocs_uptime=$row["UPTIME"];
+$ocs_uptime_max=$row["UPTIME_MAX"];
+$ocs_dist=$row["DIST"];
+$ocs_dist_start=$row["DIST_START"];
+$ocs_baro=$row["BARO"];
+$ocs_temp1=$row["TEMP1"];
+$ocs_temp2=$row["TEMP2"];
+$ocs_temp3=$row["TEMP3"];
+$ocs_clinox=$row["CLINOX"];
+$ocs_clinox_min=$row["CLINOX_MIN"];
+$ocs_clinox_max=$row["CLINOX_MAX"];
+$ocs_clinoy=$row["CLINOY"];
+$ocs_clinoy_min=$row["CLINOY_MIN"];
+$ocs_clinoy_max=$row["CLINOY_MAX"];
+$ocs_winddir=$row["WINDDIR"];
+$ocs_windspd=$row["WINDSPD"];
+$ocs_sunrise=$row["SUNRISE"];
+$ocs_sunset=$row["SUNSET"];
 //Format time
 $ocs_time_format=date('d.m.Y H:i', $ocs_time);
 //Format latitude
@@ -96,11 +98,10 @@ echo'<div class="onboard_computer_system_title">--------------------------------
 echo'<p class="link_text"><a target="_blank" href="/img/cam01.jpg?'.round($ocs_time).'">Camera</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a target="_blank" href="'.$ocs_location.'">Current location</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-location">Location history</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-weather">Weather history</a></p>';
 echo'<p>LAT: '.$ocs_lat_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LON: '.$ocs_lon_format.'&nbsp;&nbsp; // &nbsp;&nbsp;SPD: '.$ocs_spd_format.'&nbsp;&nbsp; // &nbsp;&nbsp;COG: '.$ocs_cog_format.'</p>';
 echo'<p>CLINO: '.$ocs_clinox_format.'&nbsp;&nbsp; // &nbsp;&nbsp;HDG: '.$ocs_hdg_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LOG: '.$ocs_dist_total_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WIND: '.$ocs_wind_format.'</p>';
+//echo'<p>SUNRISE: '.$ocs_sunrise.'&nbsp;&nbsp; // &nbsp;&nbsp;SUNSET: '.$ocs_sunset.'&nbsp;&nbsp; // &nbsp;&nbsp;MAX SPD: '.$ocs_spd_max_format.'&nbsp;&nbsp; // &nbsp;&nbsp;MAX CLINO: '.$ocs_clinox_max_format.'</p>';
 echo'<p>BARO: '.$ocs_baro_format.'&nbsp;&nbsp; // &nbsp;&nbsp;INSIDE: '.$ocs_temp1_format.'&nbsp;&nbsp; // &nbsp;&nbsp;OUTSIDE: '.$ocs_temp2_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WATER: '.$ocs_temp3_format.'</p>';
-//echo'<p>MAX SPD: '.$ocs_spd_max_format.'&nbsp;&nbsp; // &nbsp;&nbsp;MAX CLINO: '.$ocs_clinox_max_format.'</p>';
-//$ocs_uptime_max_format
 echo'<div class="onboard_computer_system_title">--------------------------------------------------------------</div>';
-echo'<p>UPDATED: '.$ocs_time_format.'&nbsp;&nbsp; // &nbsp;&nbsp;UPTIME: '.$ocs_uptime_format.'</p>';
+echo'<p>UPDATED: '.$ocs_time_format.'&nbsp;&nbsp; // &nbsp;&nbsp;<span title="MAX: '.$ocs_uptime_max_format.'">UPTIME: '.$ocs_uptime_format.'</span></p>';
 echo'<div class="onboard_computer_system_title">--------------------------------------------------------------</div>';
 echo'</div>';
 
