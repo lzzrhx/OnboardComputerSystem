@@ -108,12 +108,12 @@
 		<menu id="root-menu-81114" label="Power">
 			<item label="Shutdown">
 				<action name="Execute">
-					<execute>~/Scripts/shutdown.sh</execute>
+					<execute>~/.OnboardComputerSystem/shutdown.sh</execute>
 				</action>
 			</item>
 			<item label="Reboot">
 				<action name="Execute">
-					<execute>~/Scripts/reboot.sh</execute>
+					<execute>~/.OnboardComputerSystem/reboot.sh</execute>
 				</action>
 			</item>
 		</menu>
