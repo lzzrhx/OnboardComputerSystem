@@ -63,14 +63,15 @@ $ocs_hdg_format=round($ocs_hdg).'°';
 //Format clinometer (X axis)
 if(substr($ocs_clinox,0,1)=="-"){$ocs_clinox_dir='starboard';$ocs_clinox=substr($ocs_clinox,1);}else{$ocs_clinox_dir='port';};
 $ocs_clinox_format=round($ocs_clinox).'°';
-//$ocs_clinox_format.=' ('.$ocs_clinox_dir.')';
 if(substr($ocs_clinox_min,0,1)=="-"){$ocs_clinox_min=substr($ocs_clinox_min,1);}
 if($ocs_clinox_max<$ocs_clinox_min){$ocs_clinox_max=$ocs_clinox_min;$ocs_clinox_max_dir='starboard';}else{$ocs_clinox_max_dir='port';}
 $ocs_clinox_max_format=round($ocs_clinox_max).'°';
-//$ocs_clinox_max_format.=' ('.$ocs_clinox_max_dir.')';
 //Format clinometer (Y axis)
 if(substr($ocs_clinoy,0,1)=="-"){$ocs_clinoy_dir='forward';$ocs_clinoy=substr($ocs_clinoy,1);}else{$ocs_clinoy_dir='backward';};
 $ocs_clinoy_format=round($ocs_clinoy).'°';
+if(substr($ocs_clinoy_min,0,1)=="-"){$ocs_clinoy_min=substr($ocs_clinoy_min,1);}
+if($ocs_clinoy_max<$ocs_clinoy_min){$ocs_clinoy_max=$ocs_clinoy_min;$ocs_clinoy_max_dir='forward';}else{$ocs_clinoy_max_dir='backward';}
+$ocs_clinoy_max_format=round($ocs_clinoy_max).'°';
 //Format distance
 $ocs_dist_total=$ocs_dist+$ocs_dist_start;
 $ocs_dist_total_format=number_format(($ocs_dist_total*0.000539956803),1).' NM';
@@ -96,9 +97,8 @@ echo'<div class="onboard_computer_system_title">--------------------------------
 echo'<div class="onboard_computer_system_title">* O N B O A R D * C O M P U T E R * S Y S T E M *</div>';
 echo'<div class="onboard_computer_system_title">--------------------------------------------------------------</div>';
 echo'<p class="link_text"><a target="_blank" href="/img/cam01.jpg?'.round($ocs_time).'">Camera</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a target="_blank" href="'.$ocs_location.'">Current location</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-location">Location history</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-weather">Weather history</a></p>';
-echo'<p>LAT: '.$ocs_lat_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LON: '.$ocs_lon_format.'&nbsp;&nbsp; // &nbsp;&nbsp;SPD: '.$ocs_spd_format.'&nbsp;&nbsp; // &nbsp;&nbsp;COG: '.$ocs_cog_format.'</p>';
-echo'<p>CLINO: '.$ocs_clinox_format.'&nbsp;&nbsp; // &nbsp;&nbsp;HDG: '.$ocs_hdg_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LOG: '.$ocs_dist_total_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WIND: '.$ocs_wind_format.'</p>';
-//echo'<p>SUNRISE: '.$ocs_sunrise.'&nbsp;&nbsp; // &nbsp;&nbsp;SUNSET: '.$ocs_sunset.'&nbsp;&nbsp; // &nbsp;&nbsp;MAX SPD: '.$ocs_spd_max_format.'&nbsp;&nbsp; // &nbsp;&nbsp;MAX CLINO: '.$ocs_clinox_max_format.'</p>';
+echo'<p>LAT: '.$ocs_lat_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LON: '.$ocs_lon_format.'&nbsp;&nbsp; // &nbsp;&nbsp;<span title="MAX: '.$ocs_spd_max_format.'">SPD: '.$ocs_spd_format.'</span>&nbsp;&nbsp; // &nbsp;&nbsp;COG: '.$ocs_cog_format.'</p>';
+echo'<p><span title="MAX: '.$ocs_clinox_max_format.'">CLINO: '.$ocs_clinox_format.'</span>&nbsp;&nbsp; // &nbsp;&nbsp;HDG: '.$ocs_hdg_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LOG: '.$ocs_dist_total_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WIND: '.$ocs_wind_format.'</p>';
 echo'<p>BARO: '.$ocs_baro_format.'&nbsp;&nbsp; // &nbsp;&nbsp;INSIDE: '.$ocs_temp1_format.'&nbsp;&nbsp; // &nbsp;&nbsp;OUTSIDE: '.$ocs_temp2_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WATER: '.$ocs_temp3_format.'</p>';
 echo'<div class="onboard_computer_system_title">--------------------------------------------------------------</div>';
 echo'<p>UPDATED: '.$ocs_time_format.'&nbsp;&nbsp; // &nbsp;&nbsp;<span title="MAX: '.$ocs_uptime_max_format.'">UPTIME: '.$ocs_uptime_format.'</span></p>';

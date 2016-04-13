@@ -1,5 +1,5 @@
 #include "/home/laserwolf/.OnboardComputerSystem/colors"
-*font: xft:ProggyCleanTT:size=12:antialias=true
+*font: xft:ProggyCleanTT:size=14:antialias=true
 Xft.autohint: 0
 Xft.lcdfilter:  lcddefault
 Xft.hintstyle:  hintfull

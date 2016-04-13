@@ -11,16 +11,21 @@
 				<execute>pcmanfm</execute>
 			</action>
 		</item>
+		<item label="Internet">
+			<action name="Execute">
+				<execute>epiphany-browser</execute>
+			</action>
+		</item>
 		<separator/>
 		<menu id="root-menu-81349" label="Apps">
 			<item label="Location history">
 				<action name="Execute">
-					<execute>~/.OnboardComputerSystem/location-history-curses.py</execute>
+					<execute>urxvt -hold -name location-history -e ~/.OnboardComputerSystem/location-history-curses.py</execute>
 				</action>
 			</item>
 			<item label="Weather history">
 				<action name="Execute">
-					<execute>~/.OnboardComputerSystem/weather-history-curses.py</execute>
+					<execute>urxvt -hold -name weather-history -e ~/.OnboardComputerSystem/weather-history-curses.py</execute>
 				</action>
 			</item>
 			<item label="OpenCPN">

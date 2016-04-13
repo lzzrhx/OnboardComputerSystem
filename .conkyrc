@@ -2,7 +2,7 @@ background yes
 use_xft yes
 xftfont 123:size=8
 xftalpha 0.1
-update_interval 1
+update_interval 3
 total_run_times 0
 own_window yes
 own_window_type normal
@@ -36,7 +36,7 @@ ${execp sed -n '2{p;q}' /home/laserwolf/.conkytext}
 
 $alignc ---------------------------------------------------- 
 
-$alignc * O N B O A R D * C O M P U T E R * S Y S T E M * ${font ProggyCleanTT:size=26}
+$alignc * O N B O A R D * C O M P U T E R * S Y S T E M * 
 
 $alignc ---------------------------------------------------- 
 

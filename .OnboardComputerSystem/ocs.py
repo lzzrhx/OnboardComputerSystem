@@ -31,15 +31,19 @@ clinoycalibrate=(-1.5)                     #Clinometer Y Axis
 #Set time values (in seconds)
 setwaittime=5                              #Wait before starting
 setrefreshtime=1                           #Refresh data
+setlcdtime_screen1=3*60                    #LCD screen 1
+setlcdtime_screen2=30                      #LCD screen 2
+setlcdtime_screen3=setlcdtime_screen2      #LCD screen 3
+setconkytime=3                             #Update Conky
 setgpswaittime=2*60                        #Wait for gps at boot
 setcheckgpsdtime=2*60                      #Check that GPSd is working
-setdisttime=5*60                           #Update distance travelled
+setdisttime=3*100                          #Update distance travelled
 settemptime=15*60                          #Update temperature
 setbarotime=15*60                          #Update barometer
 
 #Set distance values (in meters)
 setlogdistmin=50                           #Distance required for adding new entry to GPS log database
-setdistprevmin=15                          #Distance required for updating distance travelled
+setdistprevmin=3*5                         #Distance required for updating distance travelled
 
 #Set directories
 home_dir = os.path.expanduser('~') + '/'   #Home directory
@@ -149,10 +153,7 @@ temp2online=os.path.isfile(temp2device_file)
 temp3online=os.path.isfile(temp3device_file)
 
 #Setup LCD (from https://github.com/adafruit/Adafruit_Python_CharLCD)
-import Adafruit_CharLCD as LCD
-lcd = LCD.Adafruit_CharLCD(25, 24, 23, 17, 27, 22, 20, 4)
-lcd.clear()
-lcd.message('  ----------------  \n  ONBOARD COMPUTER  \n       SYSTEM       \n  ----------------  ')
+execfile(home_dir+'.OnboardComputerSystem/lcd-boot.py')
 
 #Setup BMP180 barometric pressure sensor (from https://github.com/adafruit/Adafruit_Python_BMP)
 import Adafruit_BMP.BMP085 as BMP085
@@ -223,17 +224,18 @@ conn.close()
 
 #Set default values
 gpsd = None
+alarm=0
 uptime=0
 refreshtime=setrefreshtime
 checkgpsdtime=0
 gpsfixtime=0
 disttime=0
+conkytime=setconkytime
 barotime=setbarotime
 temptime=settemptime
 distfirst=1
 logfirst=1
-lcdnum=0
-lcd_update=0
+lcdtime=0
 ocsdb_update=0
 locationdb_update=0
 weatherdb_update=0
@@ -284,8 +286,6 @@ if __name__ == '__main__':
       if (refreshtime>=setrefreshtime):
 
         #Set update values
-        if (uptime==10 or ( uptime>10 and (datetime.now().strftime('%S')=='00' or datetime.now().strftime('%S')=='15' or datetime.now().strftime('%S')=='30' or datetime.now().strftime('%S')=='45'))):
-          lcd_update=1
         if (uptime>=setgpswaittime and datetime.now().strftime('%S')=='00'):
           ocsdb_update=1
         if (uptime>=setgpswaittime and (logfirst==1 or (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'))):
@@ -547,21 +547,20 @@ if __name__ == '__main__':
           sunriseformat=sunrise.strftime('%H:%M')
           sunsetformat=sunset.strftime('%H:%M')
           astronomy_update=0
-
+        
         #Update LCD
-        if (lcd_update==1):
-          lcdnum+=1
-          lcdtime1=4*4
-          lcdtime2=2
-          if lcdnum == lcdtime1+lcdtime2+lcdtime2+1:
-            lcdnum=1
-          if lcdnum == 1:
+        if (uptime>10):
+          if alarm==1:
+            lcdscreen=0
+          elif lcdtime <= setlcdtime_screen1:
             lcdscreen=1
-          elif lcdnum == lcdtime1+1:
+          elif lcdtime <= setlcdtime_screen1+setlcdtime_screen2:
             lcdscreen=2
-          elif lcdnum == lcdtime1+lcdtime2+1:
+          elif lcdtime <= setlcdtime_screen1+setlcdtime_screen2+setlcdtime_screen3:
             lcdscreen=3
-          time_lcd='  {TIME}  '.format(TIME=datetime.now().strftime('%d.%m.%Y %H:%M'))
+          else:
+            lcdtime=0
+          time_lcd='{TIME}'.format(TIME=datetime.now().strftime('  %d.%m.%Y %H:%M  '))
           lat_lcd=('LAT:')+('{0}'.format(gpslatdeg)+chr(223)).rjust(7)+('{0}\'{1}'.format(gpslatmin,gpslatdir)).rjust(9)
           lon_lcd=('LON:')+('{0}'.format(gpslondeg)+chr(223)).rjust(7)+('{0}\'{1}'.format(gpslonmin,gpslondir)).rjust(9)
           spdcog_lcd=('SPD:')+('{0}KN'.format(gpsspdformat)).rjust(6)+' '+'COG:'+('{0}'.format(gpscogformat)+chr(223)).rjust(5)
@@ -573,42 +572,50 @@ if __name__ == '__main__':
           temp1_lcd=('INSIDE:')+('{0}'.format(temp1format)+chr(223)+'C').rjust(13)
           temp2_lcd=('OUTSIDE:')+('{0}'.format(temp2format)+chr(223)+'C').rjust(12)
           temp3_lcd=('WATER:')+('{0}'.format(temp3format)+chr(223)+'C').rjust(14)
-          #screen1
+          #Alarm screen
+          lcd_screen0_line1=' ------------------ '
+          lcd_screen0_line2=' !!MASTER CAUTION!! '
+          lcd_screen0_line3=' !!MASTER CAUTION!! '
+          lcd_screen0_line4=' ------------------ '
+          #LCD screen 1
           lcd_screen1_line1=time_lcd
           lcd_screen1_line2=lat_lcd
           lcd_screen1_line3=lon_lcd
           lcd_screen1_line4=spdcog_lcd
-          #screen2
+          #LCD screen 2
           lcd_screen2_line1=clino_lcd
           lcd_screen2_line2=heading_lcd
           lcd_screen2_line3=dist_lcd
           lcd_screen2_line4=wind_lcd
-          #screen3
+          #LCD screen 3
           lcd_screen3_line1=baro_lcd
           lcd_screen3_line2=temp1_lcd
           lcd_screen3_line3=temp2_lcd
           lcd_screen3_line4=temp3_lcd
-          if lcdscreen == 1:
+          if lcdscreen == 0:
+            lcdtext='{line1}\n{line2}\n{line3}\n{line4}'.format(line1=lcd_screen0_line1,line2=lcd_screen0_line2,line3=lcd_screen0_line3,line4=lcd_screen0_line4)
+          elif lcdscreen == 1:
             lcdtext='{line1}\n{line2}\n{line3}\n{line4}'.format(line1=lcd_screen1_line1,line2=lcd_screen1_line2,line3=lcd_screen1_line3,line4=lcd_screen1_line4)
           elif lcdscreen == 2:
             lcdtext='{line1}\n{line2}\n{line3}\n{line4}'.format(line1=lcd_screen2_line1,line2=lcd_screen2_line2,line3=lcd_screen2_line3,line4=lcd_screen2_line4)
           elif lcdscreen == 3:          
             lcdtext='{line1}\n{line2}\n{line3}\n{line4}'.format(line1=lcd_screen3_line1,line2=lcd_screen3_line2,line3=lcd_screen3_line3,line4=lcd_screen3_line4)
-          lcd.clear()
           lcd.message(lcdtext)
-          lcd_update=0
-        
+          lcdtime+=1
+
         #Output data to conky
-        conkytext='$alignc LAT: {LAT} // LON: {LON} '.format(LAT=gpslatformatfull,LON=gpslonformatfull)
-        conkytext+='\n'
-        conkytext+='$alignc CLINO: {CLINO} // HDG: {HDG} // LOG: {LOG} // WIND: {WIND} '.format(CLINO=clinoxformatfull,HDG=headingformatfull,LOG=distformatfull,WIND=windformatfull)
-        conkytext+='\n'
-        conkytext+='$alignc BARO: {BARO} // INSIDE: {INSIDE} // OUTSIDE: {OUTSIDE} // WATER: {WATER} '.format(BARO=baroformatfull,INSIDE=temp1formatfull,OUTSIDE=temp2formatfull,WATER=temp3formatfull)
-        conkytext+='\n'
-        conkytext+='$alignc SUNRISE: {SUNRISE} // SUNSET: {SUNSET} '.format(SUNRISE=sunriseformat,SUNSET=sunsetformat)
-        conkyfile = open(home_dir+'.conkytext', 'w')
-        conkyfile.writelines(conkytext)
-        conkyfile.close()
+        if (uptime>10 and conkytime >= setconkytime):
+          conkytext='$alignc LAT: {LAT} // LON: {LON} '.format(LAT=gpslatformatfull,LON=gpslonformatfull)
+          conkytext+='\n'
+          conkytext+='$alignc CLINO: {CLINO} // HDG: {HDG} // LOG: {LOG} // WIND: {WIND} '.format(CLINO=clinoxformatfull,HDG=headingformatfull,LOG=distformatfull,WIND=windformatfull)
+          conkytext+='\n'
+          conkytext+='$alignc BARO: {BARO} // INSIDE: {INSIDE} // OUTSIDE: {OUTSIDE} // WATER: {WATER} '.format(BARO=baroformatfull,INSIDE=temp1formatfull,OUTSIDE=temp2formatfull,WATER=temp3formatfull)
+          conkytext+='\n'
+          conkytext+='$alignc SUNRISE: {SUNRISE} // SUNSET: {SUNSET} '.format(SUNRISE=sunriseformat,SUNSET=sunsetformat)
+          conkyfile = open(home_dir+'.conkytext', 'w')
+          conkyfile.writelines(conkytext)
+          conkyfile.close()
+          conkytime=0
 
         #Update ocs database
         if (gpsfix==1 and ocsdb_update==1):
@@ -680,7 +687,7 @@ if __name__ == '__main__':
           conn.close()
           weatherdb_update=0
         refreshtime=0
-        
+
       #Print data
       print'%{c}',gpsfixformat,' TIME:',currenttime,' // SPD:',gpsspdformatfull,' // COG:',gpscogformatfull,' ',gpsfixformat
       #print'TIME:',currenttime,' - HDG:',headingformatfull,' - CLINO(X):',clinox,' - CLINO(Y):',clinoy
@@ -692,6 +699,7 @@ if __name__ == '__main__':
       disttime+=0.5
       barotime+=0.5
       temptime+=0.5
+      conkytime+=0.5
       if gpsfix == 0:
         gpsfixtime+=0.5
 
