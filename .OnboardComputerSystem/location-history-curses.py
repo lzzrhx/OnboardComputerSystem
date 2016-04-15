@@ -7,6 +7,7 @@ import os
 import time
 import sqlite3
 import curses
+import sys
 
 #Set values
 main_title='LOCATION HISTORY'
@@ -15,6 +16,9 @@ data_margin=5
 scroll_offset=2
 scroll_continuous=0
 title_width=50
+
+#Set terminal title
+sys.stdout.write('\x1b]2;'+main_title+'\x07')
 
 #Setup ncurses
 screen = curses.initscr()
