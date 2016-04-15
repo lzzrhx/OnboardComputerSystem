@@ -20,12 +20,12 @@
 		<menu id="root-menu-81349" label="Apps">
 			<item label="Location history">
 				<action name="Execute">
-					<execute>urxvt -hold -name location-history -e ~/.OnboardComputerSystem/location-history-curses.py</execute>
+					<execute>urxvt -name location-history -e ~/.OnboardComputerSystem/location-history-curses.py</execute>
 				</action>
 			</item>
 			<item label="Weather history">
 				<action name="Execute">
-					<execute>urxvt -hold -name weather-history -e ~/.OnboardComputerSystem/weather-history-curses.py</execute>
+					<execute>urxvt -name weather-history -e ~/.OnboardComputerSystem/weather-history-curses.py</execute>
 				</action>
 			</item>
 			<item label="OpenCPN">

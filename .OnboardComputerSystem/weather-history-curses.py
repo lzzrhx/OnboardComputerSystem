@@ -177,3 +177,4 @@ while x!=ord('q'):
 curses.nocbreak(); screen.keypad(0); curses.echo()
 curses.endwin()
 os.system('clear')
+sys.exit()
