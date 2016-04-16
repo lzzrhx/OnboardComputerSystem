@@ -15,44 +15,53 @@ import math
 import sqlite3
 import ephem
 
+main_title='Onboard Computer System'
+
+alarm=0
+
 #Set starting number for total distance travelled (in meters)
 setdiststart=925*1852
 
 #Set temp sensor id
-temp1name='28-0115905a2fff'                #Inside temp
-temp2name='28-0415901b95ff'                #Outside temp
-temp3name='28-01159066d4ff'                #Water temp
+temp1name='28-0115905a2fff'                     #Inside temp
+temp2name='28-0415901b95ff'                     #Outside temp
+temp3name='28-01159066d4ff'                     #Water temp
 
 #Set calibration values (in degrees)
-headingcalibrate=(0)                       #Heading
-clinoxcalibrate=(+3.0)                     #Clinometer X axis
-clinoycalibrate=(-1.5)                     #Clinometer Y Axis
+headingcalibrate=(0)                            #Heading
+clinoxcalibrate=(+3.0)                          #Clinometer X axis
+clinoycalibrate=(-1.5)                          #Clinometer Y Axis
+
+#Set minimum distance (in meters) for adding new entry to the location database
+setlogdistmin=50
+
+#Set values for calculating distance travelled
+setdistmultiplier=1
+setdisttime=setdistmultiplier*100
+setdistprevmin=setdistmultiplier*5
 
 #Set time values (in seconds)
-setwaittime=5                              #Wait before starting
-setrefreshtime=1                           #Refresh data
-setlcdtime_screen1=3*60                    #LCD screen 1
-setlcdtime_screen2=30                      #LCD screen 2
-setlcdtime_screen3=setlcdtime_screen2      #LCD screen 3
-setconkytime=3                             #Update Conky
-setgpswaittime=2*60                        #Wait for gps at boot
-setcheckgpsdtime=2*60                      #Check that GPSd is working
-setdisttime=3*100                          #Update distance travelled
-settemptime=15*60                          #Update temperature
-setbarotime=15*60                          #Update barometer
-
-#Set distance values (in meters)
-setlogdistmin=50                           #Distance required for adding new entry to GPS log database
-setdistprevmin=3*5                         #Distance required for updating distance travelled
+setwaittime=5                                   #Wait before starting
+setlcdtime_screen1=3*60                         #LCD screen 1
+setlcdtime_screen2=30                           #LCD screen 2
+setlcdtime_screen3=setlcdtime_screen2           #LCD screen 3
+setconkytime=3                                  #Update Conky
+setgpswaittime=2*60                             #Wait for gps at boot
+settemptime=15*60                               #Update temperature
+setbarotime=15*60                               #Update barometer
 
 #Set directories
-home_dir = os.path.expanduser('~') + '/'   #Home directory
-db_dir = home_dir + 'Databases/'           #Database directory
+home_dir = os.path.expanduser('~') + '/'        #Home directory
+ocs_dir = home_dir + '.OnboardComputerSystem/'  #Onboard Computer System directory
+db_dir = home_dir + 'Databases/'                #Database directory
 
 #Set database names
-ocsdbname='ocs'                            #OCS database
-locationdbname='location'                  #GPS log database
-weatherdbname='weather'                    #Weather log database
+ocsdbname='ocs'                                 #OCS database
+locationdbname='location'                       #Location log database
+weatherdbname='weather'                         #Weather log database
+
+#Set terminal title
+sys.stdout.write('\x1b]2;'+main_title+'\x07')
 
 #Database stuff
 ocsdb_file = db_dir + ocsdbname + '.db'
@@ -153,7 +162,7 @@ temp2online=os.path.isfile(temp2device_file)
 temp3online=os.path.isfile(temp3device_file)
 
 #Setup LCD (from https://github.com/adafruit/Adafruit_Python_CharLCD)
-execfile(home_dir+'.OnboardComputerSystem/lcd-boot.py')
+execfile(ocs_dir+'/lcd-boot.py')
 
 #Setup BMP180 barometric pressure sensor (from https://github.com/adafruit/Adafruit_Python_BMP)
 import Adafruit_BMP.BMP085 as BMP085
@@ -213,6 +222,8 @@ row=c.fetchone()
 spdmax=float(row[5])
 uptimemax=float(row[9])
 dist=float(row[10])
+diststart=setdiststart
+disttotal=dist+diststart
 clinoxmin=float(row[17])
 clinoxmax=str(row[18])
 clinoymin=float(row[20])
@@ -222,31 +233,80 @@ sunsetformat=str(row[25])
 conn.commit()
 conn.close()
 
-#Set default values
-gpsd = None
-alarm=0
+#Set time values
+start_time_values=1
+start_gpsp=0
 uptime=0
-refreshtime=setrefreshtime
-checkgpsdtime=0
-gpsfixtime=0
-disttime=0
-conkytime=setconkytime
-barotime=setbarotime
-temptime=settemptime
-distfirst=1
 logfirst=1
-lcdtime=0
 ocsdb_update=0
+ocsdb_update_lock = threading.Lock()
 locationdb_update=0
+locationdb_update_lock = threading.Lock()
 weatherdb_update=0
+weatherdb_update_lock = threading.Lock()
 astronomy_update=0
-gpsmod=0
+astronomy_update_lock = threading.Lock()
+class time_values(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    global start_gpsp
+    global uptime
+    global ocsdb_update
+    global locationdb_update
+    global weatherdb_update
+    global astronomy_update
+    while True:
+      if start_time_values==1:
+        if (uptime>=setgpswaittime and datetime.now().strftime('%S')=='00'):
+          ocsdb_update_lock.acquire()
+          ocsdb_update=1
+          ocsdb_update_lock.release()
+        if (uptime>=setgpswaittime and (logfirst==1 or (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'))):
+          locationdb_update_lock.acquire()
+          locationdb_update=1
+          locationdb_update_lock.release()
+        if (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'):
+          weatherdb_update_lock.acquire()
+          weatherdb_update=1
+          weatherdb_update_lock.release()
+        if (uptime==0 or (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00')):
+          astronomy_update_lock.acquire()
+          astronomy_update=1
+          astronomy_update_lock.release()
+        uptime+=1
+        if start_gpsp==0:
+          start_gpsp=1
+        sleep(1)
+
+#Get GPS data
+start_read_data=0
+gpsd = None
+class gpsp(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+    global gpsd #bring it in scope
+    gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
+    self.current_value = None
+    self.running = True #setting the thread running to true
+  def run(self):
+    global gpsd
+    global start_read_data
+    while gpsp.running:
+      if start_gpsp==1:
+        gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
+        if start_read_data==0:
+          start_read_data=1
+        sleep(0.1)
+
+#Read data
+start_output_lcd=0
+start_output_conky=0
+start_output_data=0
+start_update_databases=0
 gpslat=0
 gpslon=0
 gpsspd=0
-gpsspd1=0
-gpsspd2=0
-gpsspd3=0
 gpscog=0
 heading=0
 clinox=0
@@ -257,78 +317,114 @@ temp2=0
 temp3=0
 windspd=0
 winddir=0
-diststart=setdiststart
-disttotal=dist+diststart
-
-#Start realtime
-class GpsPoller(threading.Thread):
+class read_data(threading.Thread):
   def __init__(self):
     threading.Thread.__init__(self)
-    global gpsd #bring it in scope
-    gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
-    self.current_value = None
-    self.running = True #setting the thread running to true
   def run(self):
-    global gpsd
-    while gpsp.running:
-      gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
-if __name__ == '__main__':
-  gpsp = GpsPoller() # create the thread
-  try:
-    gpsp.start() # start it up
+    disttime=0
+    barotime=0
+    temptime=0
+    barotime=setbarotime
+    temptime=settemptime
+    gpsspd1=0
+    gpsspd2=0
+    gpsspd3=0
+    distfirst=1
+    global start_output_lcd
+    global start_output_conky
+    global start_output_data
+    global start_update_databases
+    global currenttimestamp
+    global uptimemax
+    global gpsfix
+    global gpslat
+    global gpslon
+    global gpsspd
+    global spdmax
+    global gpscog
+    global heading
+    global clinox
+    global clinoxmin
+    global clinoxmax
+    global clinoy
+    global clinoymin
+    global clinoymax
+    global baro
+    global temp1
+    global temp2
+    global temp3
+    global dist
+    global disttotal
+    global sunriseformat
+    global sunsetformat
+    global astronomy_update
+    global gpslatdir
+    global gpslatdeg
+    global gpslatdegformat
+    global gpslatmin
+    global gpslatminformat
+    global gpslatformatfull
+    global gpslondir
+    global gpslondeg
+    global gpslondegformat
+    global gpslonmin
+    global gpslonminformat
+    global gpslonformatfull
+    global gpsspdformat
+    global gpsspdformatfull
+    global gpscogformat
+    global gpscogformatfull
+    global gpsfixformat
+    global headingformat
+    global headingformatfull
+    global clinoxformat
+    global clinoxdir
+    global clinoxformatfull
+    global clinoyformat
+    global clinoydir
+    global clinoyformatfull
+    global baroformat
+    global baroformatfull
+    global temp1format
+    global temp1formatfull
+    global temp2format
+    global temp2formatfull
+    global temp3format
+    global temp3formatfull
+    global windspdformat
+    global windspdformatfull
+    global winddirformat
+    global winddirformatfull
+    global windformatfull
+    global distformat
+    global distformatfull
+    global uptimeformatfull
     while True:
-
-      #Time
-      currenttime=datetime.now().strftime('%d.%m.%Y %H:%M:%S')
-      currenttimestamp=time.time()
-
-      #Refresh
-      if (refreshtime>=setrefreshtime):
-
-        #Set update values
-        if (uptime>=setgpswaittime and datetime.now().strftime('%S')=='00'):
-          ocsdb_update=1
-        if (uptime>=setgpswaittime and (logfirst==1 or (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'))):
-          locationdb_update=1
-        if (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'):
-          weatherdb_update=1
-        if (uptime==0 or (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00')):
-          astronomy_update=1
-
+      if start_read_data==1:
+        #Time
+        currenttimestamp=time.time()
         #Uptime
         if uptime > uptimemax:
           uptimemax=uptime
-        uptimemin, uptimesec = divmod(uptime, 60)
-        uptimehour, uptimemin = divmod(uptimemin, 60)
-        uptimeday, uptimehour = divmod(uptimehour, 24)
-      
-        #Restart GPS
-        if checkgpsdtime>=setcheckgpsdtime:
-          if gpsd.fix.mode == 1:
-            checkgpsdtime=0
-          checkgpsdtime=0
-
         #Read GPS data
         if math.isnan(gpsd.fix.mode) is False:
           if gpsd.fix.mode == 3:
             gpsfix=1
-            gpsfixtime=0
             if math.isnan(gpsd.fix.latitude) is False:
-              gpslat=gpsd.fix.latitude
+                gpslat=gpsd.fix.latitude
             if math.isnan(gpsd.fix.longitude) is False:
-              gpslon=gpsd.fix.longitude
+                gpslon=gpsd.fix.longitude
             if math.isnan(gpsd.fix.speed) is False:
-              gpsspd3=gpsspd2
-              gpsspd2=gpsspd1
-              gpsspd1=gpsd.fix.speed
-              gpsspd=(gpsspd1+gpsspd2+gpsspd3)/3
-              if (uptime >= setgpswaittime and gpsspd > spdmax):
-                spdmax=gpsspd
+                gpsspd3=gpsspd2
+                gpsspd2=gpsspd1
+                gpsspd1=gpsd.fix.speed
+                gpsspd=(gpsspd1+gpsspd2+gpsspd3)/3
+                if (uptime >= setgpswaittime and gpsspd > spdmax):
+                  spdmax=gpsspd
             if math.isnan(gpsd.fix.track) is False:
-              gpscog=gpsd.fix.track
+                gpscog=gpsd.fix.track
           else:
             gpsfix=0
-
         #Read heading & clinometer
         if lsmonline is True:
           magx = LSM_COMBINE(LSM_BUS.read_byte_data(LSM, LSM_MAG_X_MSB), LSM_BUS.read_byte_data(LSM, LSM_MAG_X_LSB))
@@ -368,13 +464,12 @@ if __name__ == '__main__':
             clinoymin=clinoy
           if clinoy > clinoymax:
             clinoymax=clinoy
-
         #Read barometric pressure
         if (barotime >= setbarotime):
           #baro_temp=baro_sensor.read_temperature()
           baro=float(baro_sensor.read_pressure())
           barotime=0
-
+        barotime+=1
         #Read temperature
         if (temptime >= settemptime):
           #Temperature sensor #1
@@ -411,7 +506,7 @@ if __name__ == '__main__':
                   if (int(float(temp3_string)/1000.0)) != 85:
                     temp3 = float(temp3_string) / 1000.0
           temptime=0
-
+        temptime+=1
         #Calculate distance travelled
         if (gpsfix==1 and uptime>=setgpswaittime):
           if (distfirst==1):
@@ -432,15 +527,15 @@ if __name__ == '__main__':
             haversine_r = 6371 # Radius of earth in kilometers. Use 3956 for miles
             distprev=int((haversine_c*haversine_r)*1000)
             if distprev > setdistprevmin:
-              distprev=distprev
-              distlat=gpslat
-              distlon=gpslon
+                distprev=distprev
+                distlat=gpslat
+                distlon=gpslon
             else:
-              distprev=0
+                distprev=0
             dist=int(dist)+int(distprev)
             disttotal=dist+diststart
             disttime=0
-
+          disttime+=1
         #Format latitude
         if str(gpslat)[0] == "-":
           gpslatformat=float(str(gpslat)[1:])
@@ -454,7 +549,6 @@ if __name__ == '__main__':
         gpslatmin='{0:.3f}'.format((float('0.%s' % gpslatsplit[1])*60))
         gpslatminformat='{0:06.3f}'.format(float(gpslatmin))
         gpslatformatfull='{0}° {1}\'{2}'.format(gpslatdeg,gpslatmin,gpslatdir)
-
         #Format longitude
         if str(gpslon)[0] == "-":
           gpslonformat=float(str(gpslon)[1:])
@@ -468,25 +562,20 @@ if __name__ == '__main__':
         gpslonmin='{0:.3f}'.format((float('0.%s' % gpslonsplit[1])*60))
         gpslonminformat='{0:06.3f}'.format(float(gpslonmin))
         gpslonformatfull='{0}° {1}\'{2}'.format(gpslondeg,gpslonmin,gpslondir)
-
         #Format speed
         gpsspdformat='{0:.1f}'.format((float(gpsspd) * 1.9438444924574))
         gpsspdformatfull='{0} KN'.format(gpsspdformat)
-
         #Format course over ground
         gpscogformat=int(gpscog)
         gpscogformatfull='{0}°'.format(gpscogformat)
-
         #Format GPS fix
         if gpsfix==1:
           gpsfixformat='%{F#638057}[ FX ]%{F-}'
         else:
           gpsfixformat="%{F#805A57}[ NO ]%{F-}"
-
         #Format heading
         headingformat=int(heading)
         headingformatfull='{0}°'.format(headingformat)
-
         #Format clinometer (X axis)
         if str(clinox)[0] == "-":
           clinoxformat=int(float(str(clinox)[1:]))
@@ -497,7 +586,6 @@ if __name__ == '__main__':
         if int(clinox) == 0:
           clinoxdir='none'
         clinoxformatfull='{0}°'.format(clinoxformat)
-
         #Format clinometer (Y axis)
         if str(clinoy)[0] == "-":
           clinoyformat=int(float(str(clinoy)[1:]))
@@ -508,11 +596,9 @@ if __name__ == '__main__':
         if int(clinoy) == 0:
           clinoydir='none'
         clinoyformatfull='{0}°'.format(clinoyformat)
-
         #Format barometric pressure
         baroformat='{0}'.format(int(baro/100))
         baroformatfull='{0} MBAR'.format(baroformat)
-
         #Format temperature
         temp1format='{0:.1f}'.format(float(temp1))
         temp1formatfull='{0}°C'.format(temp1format)
@@ -520,21 +606,20 @@ if __name__ == '__main__':
         temp2formatfull='{0}°C'.format(temp2format)
         temp3format='{0:.1f}'.format(float(temp3))
         temp3formatfull='{0}°C'.format(temp3format)
-
         #Format wind data
         windspdformat='{0:.1f}'.format(windspd)
         windspdformatfull='{0} MS'.format(windspdformat)
         winddirformat=int(winddir)
         winddirformatfull='{0}°'.format(winddirformat)
         windformatfull='{0} {1}'.format(winddirformatfull,windspdformatfull)
-
         #Format distance travelled
         distformat='{0:.1f}'.format((float(dist)+float(diststart)) * 0.000539956803)
         distformatfull='{0} NM'.format(distformat)
-
         #Format uptime
+        uptimemin, uptimesec = divmod(uptime, 60)
+        uptimehour, uptimemin = divmod(uptimemin, 60)
+        uptimeday, uptimehour = divmod(uptimehour, 24)
         uptimeformatfull="%02d DAYS - %02d HOURS - %02d MINUTES" % (uptimeday, uptimehour, uptimemin)
-        
         #Calculate sunset/sunrise
         if (gpsfix==1 and astronomy_update==1):
           eph_observer=ephem.Observer()
@@ -546,10 +631,29 @@ if __name__ == '__main__':
           sunset=ephem.localtime(eph_observer.next_setting(eph_sun))
           sunriseformat=sunrise.strftime('%H:%M')
           sunsetformat=sunset.strftime('%H:%M')
+          astronomy_update_lock.acquire()
           astronomy_update=0
-        
-        #Update LCD
-        if (uptime>10):
+          astronomy_update_lock.release()
+        if start_output_lcd==0:
+          start_output_lcd=1
+        if start_output_conky==0:
+          start_output_conky=1
+        if start_output_data==0:
+          start_output_data=1
+        if start_update_databases==0:
+          start_update_databases=1
+        sleep(1)
+
+#Output data to LCD
+class output_lcd(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    lcdtime=0
+    while True:
+      if start_output_lcd==1:
+        sec_tenth=datetime.now().microsecond/100000
+        if sec_tenth==0:
           if alarm==1:
             lcdscreen=0
           elif lcdtime <= setlcdtime_screen1:
@@ -560,7 +664,7 @@ if __name__ == '__main__':
             lcdscreen=3
           else:
             lcdtime=0
-          time_lcd='{TIME}'.format(TIME=datetime.now().strftime('  %d.%m.%Y %H:%M  '))
+          time_lcd='{TIME}'.format(TIME=datetime.now().strftime('%d.%m.%Y  %H:%M:%S'))
           lat_lcd=('LAT:')+('{0}'.format(gpslatdeg)+chr(223)).rjust(7)+('{0}\'{1}'.format(gpslatmin,gpslatdir)).rjust(9)
           lon_lcd=('LON:')+('{0}'.format(gpslondeg)+chr(223)).rjust(7)+('{0}\'{1}'.format(gpslonmin,gpslondir)).rjust(9)
           spdcog_lcd=('SPD:')+('{0}KN'.format(gpsspdformat)).rjust(6)+' '+'COG:'+('{0}'.format(gpscogformat)+chr(223)).rjust(5)
@@ -602,9 +706,18 @@ if __name__ == '__main__':
             lcdtext='{line1}\n{line2}\n{line3}\n{line4}'.format(line1=lcd_screen3_line1,line2=lcd_screen3_line2,line3=lcd_screen3_line3,line4=lcd_screen3_line4)
           lcd.message(lcdtext)
           lcdtime+=1
+          sleep(0.1)
+        sleep(0.01)
 
-        #Output data to conky
-        if (uptime>10 and conkytime >= setconkytime):
+#Output data to Conky
+class output_conky(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    conkytime=0
+    while True:
+      if start_output_conky==1:
+        if (conkytime >= setconkytime):
           conkytext='$alignc LAT: {LAT} // LON: {LON} '.format(LAT=gpslatformatfull,LON=gpslonformatfull)
           conkytext+='\n'
           conkytext+='$alignc CLINO: {CLINO} // HDG: {HDG} // LOG: {LOG} // WIND: {WIND} '.format(CLINO=clinoxformatfull,HDG=headingformatfull,LOG=distformatfull,WIND=windformatfull)
@@ -616,8 +729,34 @@ if __name__ == '__main__':
           conkyfile.writelines(conkytext)
           conkyfile.close()
           conkytime=0
+        conkytime+=1
+        sleep(1)
 
-        #Update ocs database
+#Output data
+class output_data(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    global gpsfixformat
+    while True:
+      if start_output_data==1:
+        currenttime=datetime.now().strftime('%d.%m.%Y %H:%M:%S')
+        print'%{c}',gpsfixformat,' TIME:',currenttime,' // SPD:',gpsspdformatfull,' // COG:',gpscogformatfull,' ',gpsfixformat
+        #print'TIME:',currenttime,' - HDG:',headingformatfull,' - CLINO(X):',clinox,' - CLINO(Y):',clinoy
+        sleep(0.1)
+
+#Update databases
+class update_databases(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    global logfirst
+    global ocsdb_update
+    global locationdb_update
+    global weatherdb_update
+    while True:
+      if start_update_databases==1:
+        #Update OCS database
         if (gpsfix==1 and ocsdb_update==1):
           sqlite_file=ocsdb_file
           conn=sqlite3.connect(sqlite_file)
@@ -625,8 +764,9 @@ if __name__ == '__main__':
           c.execute("UPDATE OCS SET TIME='{TIME}', LAT='{LAT}', LON='{LON}', SPD='{SPD}', SPD_MAX='{SPD_MAX}', COG='{COG}', HDG='{HDG}', UPTIME='{UPTIME}', UPTIME_MAX='{UPTIME_MAX}', DIST_START='{DIST_START}', DIST='{DIST}', BARO='{BARO}', TEMP1='{TEMP1}', TEMP2='{TEMP2}', TEMP3='{TEMP3}', CLINOX='{CLINOX}', CLINOX_MIN='{CLINOX_MIN}', CLINOX_MAX='{CLINOX_MAX}', CLINOY='{CLINOY}', CLINOY_MIN='{CLINOY_MIN}', CLINOY_MAX='{CLINOY_MAX}', SUNRISE='{SUNRISE}', SUNSET='{SUNSET}'".format(TIME=currenttimestamp,LAT=gpslat,LON=gpslon,SPD=gpsspd,SPD_MAX=spdmax,COG=gpscog,HDG=heading,UPTIME=int(uptime),UPTIME_MAX=int(uptimemax),DIST_START=diststart,DIST=dist,BARO=baro,TEMP1=temp1,TEMP2=temp2,TEMP3=temp3,CLINOX=clinox,CLINOX_MIN=clinoxmin,CLINOX_MAX=clinoxmax,CLINOY=clinoy,CLINOY_MIN=clinoymin,CLINOY_MAX=clinoymax,SUNRISE=sunriseformat,SUNSET=sunsetformat))
           conn.commit()
           conn.close()
+          ocsdb_update_lock.acquire()
           ocsdb_update=0
-
+          ocsdb_update_lock.release()
         #Update location database
         if (gpsfix==1 and locationdb_update==1):
           if (logfirst==1):
@@ -675,8 +815,9 @@ if __name__ == '__main__':
             loglat=gpslat
             loglon=gpslon
             lognumfirst=0
+          locationdb_update_lock.acquire()
           locationdb_update=0
-
+          locationdb_update_lock.release()
         #Update weather database
         if (weatherdb_update==1):
           sqlite_file=weatherdb_file
@@ -685,28 +826,24 @@ if __name__ == '__main__':
           c.execute("INSERT INTO WEATHER ( TIME, BARO, TEMP1, TEMP2, TEMP3, WINDDIR, WINDSPD ) VALUES ( '{TIME}', '{BARO}', '{TEMP1}', '{TEMP2}', '{TEMP3}', '{WINDDIR}', '{WINDSPD}')".format(TIME=currenttimestamp,BARO=baro,TEMP1=temp1,TEMP2=temp2,TEMP3=temp3,WINDDIR=winddir,WINDSPD=windspd))
           conn.commit()
           conn.close()
+          weatherdb_update_lock.acquire()
           weatherdb_update=0
-        refreshtime=0
+          weatherdb_update_lock.release()
+        sleep(1)
 
-      #Print data
-      print'%{c}',gpsfixformat,' TIME:',currenttime,' // SPD:',gpsspdformatfull,' // COG:',gpscogformatfull,' ',gpsfixformat
-      #print'TIME:',currenttime,' - HDG:',headingformatfull,' - CLINO(X):',clinox,' - CLINO(Y):',clinoy
-      
-      #Update time
-      refreshtime+=0.5
-      checkgpsdtime+=0.5
-      uptime+=0.5
-      disttime+=0.5
-      barotime+=0.5
-      temptime+=0.5
-      conkytime+=0.5
-      if gpsfix == 0:
-        gpsfixtime+=0.5
-
-      #Sleep
-      time.sleep(0.5)
-
-  except (SystemExit):
-    gpsp.running = False
-    gpsp.join()
-    print'%{c}ERROR'
+#Start everything
+if __name__ == '__main__':
+  time_values = time_values()
+  time_values.start()
+  gpsp = gpsp()
+  gpsp.start()
+  read_data = read_data()
+  read_data.start()
+  output_lcd = output_lcd()
+  output_lcd.start()
+  output_conky = output_conky()
+  output_conky.start()
+  output_data = output_data()
+  output_data.start()
+  update_databases = update_databases()
+  update_databases.start()

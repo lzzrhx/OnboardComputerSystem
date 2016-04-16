@@ -194,15 +194,15 @@ while x!=ord('q'):
     for index in entry_range:
       entry_text=list_entries['list'][index]['title']
       if pos==index:
-        screen.addstr(6+entry_num+dataspace,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_selected)
+        screen.addstr(title_line3_pos+margin+entry_num+dataspace,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_selected)
         datacount = len(list_entries['list'][index]['data'])
         dataspace=datacount+1
         for index2 in range(datacount):
           data_text=list_entries['list'][index]['data'][index2]['title'].ljust(len(entry_text))
-          screen.addstr(6+entry_num+index2+1,int((curses_size[1]-len(data_text))/2), data_text, style_data)
-        screen.addstr(6+entry_num+index2+1+1,int((curses_size[1]-len(data_line))/2), data_line, style_data)
+          screen.addstr(title_line3_pos+margin+entry_num+index2+1,int((curses_size[1]-len(data_text))/2), data_text, style_data)
+        screen.addstr(title_line3_pos+margin+entry_num+index2+1+1,int((curses_size[1]-len(data_line))/2), data_line, style_data)
       else:
-        screen.addstr(6+entry_num+dataspace,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu)
+        screen.addstr(title_line3_pos+margin+entry_num+dataspace,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu)
       entry_num+=1
     screen.refresh()
   x = screen.getch()
