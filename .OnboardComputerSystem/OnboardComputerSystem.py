@@ -14,10 +14,10 @@ import threading
 import math
 import sqlite3
 import ephem
+import signal
 
+#Set main title
 main_title='Onboard Computer System'
-
-alarm=0
 
 #Set starting number for total distance travelled (in meters)
 setdiststart=925*1852
@@ -31,6 +31,9 @@ temp3name='28-01159066d4ff'                     #Water temp
 headingcalibrate=(0)                            #Heading
 clinoxcalibrate=(+3.0)                          #Clinometer X axis
 clinoycalibrate=(-1.5)                          #Clinometer Y Axis
+
+#Set distance (in meters) for triggering anchor alarm
+setalarm_anchor_dist=25
 
 #Set minimum distance (in meters) for adding new entry to the location database
 setlogdistmin=50
@@ -233,6 +236,16 @@ sunsetformat=str(row[25])
 conn.commit()
 conn.close()
 
+#Killer
+class killer:
+  kill_now = False
+  def __init__(self):
+    signal.signal(signal.SIGINT, self.exit_gracefully)
+    signal.signal(signal.SIGTERM, self.exit_gracefully)
+  def exit_gracefully(self,signum, frame):
+    self.kill_now = True
+killer = killer()
+
 #Set time values
 start_time_values=1
 start_gpsp=0
@@ -257,6 +270,8 @@ class time_values(threading.Thread):
     global weatherdb_update
     global astronomy_update
     while True:
+      if killer.kill_now:
+        break
       if start_time_values==1:
         if (uptime>=setgpswaittime and datetime.now().strftime('%S')=='00'):
           ocsdb_update_lock.acquire()
@@ -293,6 +308,8 @@ class gpsp(threading.Thread):
     global gpsd
     global start_read_data
     while gpsp.running:
+      if killer.kill_now:
+        break
       if start_gpsp==1:
         gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
         if start_read_data==0:
@@ -303,6 +320,7 @@ class gpsp(threading.Thread):
 start_output_lcd=0
 start_output_conky=0
 start_output_data=0
+start_alarm_system=0
 start_update_databases=0
 gpslat=0
 gpslon=0
@@ -333,8 +351,8 @@ class read_data(threading.Thread):
     global start_output_lcd
     global start_output_conky
     global start_output_data
+    global start_alarm_system
     global start_update_databases
-    global currenttimestamp
     global uptimemax
     global gpsfix
     global gpslat
@@ -400,9 +418,9 @@ class read_data(threading.Thread):
     global distformatfull
     global uptimeformatfull
     while True:
+      if killer.kill_now:
+        break
       if start_read_data==1:
-        #Time
-        currenttimestamp=time.time()
         #Uptime
         if uptime > uptimemax:
           uptimemax=uptime
@@ -640,6 +658,8 @@ class read_data(threading.Thread):
           start_output_conky=1
         if start_output_data==0:
           start_output_data=1
+        if start_alarm_system==0:
+          start_alarm_system=1
         if start_update_databases==0:
           start_update_databases=1
         sleep(1)
@@ -651,6 +671,8 @@ class output_lcd(threading.Thread):
   def run(self):
     lcdtime=0
     while True:
+      if killer.kill_now:
+        break
       if start_output_lcd==1:
         sec_tenth=datetime.now().microsecond/100000
         if sec_tenth==0:
@@ -716,6 +738,8 @@ class output_conky(threading.Thread):
   def run(self):
     conkytime=0
     while True:
+      if killer.kill_now:
+        break
       if start_output_conky==1:
         if (conkytime >= setconkytime):
           conkytext='$alignc LAT: {LAT} // LON: {LON} '.format(LAT=gpslatformatfull,LON=gpslonformatfull)
@@ -739,11 +763,51 @@ class output_data(threading.Thread):
   def run(self):
     global gpsfixformat
     while True:
+      if killer.kill_now:
+        break
       if start_output_data==1:
         currenttime=datetime.now().strftime('%d.%m.%Y %H:%M:%S')
         print'%{c}',gpsfixformat,' TIME:',currenttime,' // SPD:',gpsspdformatfull,' // COG:',gpscogformatfull,' ',gpsfixformat
         #print'TIME:',currenttime,' - HDG:',headingformatfull,' - CLINO(X):',clinox,' - CLINO(Y):',clinoy
         sleep(0.1)
+
+#Alarm system
+alarm=0
+alarm_anchor=0
+enable_alarm_anchor=0
+class alarm_system(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    global alarm
+    alarm_anchor_first=1
+    while True:
+      if killer.kill_now:
+        break
+      if start_alarm_system==1:
+        if alarm==1:
+          do_buzzer_here=1
+        if enable_alarm_anchor==1:
+          if alarm_anchor_first==1:
+            alarm_anchor_lat=gpslat
+            alarm_anchor_lon=gpslon
+            alarm_anhor_first=0
+          lat1=float(alarm_anchor_lat)
+          lon1=float(alarm_anchor_lon)
+          lat2=float(gpslat)
+          lon2=float(gpslon)
+          lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+          #haversine formula 
+          dlon = lon2 - lon1
+          dlat = lat2 - lat1
+          haversine_a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+          haversine_c = 2 * asin(sqrt(haversine_a))
+          haversine_r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+          alarm_anchor_dist=int((haversine_c*haversine_r)*1000)
+          if alarm_anchor_dist >= setalarm_anchor_dist:
+            alarm_anchor==1
+            alarm=1
+        sleep(1)
 
 #Update databases
 class update_databases(threading.Thread):
@@ -755,7 +819,10 @@ class update_databases(threading.Thread):
     global locationdb_update
     global weatherdb_update
     while True:
+      if killer.kill_now:
+        break
       if start_update_databases==1:
+        currenttimestamp=time.time()
         #Update OCS database
         if (gpsfix==1 and ocsdb_update==1):
           sqlite_file=ocsdb_file
@@ -845,5 +912,12 @@ if __name__ == '__main__':
   output_conky.start()
   output_data = output_data()
   output_data.start()
+  alarm_system = alarm_system()
+  alarm_system.start()
   update_databases = update_databases()
   update_databases.start()
+  while True:
+    time.sleep(1)
+    if killer.kill_now:
+      execfile(ocs_dir+'/lcd-boot.py')
+      break

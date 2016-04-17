@@ -113,12 +113,12 @@
 		<menu id="root-menu-81114" label="Power">
 			<item label="Shutdown">
 				<action name="Execute">
-					<execute>~/.OnboardComputerSystem/shutdown.sh</execute>
+					<execute>sudo poweroff</execute>
 				</action>
 			</item>
 			<item label="Reboot">
 				<action name="Execute">
-					<execute>~/.OnboardComputerSystem/reboot.sh</execute>
+					<execute>sudo reboot</execute>
 				</action>
 			</item>
 		</menu>
