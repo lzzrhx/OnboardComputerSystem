@@ -343,7 +343,7 @@ $ocs_temp3_format=number_format($ocs_temp3,1).' °C';
 if($count>1){echo'<div class="seperator_small"></div>';}
 echo'<div class="weather_item">';
 echo'<p>Entry no. '.sprintf('%05d', $ocs_num).'&nbsp;&nbsp;&#8226;&nbsp;&nbsp;'.$ocs_time_format.'</p>';
-echo'<p>BARO: '.$ocs_baro_format.'&nbsp;&nbsp; // &nbsp;&nbsp;TEMP INSIDE: '.$ocs_temp1_format.'&nbsp;&nbsp; // &nbsp;&nbsp;TEMP OUTSIDE: '.$ocs_temp2_format.'&nbsp;&nbsp; // &nbsp;&nbsp;TEMP WATER: '.$ocs_temp3_format.'</p>';
+echo'<p>BARO: '.$ocs_baro_format.'&nbsp;&nbsp; // &nbsp;&nbsp;INSIDE: '.$ocs_temp1_format.'&nbsp;&nbsp; // &nbsp;&nbsp;OUTSIDE: '.$ocs_temp2_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WATER: '.$ocs_temp3_format.'</p>';
 echo'</div>';$count++;}
 echo'</div>';
 
