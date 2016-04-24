@@ -127,8 +127,6 @@ $weather_color_01_hex='#A9A28F';list($weather_color_01_r, $weather_color_01_g, $
 $weather_color_02_hex='#807A6C';list($weather_color_02_r, $weather_color_02_g, $weather_color_02_b) = sscanf($weather_color_02_hex, "#%02x%02x%02x");$weather_color_02_rgb=$weather_color_02_r.','.$weather_color_02_g.','.$weather_color_02_b;$weather_color_02_rgba=$weather_color_02_rgb.',1';
 $weather_color_03_hex='#57807D';list($weather_color_03_r, $weather_color_03_g, $weather_color_03_b) = sscanf($weather_color_03_hex, "#%02x%02x%02x");$weather_color_03_rgb=$weather_color_03_r.','.$weather_color_03_g.','.$weather_color_03_b;$weather_color_03_rgba=$weather_color_03_rgb.',1';
 
-echo'<div class="content">';
-
 echo'<div class="seperator_full"></div>';
 
 #Show barometric data
@@ -320,6 +318,7 @@ echo'</script>';
 echo'<div class="seperator_full"></div>';
 
 //Weather history
+echo'<div class="content">';
 $db = new SQLite3('db/weather.db');
 $count=1;
 $results = $db->query('SELECT * FROM WEATHER ORDER BY ID DESC');
@@ -346,7 +345,6 @@ echo'<div class="weather_item">';
 echo'<p>Entry no. '.sprintf('%05d', $ocs_num).'&nbsp;&nbsp;&#8226;&nbsp;&nbsp;'.$ocs_time_format.'</p>';
 echo'<p>BARO: '.$ocs_baro_format.'&nbsp;&nbsp; // &nbsp;&nbsp;TEMP INSIDE: '.$ocs_temp1_format.'&nbsp;&nbsp; // &nbsp;&nbsp;TEMP OUTSIDE: '.$ocs_temp2_format.'&nbsp;&nbsp; // &nbsp;&nbsp;TEMP WATER: '.$ocs_temp3_format.'</p>';
 echo'</div>';$count++;}
-
 echo'</div>';
 
 //Settings and stuff
