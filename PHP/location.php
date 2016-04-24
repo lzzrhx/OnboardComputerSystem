@@ -168,7 +168,7 @@ echo'map: map';
 echo'});';
 echo'}';
 echo'</script>';
-echo'<script async defer src="https://maps.googleapis.com/maps/api/js?key='.$google_maps_api_key.'&signed_in=true&callback=initMap"></script>';
+echo'<script async defer src="https://maps.googleapis.com/maps/api/js?key='.$google_maps_api_key.'&signed_in=false&callback=initMap"></script>';
 
 //Location history
 echo'<div class="content">';
