@@ -96,7 +96,7 @@ echo'<div class="onboard_computer_system">';
 echo'<div class="onboard_computer_system_title">--------------------------------------------------------------</div>';
 echo'<div class="onboard_computer_system_title">* O N B O A R D * C O M P U T E R * S Y S T E M *</div>';
 echo'<div class="onboard_computer_system_title">--------------------------------------------------------------</div>';
-echo'<p class="link_text"><a target="_blank" href="/img/cam01.jpg?'.round($ocs_time).'">Camera</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a target="_blank" href="'.$ocs_location.'">Current location</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-location">Location history</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-weather">Weather history</a></p>';
+echo'<p class="link_text"><a href="/if-camera">Camera</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-location">Location history</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-weather">Weather history</a></p>';
 echo'<p>LAT: '.$ocs_lat_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LON: '.$ocs_lon_format.'&nbsp;&nbsp; // &nbsp;&nbsp;<span title="MAX: '.$ocs_spd_max_format.'">SPD: '.$ocs_spd_format.'</span>&nbsp;&nbsp; // &nbsp;&nbsp;COG: '.$ocs_cog_format.'</p>';
 echo'<p><span title="MAX: '.$ocs_clinox_max_format.'">CLINO: '.$ocs_clinox_format.'</span>&nbsp;&nbsp; // &nbsp;&nbsp;HDG: '.$ocs_hdg_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LOG: '.$ocs_dist_total_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WIND: '.$ocs_wind_format.'</p>';
 echo'<p>BARO: '.$ocs_baro_format.'&nbsp;&nbsp; // &nbsp;&nbsp;INSIDE: '.$ocs_temp1_format.'&nbsp;&nbsp; // &nbsp;&nbsp;OUTSIDE: '.$ocs_temp2_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WATER: '.$ocs_temp3_format.'</p>';
