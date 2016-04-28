@@ -20,7 +20,7 @@ import signal
 main_title='Onboard Computer System'
 
 #Set starting number for total distance travelled (in meters)
-setdiststart=925*1852
+setdiststart=0*1852
 
 #Set temp sensor id
 temp1name='28-0115905a2fff'                     #Inside temp
@@ -29,8 +29,8 @@ temp3name='28-01159066d4ff'                     #Water temp
 
 #Set calibration values (in degrees)
 headingcalibrate=(0)                            #Heading
-clinoxcalibrate=(+3.0)                          #Clinometer X axis
-clinoycalibrate=(-1.5)                          #Clinometer Y Axis
+clinoxcalibrate=(0)                             #Clinometer X axis
+clinoycalibrate=(0)                             #Clinometer Y Axis
 
 #Set distance (in meters) for triggering anchor alarm
 setalarm_anchor_dist=25
@@ -277,7 +277,7 @@ class time_values(threading.Thread):
           ocsdb_update_lock.acquire()
           ocsdb_update=1
           ocsdb_update_lock.release()
-        if (uptime>=setgpswaittime and (logfirst==1 or (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'))):
+        if (uptime>=setgpswaittime and datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'):
           locationdb_update_lock.acquire()
           locationdb_update=1
           locationdb_update_lock.release()
