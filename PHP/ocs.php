@@ -1,5 +1,16 @@
 <?php
 
+//Last.fm intergration requires https://github.com/erikjansson/Now-Playing
+
+//Last.fm
+require_once 'incl/lastfm.php';
+$lastfm_user='Zeph0n';
+$lastfm_key='afe5ef00fe3c06f26ccc8b7a155e7a6c';
+$lastfm_secret='3cc0c6415002fdbaf8c3689e4c2969bb';
+$nowPlaying = new NowPlaying($lastfm_user,$lastfm_key);
+$nowPlaying->setNoTrackPlayingMessage('-');
+$lastfm=$nowPlaying->getNowPlaying();
+
 //Onboard Computer System
 $db = new SQLite3('db/ocs.db');
 $results = $db->query('SELECT * FROM OCS LIMIT 1');
@@ -97,6 +108,7 @@ echo'<div class="onboard_computer_system_title">--------------------------------
 echo'<div class="onboard_computer_system_title">* O N B O A R D * C O M P U T E R * S Y S T E M *</div>';
 echo'<div class="onboard_computer_system_title">--------------------------------------------------------------</div>';
 echo'<p class="link_text"><a href="/if-camera">Camera</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-location">Location history</a>&nbsp;&nbsp;&#8226;&nbsp;&nbsp;<a href="/if-weather">Weather history</a></p>';
+if ($lastfm!='-'){echo'<p>[ NOW PLAYING: '.$lastfm.' ]</p>';}
 echo'<p>LAT: '.$ocs_lat_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LON: '.$ocs_lon_format.'&nbsp;&nbsp; // &nbsp;&nbsp;<span title="MAX: '.$ocs_spd_max_format.'">SPD: '.$ocs_spd_format.'</span>&nbsp;&nbsp; // &nbsp;&nbsp;COG: '.$ocs_cog_format.'</p>';
 echo'<p><span title="MAX: '.$ocs_clinox_max_format.'">CLINO: '.$ocs_clinox_format.'</span>&nbsp;&nbsp; // &nbsp;&nbsp;HDG: '.$ocs_hdg_format.'&nbsp;&nbsp; // &nbsp;&nbsp;LOG: '.$ocs_dist_total_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WIND: '.$ocs_wind_format.'</p>';
 echo'<p>BARO: '.$ocs_baro_format.'&nbsp;&nbsp; // &nbsp;&nbsp;INSIDE: '.$ocs_temp1_format.'&nbsp;&nbsp; // &nbsp;&nbsp;OUTSIDE: '.$ocs_temp2_format.'&nbsp;&nbsp; // &nbsp;&nbsp;WATER: '.$ocs_temp3_format.'</p>';
