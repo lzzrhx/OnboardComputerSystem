@@ -4,9 +4,9 @@
 
 //Last.fm
 require_once 'incl/lastfm.php';
-$lastfm_user='Zeph0n';
-$lastfm_key='afe5ef00fe3c06f26ccc8b7a155e7a6c';
-$lastfm_secret='3cc0c6415002fdbaf8c3689e4c2969bb';
+$lastfm_user='USERNAME';
+$lastfm_key='API_KEY';
+$lastfm_secret='API_SECRET';
 $nowPlaying = new NowPlaying($lastfm_user,$lastfm_key);
 $nowPlaying->setNoTrackPlayingMessage('-');
 $lastfm=$nowPlaying->getNowPlaying();
