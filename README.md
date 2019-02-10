@@ -1,6 +1,6 @@
 # Onboard Computer System
 
-http://perpetual.voyage/journal/1
+http://perpetual.voyage/ocs
 
 
 ![ocs_screenshot_01](image_files/ocs_screenshot_01.png?raw=true "ocs_screenshot_01")
@@ -49,31 +49,19 @@ http://perpetual.voyage/journal/1
 
 ![ocs_screenshot_12](image_files/ocs_screenshot_12.png?raw=true "ocs_screenshot_12")
 
-------
-
-![ocs_screenshot_13](image_files/ocs_screenshot_13.png?raw=true "ocs_screenshot_13")
 
 ------
 
-![ocs_screenshot_14](image_files/ocs_screenshot_14.png?raw=true "ocs_screenshot_14")
-
-
-------
-
-![ocs_diagram01_12v](image_files/ocs_diagram01_12v.png?raw=true "ocs_diagram01_12v")
+![ocs_diagram01](image_files/ocs_diagram01_12v.png?raw=true "ocs_diagram01")
 
 ------
 
-![ocs_diagram03_raspi](image_files/ocs_diagram02_usb.png?raw=true "ocs_diagram02_usb")
+![ocs_diagram02](image_files/ocs_diagram02_usb.png?raw=true "ocs_diagram02")
 
 ------
 
-![ocs_diagram05_10dof](image_files/ocs_diagram03_180bmp.png?raw=true "ocs_diagram03_180bmp")
+![ocs_diagram03](image_files/ocs_diagram03_180bmp.png?raw=true "ocs_diagram03")
 
 ------
 
-![ocs_diagram06_ds18b20](image_files/ocs_diagram04_ds18b20.png?raw=true "ocs_diagram04_ds18b20")
-
-------
-
-![ocs_diagram07_buzzer](image_files/ocs_diagram05_buzzer.png?raw=true "ocs_diagram05_buzzer")
+![ocs_diagram04](image_files/ocs_diagram04_ds18b20.png?raw=true "ocs_diagram04")
