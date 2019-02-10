@@ -48,12 +48,3 @@ http://perpetual.voyage/ocs
 ------
 
 ![ocs_screenshot_12](image_files/ocs_screenshot_12.png?raw=true "ocs_screenshot_12")
-
-
-------
-
-![ocs_diagram01](image_files/ocs_diagram01.png?raw=true "ocs_diagram01")
-
-------
-
-![ocs_diagram02](image_files/ocs_diagram02.png?raw=true "ocs_diagram02")
