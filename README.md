@@ -57,11 +57,3 @@ http://perpetual.voyage/ocs
 ------
 
 ![ocs_diagram02](image_files/ocs_diagram02.png?raw=true "ocs_diagram02")
-
-------
-
-![ocs_diagram03](image_files/ocs_diagram03.png?raw=true "ocs_diagram03")
-
-------
-
-![ocs_diagram04](image_files/ocs_diagram04.png?raw=true "ocs_diagram04")
