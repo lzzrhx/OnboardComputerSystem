@@ -1,0 +1,2 @@
+#crontab -e
+0 * * * * /home/operator/Scripts/update-server.sh

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openbox_menu xmlns="http://openbox.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openbox.org/                 file:///usr/share/openbox/menu.xsd">
+	<menu id="root-menu" label="Openbox 3">
+		<item label=" TERMINAL ">
+			<action name="Execute">
+				<execute>urxvt</execute>
+			</action>
+		</item>
+		<item label=" FILE BROWSER ">
+			<action name="Execute">
+				<execute>pcmanfm</execute>
+			</action>
+		</item>
+		<item label=" WEB BROWSER ">
+			<action name="Execute">
+				<execute>chromium-browser</execute>
+			</action>
+		</item>
+		<separator/>
+		<menu id="root-menu-81349" label=" APPLICATIONS ">
+			<item label=" OPENCPN ">
+				<action name="Execute">
+					<execute>opencpn</execute>
+				</action>
+			</item>
+			<item label=" ZYGRIB ">
+				<action name="Execute">
+					<execute>~/Apps/zyGrib/zyGrib</execute>
+				</action>
+			</item>
+			<item label=" LOCATION HISTORY ">
+				<action name="Execute">
+					<execute>urxvt -name ocs-location-history -e ~/.OnboardComputerSystem/ocs-location-curses.py</execute>
+				</action>
+			</item>
+			<item label=" WEATHER HISTORY ">
+				<action name="Execute">
+					<execute>urxvt -name ocs-weather-history -e ~/.OnboardComputerSystem/ocs-weather-curses.py</execute>
+				</action>
+			</item>
+			<item label=" JTIDES ">
+				<action name="Execute">
+					<execute>java -jar ~/Apps/JTides/JTides.jar</execute>
+				</action>
+			</item>
+			<item label=" FOXTROTGPS ">
+				<action name="Execute">
+					<execute>foxtrotgps</execute>
+				</action>
+			</item>
+		  <item label=" CMUS ">
+			  <action name="Execute">
+				  <execute>urxvt -name cmus -e cmus</execute>
+			  </action>
+		  </item>
+		</menu>
+		<menu id="root-menu-2915" label=" VIDEO GAMES ">
+			<item label=" PISNES ">
+				<action name="Execute">
+					<execute>sudo ~/Apps/pisnes/snes9x.gui</execute>
+				</action>
+			</item>
+			<item label=" SCUMMVM ">
+				<action name="Execute">
+					<execute>scummvm</execute>
+				</action>
+			</item>
+			<item label=" CATACLYSM-DDA ">
+				<action name="Execute">
+					<execute>urxvt -name cataclysm-dda -e ~/Apps/Cataclysm-DDA/cataclysm-launcher</execute>
+				</action>
+			</item>
+			<item label=" NETHACK ">
+				<action name="Execute">
+					<execute>urxvt -name nethack -e nethack-console</execute>
+				</action>
+			</item>
+		</menu>
+		<menu id="root-menu-63234" label=" SCRIPTS ">
+			<item label=" TAKE SCREENSHOT ">
+				<action name="Execute">
+					<execute>~/Scripts/screenshot.sh</execute>
+				</action>
+			</item>
+			<item label=" UPDATE PACKAGES ">
+				<action name="Execute">
+					<execute>urxvt -hold -name update -e ~/Scripts/update-packages.sh</execute>
+				</action>
+			</item>
+			<item label=" UPDATE FIRMWARE ">
+				<action name="Execute">
+					<execute>urxvt -hold -name firmware -e ~/Scripts/update-firmware.sh</execute>
+				</action>
+			</item>
+			<item label=" UPDATE SERVER ">
+				<action name="Execute">
+					<execute>urxvt -hold -name update_server -e ~/Scripts/update-server.sh</execute>
+				</action>
+			</item>
+			<item label=" BACKUP FILES ">
+				<action name="Execute">
+					<execute>urxvt -hold -name backup -e ~/Scripts/backup-full.sh</execute>
+				</action>
+			</item>
+		</menu>
+		<menu id="root-menu-192254" label=" TOOLS ">
+			<item label=" BLUETOOTH MANAGER ">
+				<action name="Execute">
+					<execute>blueman-manager</execute>
+				</action>
+			</item>
+			<item label=" WI-FI MANAGER ">
+				<action name="Execute">
+					<execute>urxvt -name wicd-curses -e wicd-curses</execute>
+				</action>
+			</item>
+			<item label=" NETWORK MONITOR ">
+				<action name="Execute">
+					<execute>urxvt -name slurm -e slurm -i wlan0</execute>
+				</action>
+			</item>
+			<item label=" PROCESS MONITOR ">
+				<action name="Execute">
+					<execute>urxvt -name htop -e htop</execute>
+				</action>
+			</item>
+			<item label=" ADJUST VOLUME ">
+				<action name="Execute">
+					<execute>urxvt -name alsamixer -e alsamixer</execute>
+				</action>
+			</item>
+		</menu>
+		<separator/>
+		<item label=" SYSTEM SETTINGS ">
+			<action name="Execute">
+				<execute>urxvt -name ocs-config -e ~/.OnboardComputerSystem/ocs-config-curses.py</execute>
+			</action>
+        </item>
+		<separator/>
+		<menu id="root-menu-81114" label=" POWER ">
+			<item label=" SHUTDOWN ">
+				<action name="Execute">
+					<execute>sudo poweroff</execute>
+				</action>
+			</item>
+			<item label=" REBOOT ">
+				<action name="Execute">
+					<execute>sudo reboot</execute>
+				</action>
+			</item>
+		</menu>
+	</menu>
+</openbox_menu>

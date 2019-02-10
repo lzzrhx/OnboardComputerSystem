@@ -1,0 +1,11 @@
+xsetroot -solid "#000000" &
+(sleep 2 && xset s off) &
+(sleep 4 && xset -dpms) &
+(sleep 6 && xset s noblank) &
+(sleep 3 && unclutter -idle 1) &
+(sleep 3 && kplex) &
+(sleep 3 && tint2) &
+(sleep 6 && conky) &
+#(sleep 10 && /home/laserwolf/Scripts/vnc.sh) &
+(sleep 10 && twofing --wait) &
+(sleep 9 && /home/laserwolf/.OnboardComputerSystem/OnboardComputerSystem)

@@ -1,0 +1,9 @@
+[General]
+UseKTTSD=false
+
+[Main View]
+ShowBottomBar=false
+ShowLeftPanel=false
+
+[PageView]
+ShowScrollBars=false

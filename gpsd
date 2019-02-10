@@ -1,5 +1,0 @@
-START_DAEMON="true"
-USBAUTO="true"
-DEVICES="/dev/ttyUSB0"
-GPSD_OPTIONS="-n"
-GPSD_SOCKET="/var/run/gpsd.sock"

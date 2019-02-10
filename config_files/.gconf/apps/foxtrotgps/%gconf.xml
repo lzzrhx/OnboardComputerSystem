@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="repos" mtime="1549718026" type="list" ltype="string">
+		<li type="string">
+			<stringvalue>OSM|http://tile.openstreetmap.org/%d/%d/%d.png|/home/operator/.maps/OSM|0</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>Maps-for-free.com|maps-for-free|/home/operator/.maps/maps4free|0</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>OpenCycleMap|http://tile.opencyclemap.org/cycle/%d/%d/%d.png|/home/operator/.maps/opencyclemap|0</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>Google Maps (testing only)|http://mt0.google.com/vt/lyrs=m&amp;hl=en&amp;x=%d&amp;y=%d&amp;z=%d|/home/operator/.maps/googlemaps|1</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>Google Sat (testing only)|http://mt0.google.com/vt/lyrs=s&amp;hl=en&amp;x=%d&amp;y=%d&amp;z=%d|/home/operator/.maps/googlesat|1</stringvalue>
+		</li>
+	</entry>
+	<entry name="latlon_unit" mtime="1549718063" type="int" value="1"/>
+	<entry name="gpsd_host" mtime="1549718063" type="string">
+		<stringvalue>localhost</stringvalue>
+	</entry>
+	<entry name="no_redownload" mtime="1549718063" type="bool" value="false"/>
+	<entry name="auto_download" mtime="1549718063" type="bool" value="true"/>
+	<entry name="repo_name" mtime="1549718063" type="string">
+		<stringvalue>OSM</stringvalue>
+	</entry>
+	<entry name="global_zoom" mtime="1549718063" type="int" value="16"/>
+	<entry name="global_y" mtime="1549718063" type="int" value="4836243"/>
+	<entry name="global_x" mtime="1549718063" type="int" value="8636450"/>
+</gconf>

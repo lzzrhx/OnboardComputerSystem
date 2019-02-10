@@ -1,0 +1,35 @@
+*.background: #202020
+*foreground: #A9A28F
+*.cursorColor: #A9A28F
+
+!black
+*color0:#202020
+*color8:#555555
+
+!red
+*color1:#805A57
+*color9:#976B67
+
+!green
+*color2:#638057
+*color10:#759766
+
+!yellow
+*color3:#807B57
+*color11:#979267
+
+!blue
+*color4:#576480
+*color12:#677797
+
+!magenta
+*color5:#795780
+*color13:#8F6797
+
+!cyan
+*color6:#57807D
+*color14:#679794
+
+!white
+*color7:#807A6C
+*color15:#A9A28F
