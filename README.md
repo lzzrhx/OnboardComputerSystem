@@ -52,16 +52,16 @@ http://perpetual.voyage/ocs
 
 ------
 
-![ocs_diagram01](image_files/ocs_diagram01_12v.png?raw=true "ocs_diagram01")
+![ocs_diagram01](image_files/ocs_diagram01.png?raw=true "ocs_diagram01")
 
 ------
 
-![ocs_diagram02](image_files/ocs_diagram02_usb.png?raw=true "ocs_diagram02")
+![ocs_diagram02](image_files/ocs_diagram02.png?raw=true "ocs_diagram02")
 
 ------
 
-![ocs_diagram03](image_files/ocs_diagram03_180bmp.png?raw=true "ocs_diagram03")
+![ocs_diagram03](image_files/ocs_diagram03.png?raw=true "ocs_diagram03")
 
 ------
 
-![ocs_diagram04](image_files/ocs_diagram04_ds18b20.png?raw=true "ocs_diagram04")
+![ocs_diagram04](image_files/ocs_diagram04.png?raw=true "ocs_diagram04")
