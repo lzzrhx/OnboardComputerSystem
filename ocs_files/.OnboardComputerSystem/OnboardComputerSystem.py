@@ -234,6 +234,7 @@ class read_config(threading.Thread):
       global barounit_mmhg
       global tempunit_fahrenheit
       global dateformat_mmddyyy
+      global spdmax_show
       while True:
         if killer.kill_now or error_raised is True:
           break
@@ -285,6 +286,8 @@ class read_config(threading.Thread):
             dateformat_mmddyyy=config.getboolean('Config', 'DateMonthDayYear')
             barounit_mmhg=config.getboolean('Config', 'BaroUnitMmhg')
             tempunit_fahrenheit=config.getboolean('Config', 'TempUnitFahrenheit')
+            #Show max speed
+            spdmax_show=config.getboolean('Config', 'ShowMaxSpd')
             configtime=0
           if start_time_values==0:
             start_time_values=1
@@ -394,8 +397,6 @@ class read_data(threading.Thread):
   def run(self):
     try:
       disttime=0
-      barotime=0
-      temptime=0
       barotime=setbarotime
       temptime=settemptime
       gpsspd1=0
@@ -753,7 +754,7 @@ class output_conky(threading.Thread):
     threading.Thread.__init__(self)
   def run(self):
     try:
-      conkytime=setconkytime
+      conkytime=0
       while True:
         if killer.kill_now or error_raised is True:
           break
@@ -764,7 +765,8 @@ class output_conky(threading.Thread):
             conkyline_weather='BARO: '+baroformatfull+'  //  INSIDE: '+temp1formatfull+'  //  OUTSIDE: '+temp2formatfull
             conkyline_timezone='TIME OFFSET: '+utcoffsetformat+'  //  NAUTICAL TIMEZONE: '+nauticaltimezoneformat
             conkyline_coordinates='LAT: '+gpslatformatfull+'  //  LON: '+gpslonformatfull
-            conkyline_spd='AVG SPD: '+spdavgformatfull+'  //  MAX SPD: '+spdmaxformatfull
+            conkyline_spd='AVG SPD: '+spdavgformatfull
+            if spdmax_show is True: conkyline_spd+='  //  MAX SPD: '+spdmaxformatfull
             conkyline_options=['',conkyline_uptime,conkyline_astronomy,conkyline_weather,conkyline_timezone,conkyline_coordinates,conkyline_spd]
             conkyline1=conkyline_options[conklyline1_selected]
             conkyline2=conkyline_options[conklyline2_selected]
