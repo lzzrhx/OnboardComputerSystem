@@ -97,7 +97,7 @@ class error_animation(threading.Thread):
         sys.stdout.write('%{c}'+error_message+'\n')
         sleep(0.8)
         sys.stdout.write('\n')
-        sleep(0.8)
+      sleep(0.8)
 
 
 
@@ -106,7 +106,7 @@ class error_animation(threading.Thread):
 #Alarm animation
 alarm_animation_running=False
 class alarm_animation(threading.Thread):
-  def __init__(self,alarm_type=None):
+  def __init__(self):
     threading.Thread.__init__(self)
   def run(self):
     global alarm_animation_running
@@ -132,9 +132,9 @@ class alarm_animation(threading.Thread):
           sys.stdout.write('%{c}'+alarm_message_anchor+'\n')
           sleep(0.8)
           sys.stdout.write('\n')
-          sleep(0.8)
       else:
         if alarm_animation_running is True: alarm_animation_running=False
+      sleep(0.8)
 
 
 
@@ -411,7 +411,7 @@ class read_config(threading.Thread):
           if start_time_values==0:
             start_time_values=1
           configtime+=1
-          sleep(1)
+        sleep(1)
     
     #Error handling
     except:
@@ -478,7 +478,7 @@ class time_values(threading.Thread):
           uptime+=1
           if start_gpsp==0:
             start_gpsp=1
-          sleep(1)
+        sleep(1)
     
     #Error handling
     except:
@@ -514,7 +514,7 @@ class gpsp(threading.Thread):
           gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
           if start_read_data==0:
             start_read_data=1
-          sleep(0.1)
+        sleep(0.1)
     except:
       traceback.print_exc()
       if error_animation_running==0: error_animation('gps').start()
@@ -921,7 +921,7 @@ class read_data(threading.Thread):
           if start_alarm_system==0:
             start_alarm_system=1
           
-          sleep(1)
+        sleep(1)
     
     #Error handling
     except:
@@ -1015,7 +1015,7 @@ class update_databases(threading.Thread):
             weatherdb_update=0
             weatherdb_update_lock.release()
           
-          sleep(1)
+        sleep(1)
     
     #Error handling
     except:
@@ -1075,7 +1075,7 @@ class alarm_system(threading.Thread):
             start_output_conky=1
           if start_output_data==0:
             start_output_data=1
-          sleep(1)
+        sleep(1)
     
     #Error handling
     except:
@@ -1135,7 +1135,7 @@ class output_conky(threading.Thread):
             
             conkytime=0
           conkytime+=1
-          sleep(1)
+        sleep(1)
     
     #Error handling
     except:
@@ -1167,7 +1167,7 @@ class output_data(threading.Thread):
           #Output data
           if boot_animation_stop==2 and alarm_animation_running is False: sys.stdout.write('%{c}'+gpsfixformat+'  TIME: '+currenttime+'  //  SPD: '+gpsspdformatfull+'  //  COG: '+gpscogformatfull+'  //  LOG: '+distformatfull+'  '+gpsfixformat+'\n')
           
-          sleep(0.2)
+        sleep(0.2)
     
     #Error handling
     except:
