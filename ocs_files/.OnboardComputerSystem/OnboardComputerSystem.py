@@ -1,7 +1,11 @@
 #! /usr/bin/python3
 # -*- coding: utf-8 -*-
 
-#Import stuff
+
+
+
+
+#Import shit
 from gps import *
 from time import time, sleep
 from datetime import datetime, timedelta
@@ -16,6 +20,10 @@ import geopy.distance
 import Adafruit_BMP.BMP085 as BMP085
 import traceback
 
+
+
+
+
 #Killer
 class killer:
   kill_now = False
@@ -26,8 +34,11 @@ class killer:
     self.kill_now = True
 killer = killer()
 
+
+
+
+
 #Boot animation
-error_raised=False
 boot_animation_stop=0
 class boot_animation(threading.Thread):
   def __init__(self):
@@ -43,7 +54,10 @@ class boot_animation(threading.Thread):
       sleep(0.8)
       sys.stdout.write('\n')
       sleep(0.8)
-boot_animation().start()
+
+
+
+
 
 #Error animation
 error_animation_running=0
@@ -51,6 +65,8 @@ class error_animation(threading.Thread):
   def __init__(self,error_type=None):
     global error_message
     global default_error_message
+    
+    #Error messages
     default_error_message='[  S Y S T E M   F A I L U R E  ]'
     if error_type=='initialization': error_message='[  I N I T I A L I Z A T I O N   E R R O R  ]'
     elif error_type=='config': error_message='[  C O N F I G   F I L E   E R R O R  ]'
@@ -62,6 +78,7 @@ class error_animation(threading.Thread):
     elif error_type=='statusbar': error_message='[  S T A T U S B A R   O U T P U T   E R R O R  ]'
     elif error_type=='update databases': error_message='[   D A T A B A S E   U P D A T E   E R R O R  ]'
     else: error_message='[  U N K N O W N   E R R O R  ]'
+    
     threading.Thread.__init__(self)
   def run(self):
     global error_raised
@@ -81,8 +98,15 @@ class error_animation(threading.Thread):
         sys.stdout.write('\n')
         sleep(0.8)
 
+
+
+
+
 #Initialization
+error_raised=False
+boot_animation().start()
 try:
+
   #Set directories
   home_dir = path.expanduser('~') + '/'           #Home directory
   ocs_dir = home_dir + '.OnboardComputerSystem/'  #Onboard Computer System directory
@@ -196,9 +220,14 @@ try:
   conn.commit()
   conn.close()
 
+#Error handling
 except:
   traceback.print_exc()
   if error_animation_running==0: error_animation('initialization').start()
+
+
+
+
 
 #Read config file
 start_read_config=1
@@ -235,29 +264,43 @@ class read_config(threading.Thread):
       global tempunit_fahrenheit
       global dateformat_mmddyyy
       global spdmax_show
+      global spdavgreset
+      global spdmaxreset
+      global distreset
+      spdavgreset=False
+      spdmaxreset=False
+      distreset=False
       while True:
         if killer.kill_now or error_raised is True:
           break
         if start_read_config==1:
           if (configtime >= setconfigtime):
+          
             #Read config file
             config = SafeConfigParser()
+            config.optionxform = lambda option: option
             config.read(ocs_dir+'OnboardComputerSystem.conf')
+            
             #UTC offset
             usenauticaltimezone=config.getboolean('Config', 'UseNauticalTimezone')
             utcoffset=str(config.get('Config', 'UtcOffset'))
+            
             #Set starting number for total distance travelled (in nautical miles)
             setdiststart=int(config.get('Config', 'DistanceStart'))
             diststart=float(setdiststart*1852)
+            
             #Set minimum distance (in meters) for adding new entry to the location database
             setlogdistmin=int(config.get('Config', 'LogEntryMinDistance'))
+            
             #Set values for calculating distance travelled
             setdisttime=int(config.get('Config', 'DistUpdateInterval'))
             setdistprevmin=float(config.get('Config', 'DistUpdateDistance'))
+            
             #Set time values (in seconds)
             settemptime=int(config.get('Config', 'TempUpdateInterval'))*60        #Update temperature
             setbarotime=int(config.get('Config', 'BaroUpdateInterval'))*60        #Update barometer
-            #Set temp sensor id
+            
+            #Set id & setup temp sensors
             temp1name=config.get('Config', 'TempInside')                           #Inside temp
             temp2name=config.get('Config', 'TempOutside')                          #Outside temp
             temp1device_folder = temp_base_dir + temp1name
@@ -266,15 +309,19 @@ class read_config(threading.Thread):
             temp2device_file = temp2device_folder + '/w1_slave'
             temp1_online=path.isfile(temp1device_file)
             temp2_online=path.isfile(temp2device_file)
+            
             #Enable/disable barometer
             baro_online=config.getboolean('Config', 'BaroConnected')
             try:
               if baro_online is True: baro_sensor = BMP085.BMP085()
+            #Error handling
             except:
               traceback.print_exc()
               if error_animation_running==0: error_animation('baro').start()
-            #Minimum speed for recording average speed
+            
+            #Minimum speed required for recording average speed
             spdavgmin=float(config.get('Config', 'SpdAvgReqMin'))
+            
             #Set conky content
             conklyline1_selected=int(config.get('Config', 'ConkyLine1'))
             conklyline2_selected=int(config.get('Config', 'ConkyLine2'))
@@ -282,20 +329,50 @@ class read_config(threading.Thread):
             conklyline4_selected=int(config.get('Config', 'ConkyLine4'))
             conklyline5_selected=int(config.get('Config', 'ConkyLine5'))
             conklyline6_selected=int(config.get('Config', 'ConkyLine6'))
+            
             #Set units
             dateformat_mmddyyy=config.getboolean('Config', 'DateMonthDayYear')
             barounit_mmhg=config.getboolean('Config', 'BaroUnitMmhg')
             tempunit_fahrenheit=config.getboolean('Config', 'TempUnitFahrenheit')
-            #Show max speed
+            
+            #Show/hide max speed
             spdmax_show=config.getboolean('Config', 'ShowMaxSpd')
+            
+            #Reset average speed
+            if config.getboolean('Config', 'SpdAvgReset') is True:
+              config.set('Config', 'SpdAvgReset', 'False')
+              with open(ocs_dir+'OnboardComputerSystem.conf', 'w') as configfile:
+                config.write(configfile)
+              spdavgreset=True
+            
+            #Reset max speed
+            if config.getboolean('Config', 'SpdMaxReset') is True:
+              config.set('Config', 'SpdMaxReset', 'False')
+              with open(ocs_dir+'OnboardComputerSystem.conf', 'w') as configfile:
+                config.write(configfile)
+              spdmaxreset=True
+            
+            #Reset distance travelled
+            if config.getboolean('Config', 'DistanceReset') is True:
+              config.set('Config', 'DistanceReset', 'False')
+              with open(ocs_dir+'OnboardComputerSystem.conf', 'w') as configfile:
+                config.write(configfile)
+              distreset=True
+              
             configtime=0
           if start_time_values==0:
             start_time_values=1
           configtime+=1
           sleep(1)
+    
+    #Error handling
     except:
       traceback.print_exc()
       if error_animation_running==0: error_animation('config').start()
+
+
+
+
 
 #Set time values
 start_gpsp=0
@@ -325,31 +402,46 @@ class time_values(threading.Thread):
         if killer.kill_now or error_raised is True:
           break
         if start_time_values==1:
+          
+          #Update OCS database
           if (uptime>=setgpswaittime and datetime.now().strftime('%S')=='00'):
             ocsdb_update_lock.acquire()
             ocsdb_update=1
             ocsdb_update_lock.release()
+          
+          #Update location database
           if (uptime>=setgpswaittime and datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'):
             locationdb_update_lock.acquire()
             locationdb_update=1
             locationdb_update_lock.release()
+          
+          #Update weather database
           if (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'):
             weatherdb_update_lock.acquire()
             weatherdb_update=1
             weatherdb_update_lock.release()
+          
+          #Update astronomy
           if (uptime==0 or (datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00')):
             astronomy_update_lock.acquire()
             astronomy_update=1
             astronomy_update_lock.release()
+          
           uptime+=1
           if start_gpsp==0:
             start_gpsp=1
           sleep(1)
+    
+    #Error handling
     except:
       traceback.print_exc()
       if error_animation_running==0: error_animation('time values').start()
 
-#Get GPS data
+
+
+
+
+#GPS
 start_read_data=0
 gpsd = None
 class gpsp(threading.Thread):
@@ -379,7 +471,11 @@ class gpsp(threading.Thread):
       traceback.print_exc()
       if error_animation_running==0: error_animation('gps').start()
 
-#Read data
+
+
+
+
+#Read & format all data
 start_output_conky=0
 start_output_data=0
 start_update_databases=0
@@ -463,13 +559,34 @@ class read_data(threading.Thread):
       global distformat
       global distformatfull
       global uptimeformatfull
+      global spdavgreset
+      global spdmaxreset
+      global distreset
       while True:
         if killer.kill_now or error_raised is True:
           break
         if start_read_data==1:
+          
           #Uptime
           if uptime > uptimemax:
             uptimemax=uptime
+          
+          #Reset average speed
+          if spdavgreset is True:
+            spdavg=0
+            spdavgcount=0
+            spdavgreset=False
+          
+          #Reset max speed
+          if spdmaxreset is True:
+            spdmax=0
+            spdmaxreset=False
+          
+          #Reset distance
+          if distreset is True:
+            dist=0
+            distreset=False
+          
           #Read GPS data
           if isnan(gpsd.fix.mode) is False:
             if gpsd.fix.mode == 3:
@@ -497,12 +614,14 @@ class read_data(threading.Thread):
                   gpscog=float((gpscog1+gpscog2+gpscog3)/3)
             else:
               gpsfix=0
+          
           #Read barometric pressure
           if (baro_online is True and barotime >= setbarotime):
             #baro_temp=baro_sensor.read_temperature()
             baro=float(baro_sensor.read_pressure())
             barotime=0
           barotime+=1
+          
           #Read temperature
           if (temptime >= settemptime):
             #Temperature sensor #1
@@ -529,6 +648,7 @@ class read_data(threading.Thread):
                       temp2 = float(temp2_string) / 1000.0
             temptime=0
           temptime+=1
+          
           #Calculate distance travelled
           if (gpsfix==1 and uptime>=setgpswaittime):
             if (distfirst==1):
@@ -544,12 +664,14 @@ class read_data(threading.Thread):
               disttime=0
             disttime+=1
           disttotal=dist+diststart
+          
           #Format GPS time
           gpsdatetimeformat='00.00.0000 00:00:00'
           if (gpsfix==1):
             gpstimesplit=str(gpstime).split('T')
             gpsdatetime=datetime.strptime(str(gpstimesplit[0])+' '+str(gpstimesplit[1])[:8], '%Y-%m-%d %H:%M:%S')
             gpsdatetimeformat=gpsdatetime.strftime('%d.%m.%Y %H:%M:%S')
+          
           #UTC offset
           if usenauticaltimezone is False:
             utcoffsetposneg=str(utcoffset[0:1])
@@ -559,6 +681,7 @@ class read_data(threading.Thread):
               utcoffsethours=int('-'+str(utcoffsethours))
               utcoffsetminutes=int('-'+str(utcoffsetminutes))
             utcoffsetformat='UTC{0}'.format(utcoffset)
+          
           #Nautical timezones (without accurate date line)
           if (gpsfix==1 and uptime>=setgpswaittime):
             if -7.5 <= gpslon <= 7.5:
@@ -643,6 +766,7 @@ class read_data(threading.Thread):
             utcoffsethours=nauticaltimeoffset*-1
             utcoffsetminutes=0
             utcoffsetformat='UTC{0:+03d}:{1:02d}'.format(utcoffsethours,utcoffsetminutes)
+          
           #Format latitude
           if str(gpslat)[0] == "-":
             gpslatformat=float(str(gpslat)[1:])
@@ -656,6 +780,7 @@ class read_data(threading.Thread):
           gpslatmin='{0:.3f}'.format((float('0.%s' % gpslatsplit[1])*60))
           gpslatminformat='{0:06.3f}'.format(float(gpslatmin))
           gpslatformatfull='{0}° {1:06.3f}\'{2}'.format(gpslatdeg,float(gpslatmin),gpslatdir)
+          
           #Format longitude
           if str(gpslon)[0] == "-":
             gpslonformat=float(str(gpslon)[1:])
@@ -669,23 +794,29 @@ class read_data(threading.Thread):
           gpslonmin='{0:.3f}'.format((float('0.%s' % gpslonsplit[1])*60))
           gpslonminformat='{0:06.3f}'.format(float(gpslonmin))
           gpslonformatfull='{0}° {1:06.3f}\'{2}'.format(gpslondeg,float(gpslonmin),gpslondir)
+          
           #Format speed
           gpsspdformat='{0:.1f}'.format((gpsspd * 1.9438444924574))
           gpsspdformatfull='{0} KN'.format(gpsspdformat)
+          
           #Format average speed
           spdavgformat='{0:.1f}'.format((spdavg * 1.9438444924574))
           spdavgformatfull='{0} KN'.format(spdavgformat)
+          
           #Format max speed
           spdmaxformat='{0:.1f}'.format((spdmax * 1.9438444924574))
           spdmaxformatfull='{0} KN'.format(spdmaxformat)
+          
           #Format course over ground
           gpscogformat=int(gpscog)
           gpscogformatfull='{0:03d}°'.format(gpscogformat)
+          
           #Format GPS fix
           if gpsfix==1:
             gpsfixformat='%{F#638057}[ FX ]%{F-}'
           else:
             gpsfixformat="%{F#805A57}[ NO ]%{F-}"
+          
           #Format barometric pressure
           if barounit_mmhg is True:
             baroformat='{0}'.format(int((baro/100)*0.750061683))
@@ -695,6 +826,7 @@ class read_data(threading.Thread):
             baroformatfull='{0} MBAR'.format(baroformat)
           if baro_online is False:
             baroformatfull='-'
+          
           #Format temperature
           if tempunit_fahrenheit is True:
             temp1format='{0:.1f}'.format((float(temp1)*1.8)+32)
@@ -710,14 +842,17 @@ class read_data(threading.Thread):
             temp1formatfull='-'
           if temp2_online is False:
             temp2formatfull='-'
+          
           #Format distance travelled
           distformat='{0:.2f}'.format(disttotal*0.000539956803)
           distformatfull='{0} NM'.format(distformat)
+          
           #Format uptime
           uptimemin, uptimesec = divmod(uptime, 60)
           uptimehour, uptimemin = divmod(uptimemin, 60)
           uptimeday, uptimehour = divmod(uptimehour, 24)
           uptimeformatfull='{0:02d}D {1:02d}H {2:02d}M'.format(uptimeday,uptimehour,uptimemin)
+          
           #Calculate sunset/sunrise
           if (gpsfix==1 and astronomy_update==1):
             astronomy=ephem.Observer()
@@ -743,10 +878,17 @@ class read_data(threading.Thread):
             start_output_data=1
           if start_update_databases==0:
             start_update_databases=1
+          
           sleep(1)
+    
+    #Error handling
     except:
       traceback.print_exc()
       if error_animation_running==0: error_animation('read data').start()
+
+
+
+
 
 #Output data to Conky
 class output_conky(threading.Thread):
@@ -760,6 +902,8 @@ class output_conky(threading.Thread):
           break
         if start_output_conky==1:
           if (conkytime >= setconkytime):
+            
+            #Conky lines
             conkyline_uptime='UPTIME: '+uptimeformatfull
             conkyline_astronomy='SUNRISE: '+sunriseformat+'  //  SUNSET: '+sunsetformat
             conkyline_weather='BARO: '+baroformatfull+'  //  INSIDE: '+temp1formatfull+'  //  OUTSIDE: '+temp2formatfull
@@ -768,6 +912,8 @@ class output_conky(threading.Thread):
             conkyline_spd='AVG SPD: '+spdavgformatfull
             if spdmax_show is True: conkyline_spd+='  //  MAX SPD: '+spdmaxformatfull
             conkyline_options=['',conkyline_uptime,conkyline_astronomy,conkyline_weather,conkyline_timezone,conkyline_coordinates,conkyline_spd]
+            
+            #Write text to file
             conkyline1=conkyline_options[conklyline1_selected]
             conkyline2=conkyline_options[conklyline2_selected]
             conkyline3=conkyline_options[conklyline3_selected]
@@ -788,12 +934,19 @@ class output_conky(threading.Thread):
             conkyfile = open(home_dir+'.conkytext', 'w')
             conkyfile.writelines(conkytext)
             conkyfile.close()
+            
             conkytime=0
           conkytime+=1
           sleep(1)
+    
+    #Error handling
     except:
       traceback.print_exc()
       if error_animation_running==0: error_animation('conky').start()
+
+
+
+
 
 #Output data to statusbar
 class output_data(threading.Thread):
@@ -807,13 +960,24 @@ class output_data(threading.Thread):
           break
         if start_output_data==1:
           if boot_animation_stop==0: boot_animation_stop=1
+          
+          #Format date/time
           if dateformat_mmddyyy is True: currenttime=(datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%m.%d.%Y %H:%M:%S')
           else: currenttime=(datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%d.%m.%Y %H:%M:%S')
+          
+          #Output data
           if boot_animation_stop==2: sys.stdout.write('%{c}'+gpsfixformat+'  TIME: '+currenttime+'  //  SPD: '+gpsspdformatfull+'  //  COG: '+gpscogformatfull+'  //  LOG: '+distformatfull+'  '+gpsfixformat+'\n')
+          
           sleep(0.2)
+    
+    #Error handling
     except:
       traceback.print_exc()
       if error_animation_running==0: error_animation('statusbar').start()
+
+
+
+
 
 #Update databases
 class update_databases(threading.Thread):
@@ -830,6 +994,7 @@ class update_databases(threading.Thread):
           break
         if start_update_databases==1:
           currenttimestamp=time()
+          
           #Update OCS database
           if (gpsfix==1 and ocsdb_update==1):
             sqlite_file=ocsdb_file
@@ -841,6 +1006,7 @@ class update_databases(threading.Thread):
             ocsdb_update_lock.acquire()
             ocsdb_update=0
             ocsdb_update_lock.release()
+          
           #Update GPS database
           if (gpsfix==1 and locationdb_update==1):
             if (logfirst==1):
@@ -865,6 +1031,7 @@ class update_databases(threading.Thread):
               loglat=oldloglat
               loglon=oldloglon
               logfirst=0
+            
             #calculate distance
             if lognumfirst == 0:
               logdistprev=geopy.distance.geodesic((loglat, loglon), (gpslat, gpslon)).m            
@@ -881,6 +1048,7 @@ class update_databases(threading.Thread):
             locationdb_update_lock.acquire()
             locationdb_update=0
             locationdb_update_lock.release()
+          
           #Update weather database
           if (baro_online is True and temp1_online is True and temp2_online is True and weatherdb_update==1):
             sqlite_file=weatherdb_file
@@ -892,10 +1060,17 @@ class update_databases(threading.Thread):
             weatherdb_update_lock.acquire()
             weatherdb_update=0
             weatherdb_update_lock.release()
+          
           sleep(1)
+    
+    #Error handling
     except:
       traceback.print_exc()
       if error_animation_running==0: error_animation('update databases').start()
+
+
+
+
 
 #Start everything
 if __name__ == '__main__' and error_raised is not True:
