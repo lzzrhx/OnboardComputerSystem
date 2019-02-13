@@ -77,6 +77,7 @@ class error_animation(threading.Thread):
     elif error_type=='conky': error_message='[  C O N K Y   O U T P U T   E R R O R  ]'
     elif error_type=='statusbar': error_message='[  S T A T U S B A R   O U T P U T   E R R O R  ]'
     elif error_type=='update databases': error_message='[   D A T A B A S E   U P D A T E   E R R O R  ]'
+    elif error_type=='alarm': error_message='[   A L A R M   S Y S T E M   E R R O R  ]'
     else: error_message='[  U N K N O W N   E R R O R  ]'
     
     threading.Thread.__init__(self)
@@ -97,6 +98,43 @@ class error_animation(threading.Thread):
         sleep(0.8)
         sys.stdout.write('\n')
         sleep(0.8)
+
+
+
+
+
+#Alarm animation
+alarm_animation_running=False
+class alarm_animation(threading.Thread):
+  def __init__(self,alarm_type=None):
+    threading.Thread.__init__(self)
+  def run(self):
+    global alarm_animation_running
+    
+    #Alarm messages
+    default_alarm_message='[  M A S T E R   C A U T I O N  ]'
+    alarm_message_anchor='[  A N C H O R   A L A R M  ]'
+    
+    while True:
+      if killer.kill_now or error_raised:
+        break
+      if alarm_anchor_raised is True and alarm_system_activate is True:
+        if alarm_animation_running is False: alarm_animation_running=True
+        sys.stdout.write('%{c}'+default_alarm_message+'\n')
+        sleep(0.8)
+        sys.stdout.write('\n')
+        sleep(0.8)
+        if alarm_anchor_raised is True:
+          sys.stdout.write('%{c}'+alarm_message_anchor+'\n')
+          sleep(0.8)
+          sys.stdout.write('\n')
+          sleep(0.8)
+          sys.stdout.write('%{c}'+alarm_message_anchor+'\n')
+          sleep(0.8)
+          sys.stdout.write('\n')
+          sleep(0.8)
+      else:
+        if alarm_animation_running is True: alarm_animation_running=False
 
 
 
@@ -267,6 +305,10 @@ class read_config(threading.Thread):
       global spdavgreset
       global spdmaxreset
       global distreset
+      global alarm_system_activate
+      global anchor_alarm_activate
+      global set_anchor_alarm_updatetime
+      global set_anchor_alarm_distance
       spdavgreset=False
       spdmaxreset=False
       distreset=False
@@ -337,6 +379,12 @@ class read_config(threading.Thread):
             
             #Show/hide max speed
             spdmax_show=config.getboolean('Config', 'ShowMaxSpd')
+            
+            #Alarm system
+            alarm_system_activate=config.getboolean('Config', 'AlarmSystemActivate')
+            anchor_alarm_activate=config.getboolean('Config', 'AlarmAnchorActivate')
+            set_anchor_alarm_updatetime=int(config.get('Config', 'AlarmAnchorInterval'))
+            set_anchor_alarm_distance=float(config.get('Config', 'AlarmAnchorDistance'))
             
             #Reset average speed
             if config.getboolean('Config', 'SpdAvgReset') is True:
@@ -476,9 +524,6 @@ class gpsp(threading.Thread):
 
 
 #Read & format all data
-start_output_conky=0
-start_output_data=0
-start_update_databases=0
 gpstime=float(0)
 gpslat=float(0)
 gpslon=float(0)
@@ -502,9 +547,8 @@ class read_data(threading.Thread):
       gpscog2=0
       gpscog3=0
       distfirst=1
-      global start_output_conky
-      global start_output_data
       global start_update_databases
+      global start_alarm_system
       global uptimemax
       global utcoffsethours
       global utcoffsetminutes
@@ -872,12 +916,10 @@ class read_data(threading.Thread):
           if astronomyfirst==0:
             sunriseformat=(sunrise.datetime()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%H:%M')
             sunsetformat=(sunset.datetime()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%H:%M')
-          if start_output_conky==0:
-            start_output_conky=1
-          if start_output_data==0:
-            start_output_data=1
           if start_update_databases==0:
             start_update_databases=1
+          if start_alarm_system==0:
+            start_alarm_system=1
           
           sleep(1)
     
@@ -890,96 +932,8 @@ class read_data(threading.Thread):
 
 
 
-#Output data to Conky
-class output_conky(threading.Thread):
-  def __init__(self):
-    threading.Thread.__init__(self)
-  def run(self):
-    try:
-      conkytime=0
-      while True:
-        if killer.kill_now or error_raised is True:
-          break
-        if start_output_conky==1:
-          if (conkytime >= setconkytime):
-            
-            #Conky lines
-            conkyline_uptime='UPTIME: '+uptimeformatfull
-            conkyline_astronomy='SUNRISE: '+sunriseformat+'  //  SUNSET: '+sunsetformat
-            conkyline_weather='BARO: '+baroformatfull+'  //  INSIDE: '+temp1formatfull+'  //  OUTSIDE: '+temp2formatfull
-            conkyline_timezone='TIME OFFSET: '+utcoffsetformat+'  //  NAUTICAL TIMEZONE: '+nauticaltimezoneformat
-            conkyline_coordinates='LAT: '+gpslatformatfull+'  //  LON: '+gpslonformatfull
-            conkyline_spd='AVG SPD: '+spdavgformatfull
-            if spdmax_show is True: conkyline_spd+='  //  MAX SPD: '+spdmaxformatfull
-            conkyline_options=['',conkyline_uptime,conkyline_astronomy,conkyline_weather,conkyline_timezone,conkyline_coordinates,conkyline_spd]
-            
-            #Write text to file
-            conkyline1=conkyline_options[conklyline1_selected]
-            conkyline2=conkyline_options[conklyline2_selected]
-            conkyline3=conkyline_options[conklyline3_selected]
-            conkyline4=conkyline_options[conklyline4_selected]
-            conkyline5=conkyline_options[conklyline5_selected]
-            conkyline6=conkyline_options[conklyline6_selected]
-            conkytext=conkyline1
-            conkytext+='\n'
-            conkytext+=conkyline2
-            conkytext+='\n'
-            conkytext+=conkyline3
-            conkytext+='\n'
-            conkytext+=conkyline4
-            conkytext+='\n'
-            conkytext+=conkyline5
-            conkytext+='\n'
-            conkytext+=conkyline6
-            conkyfile = open(home_dir+'.conkytext', 'w')
-            conkyfile.writelines(conkytext)
-            conkyfile.close()
-            
-            conkytime=0
-          conkytime+=1
-          sleep(1)
-    
-    #Error handling
-    except:
-      traceback.print_exc()
-      if error_animation_running==0: error_animation('conky').start()
-
-
-
-
-
-#Output data to statusbar
-class output_data(threading.Thread):
-  def __init__(self):
-    threading.Thread.__init__(self)
-  def run(self):
-    try:
-      global boot_animation_stop
-      while True:
-        if killer.kill_now or error_raised is True:
-          break
-        if start_output_data==1:
-          if boot_animation_stop==0: boot_animation_stop=1
-          
-          #Format date/time
-          if dateformat_mmddyyy is True: currenttime=(datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%m.%d.%Y %H:%M:%S')
-          else: currenttime=(datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%d.%m.%Y %H:%M:%S')
-          
-          #Output data
-          if boot_animation_stop==2: sys.stdout.write('%{c}'+gpsfixformat+'  TIME: '+currenttime+'  //  SPD: '+gpsspdformatfull+'  //  COG: '+gpscogformatfull+'  //  LOG: '+distformatfull+'  '+gpsfixformat+'\n')
-          
-          sleep(0.2)
-    
-    #Error handling
-    except:
-      traceback.print_exc()
-      if error_animation_running==0: error_animation('statusbar').start()
-
-
-
-
-
 #Update databases
+start_update_databases=0
 class update_databases(threading.Thread):
   def __init__(self):
     threading.Thread.__init__(self)
@@ -1072,6 +1026,158 @@ class update_databases(threading.Thread):
 
 
 
+#Alarm system
+alarm_anchor_raised=False
+start_alarm_system=0
+class alarm_system(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    try:
+      alarm_animation().start()
+      global alarm_anchor_raised
+      global alarmformat
+      global start_output_conky
+      global start_output_data
+      anchor_alarm_first=True
+      anchor_alarm_updatetime=0
+      while True:
+        if killer.kill_now or error_raised is True:
+          break
+        
+        #Active alarm system
+        if start_alarm_system==1:
+          if alarm_system_activate is True:
+            alarmformat='[ALARM SYSTEM ACTIVE]'
+            
+            #Anchor alarm
+            if anchor_alarm_activate is True:
+              if alarm_anchor_raised is False and gpsfix==1:
+                if anchor_alarm_first is True:
+                  anchor_alarm_lat=gpslat
+                  anchor_alarm_lon=gpslon
+                  anchor_alarm_first=False
+                if anchor_alarm_updatetime>=set_anchor_alarm_updatetime:
+                  anchor_prev_dist=geopy.distance.geodesic((anchor_alarm_lat, anchor_alarm_lon), (gpslat, gpslon)).m
+                  if anchor_prev_dist > set_anchor_alarm_distance:
+                      alarm_anchor_raised=True
+                  anchor_alarm_updatetime=0
+                anchor_alarm_updatetime+=1
+            else:
+              alarm_anchor_raised=False
+              anchor_alarm_first=True
+          
+          #Inactive alarm system
+          else:
+            alarmformat='[ALARM SYSTEM INACTIVE]'
+          
+          if start_output_conky==0:
+            start_output_conky=1
+          if start_output_data==0:
+            start_output_data=1
+          sleep(1)
+    
+    #Error handling
+    except:
+      traceback.print_exc()
+      if error_animation_running==0: error_animation('alarm').start()
+
+
+
+
+
+#Output data to Conky
+start_output_conky=0
+class output_conky(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    try:
+      conkytime=0
+      while True:
+        if killer.kill_now or error_raised is True:
+          break
+        if start_output_conky==1:
+          if (conkytime >= setconkytime):
+            
+            #Conky lines
+            conkyline_uptime='UPTIME: '+uptimeformatfull
+            conkyline_astronomy='SUNRISE: '+sunriseformat+'  //  SUNSET: '+sunsetformat
+            conkyline_weather='BARO: '+baroformatfull+'  //  INSIDE: '+temp1formatfull+'  //  OUTSIDE: '+temp2formatfull
+            conkyline_timezone='TIME OFFSET: '+utcoffsetformat+'  //  NAUTICAL TIMEZONE: '+nauticaltimezoneformat
+            conkyline_coordinates='LAT: '+gpslatformatfull+'  //  LON: '+gpslonformatfull
+            conkyline_spd='AVG SPD: '+spdavgformatfull
+            conkyline_alarm=alarmformat
+            if spdmax_show is True: conkyline_spd+='  //  MAX SPD: '+spdmaxformatfull
+            conkyline_options=['',conkyline_uptime,conkyline_astronomy,conkyline_weather,conkyline_timezone,conkyline_coordinates,conkyline_spd,conkyline_alarm]
+            
+            #Write text to file
+            conkyline1=conkyline_options[conklyline1_selected]
+            conkyline2=conkyline_options[conklyline2_selected]
+            conkyline3=conkyline_options[conklyline3_selected]
+            conkyline4=conkyline_options[conklyline4_selected]
+            conkyline5=conkyline_options[conklyline5_selected]
+            conkyline6=conkyline_options[conklyline6_selected]
+            conkytext=conkyline1
+            conkytext+='\n'
+            conkytext+=conkyline2
+            conkytext+='\n'
+            conkytext+=conkyline3
+            conkytext+='\n'
+            conkytext+=conkyline4
+            conkytext+='\n'
+            conkytext+=conkyline5
+            conkytext+='\n'
+            conkytext+=conkyline6
+            conkyfile = open(home_dir+'.conkytext', 'w')
+            conkyfile.writelines(conkytext)
+            conkyfile.close()
+            
+            conkytime=0
+          conkytime+=1
+          sleep(1)
+    
+    #Error handling
+    except:
+      traceback.print_exc()
+      if error_animation_running==0: error_animation('conky').start()
+
+
+
+
+
+#Output data to statusbar
+start_output_data=0
+class output_data(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    try:
+      global boot_animation_stop
+      while True:
+        if killer.kill_now or error_raised is True:
+          break
+        if start_output_data==1:
+          if boot_animation_stop==0: boot_animation_stop=1
+          
+          #Format date/time
+          if dateformat_mmddyyy is True: currenttime=(datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%m.%d.%Y %H:%M:%S')
+          else: currenttime=(datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%d.%m.%Y %H:%M:%S')
+          
+          #Output data
+          if boot_animation_stop==2 and alarm_animation_running is False: sys.stdout.write('%{c}'+gpsfixformat+'  TIME: '+currenttime+'  //  SPD: '+gpsspdformatfull+'  //  COG: '+gpscogformatfull+'  //  LOG: '+distformatfull+'  '+gpsfixformat+'\n')
+          
+          sleep(0.2)
+    
+    #Error handling
+    except:
+      traceback.print_exc()
+      if error_animation_running==0: error_animation('statusbar').start()
+
+
+
+
+
 #Start everything
 if __name__ == '__main__' and error_raised is not True:
   read_config().start()
@@ -1081,6 +1187,7 @@ if __name__ == '__main__' and error_raised is not True:
   output_conky().start()
   output_data().start()
   update_databases().start()
+  alarm_system().start()
   while True:
     sleep(1)
     if killer.kill_now:
