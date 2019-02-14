@@ -104,6 +104,7 @@ class error_animation(threading.Thread):
 
 
 #Alarm animation
+start_alarm_animation=0
 alarm_animation_running=False
 class alarm_animation(threading.Thread):
   def __init__(self):
@@ -114,26 +115,37 @@ class alarm_animation(threading.Thread):
     #Alarm messages
     default_alarm_message='[  M A S T E R   C A U T I O N  ]'
     alarm_message_anchor='[  A N C H O R   A L A R M  ]'
+    alarm_message_cog='[  C O U R S E   A L A R M  ]'
     
     while True:
       if killer.kill_now or error_raised:
         break
-      if alarm_anchor_raised is True and alarm_system_activate is True:
-        if alarm_animation_running is False: alarm_animation_running=True
-        sys.stdout.write('%{c}'+default_alarm_message+'\n')
-        sleep(0.8)
-        sys.stdout.write('\n')
-        sleep(0.8)
-        if alarm_anchor_raised is True:
-          sys.stdout.write('%{c}'+alarm_message_anchor+'\n')
+      if start_alarm_animation==1:
+        if alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True):
+          if alarm_animation_running is False: alarm_animation_running=True
+          sys.stdout.write('%{c}'+default_alarm_message+'\n')
           sleep(0.8)
           sys.stdout.write('\n')
-          sleep(0.8)
-          sys.stdout.write('%{c}'+alarm_message_anchor+'\n')
-          sleep(0.8)
-          sys.stdout.write('\n')
-      else:
-        if alarm_animation_running is True: alarm_animation_running=False
+          if alarm_anchor_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_anchor+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_anchor+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_cog_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_cog+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_cog+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+        else:
+          if alarm_animation_running is True: alarm_animation_running=False
       sleep(0.8)
 
 
@@ -146,31 +158,31 @@ boot_animation().start()
 try:
 
   #Set directories
-  home_dir = path.expanduser('~') + '/'           #Home directory
-  ocs_dir = home_dir + '.OnboardComputerSystem/'  #Onboard Computer System directory
-  db_dir = ocs_dir + 'databases/'                 #Database directory
+  home_dir = path.expanduser('~') + '/'
+  ocs_dir = home_dir + '.OnboardComputerSystem/'
+  db_dir = ocs_dir + 'databases/'
 
   #Set time values (in seconds)
-  setwaittime=5             #Wait before starting
-  setconfigtime=10          #Update data from config file
-  setconkytime=3            #Update Conky
-  setgpswaittime=30         #Wait for gps at boot
+  set_waittime=5             #Wait before starting
+  set_configtime=5          #Update data from config file
+  set_conkytime=3            #Update Conky
+  set_gpswaittime=30         #Wait for gps at boot
 
   #Set database names
-  ocsdbname='ocs-main'      #OCS database
-  locationdbname='ocs-location'                   #Location database
-  weatherdbname='ocs-weather'                     #Weather database
+  ocsdb_name='ocs-main'
+  locationdb_name='ocs-location'
+  weatherdb_name='ocs-weather'
 
   #Database stuff
-  ocsdb_file = db_dir + ocsdbname + '.db'
-  locationdb_file = db_dir + locationdbname + '.db'
-  weatherdb_file = db_dir + weatherdbname + '.db'
-  ocsdbonline=path.isfile(ocsdb_file)
-  locationdbonline=path.isfile(locationdb_file)
-  weatherdbonline=path.isfile(weatherdb_file)
+  ocsdb_file = db_dir + ocsdb_name + '.db'
+  locationdb_file = db_dir + locationdb_name + '.db'
+  weatherdb_file = db_dir + weatherdb_name + '.db'
+  ocsdb_online=path.isfile(ocsdb_file)
+  locationdb_online=path.isfile(locationdb_file)
+  weatherdb_online=path.isfile(weatherdb_file)
 
   #Create OCS database
-  if ocsdbonline is False:
+  if ocsdb_online is False:
     sqlite_file=ocsdb_file
     conn=sqlite3.connect(sqlite_file)
     c = conn.cursor()
@@ -201,7 +213,7 @@ try:
     conn.close()
 
   #Create location database
-  if locationdbonline is False:
+  if locationdb_online is False:
     sqlite_file=locationdb_file
     conn=sqlite3.connect(sqlite_file)
     c = conn.cursor()
@@ -218,7 +230,7 @@ try:
     conn.close()
     
   #Create weather database
-  if weatherdbonline is False:
+  if weatherdb_online is False:
     sqlite_file=weatherdb_file
     conn=sqlite3.connect(sqlite_file)
     c = conn.cursor()
@@ -233,7 +245,7 @@ try:
     conn.close()
 
   #Wait
-  sleep(setwaittime)
+  sleep(set_waittime)
 
   #Prepare for temperature sensors
   system('sudo modprobe w1-gpio')
@@ -275,23 +287,23 @@ class read_config(threading.Thread):
     threading.Thread.__init__(self)
   def run(self):
     try:
-      configtime=setconfigtime
+      configtime=set_configtime
       global start_time_values
-      global usenauticaltimezone
+      global utcoffset_nauticaltimezone
       global utcoffset
-      global diststart
-      global setlogdistmin
-      global setdisttime
-      global setdistprevmin
-      global settemptime
-      global setbarotime
+      global dist_start
+      global set_logdistmin
+      global set_disttime
+      global set_distmin
+      global set_temptime
+      global set_barotime
       global temp1device_file
       global temp2device_file
       global temp1_online
       global temp2_online
       global baro_online
       global baro_sensor
-      global spdavgmin
+      global spdavg_min
       global conklyline1_selected
       global conklyline2_selected
       global conklyline3_selected
@@ -302,21 +314,25 @@ class read_config(threading.Thread):
       global tempunit_fahrenheit
       global dateformat_mmddyyy
       global spdmax_show
-      global spdavgreset
-      global spdmaxreset
-      global distreset
+      global spdavg_reset
+      global spdmax_reset
+      global dist_reset
       global alarm_system_activate
-      global anchor_alarm_activate
-      global set_anchor_alarm_updatetime
-      global set_anchor_alarm_distance
-      spdavgreset=False
-      spdmaxreset=False
-      distreset=False
+      global alarm_anchor_active
+      global set_alarm_anchor_updatetime
+      global set_alarm_anchor_distance
+      global alarm_cog_active
+      global alarm_cog_speed
+      global alarm_cog_min
+      global alarm_cog_max
+      spdavg_reset=False
+      spdmax_reset=False
+      dist_reset=False
       while True:
         if killer.kill_now or error_raised is True:
           break
         if start_read_config==1:
-          if (configtime >= setconfigtime):
+          if (configtime >= set_configtime):
           
             #Read config file
             config = SafeConfigParser()
@@ -324,23 +340,23 @@ class read_config(threading.Thread):
             config.read(ocs_dir+'OnboardComputerSystem.conf')
             
             #UTC offset
-            usenauticaltimezone=config.getboolean('Config', 'UseNauticalTimezone')
+            utcoffset_nauticaltimezone=config.getboolean('Config', 'UseNauticalTimezone')
             utcoffset=str(config.get('Config', 'UtcOffset'))
             
             #Set starting number for total distance travelled (in nautical miles)
-            setdiststart=int(config.get('Config', 'DistanceStart'))
-            diststart=float(setdiststart*1852)
+            set_dist_start=int(config.get('Config', 'DistanceStart'))
+            dist_start=float(set_dist_start*1852)
             
             #Set minimum distance (in meters) for adding new entry to the location database
-            setlogdistmin=int(config.get('Config', 'LogEntryMinDistance'))
+            set_logdistmin=int(config.get('Config', 'LogEntryMinDistance'))
             
             #Set values for calculating distance travelled
-            setdisttime=int(config.get('Config', 'DistUpdateInterval'))
-            setdistprevmin=float(config.get('Config', 'DistUpdateDistance'))
+            set_disttime=int(config.get('Config', 'DistUpdateInterval'))
+            set_distmin=float(config.get('Config', 'DistUpdateDistance'))
             
             #Set time values (in seconds)
-            settemptime=int(config.get('Config', 'TempUpdateInterval'))*60        #Update temperature
-            setbarotime=int(config.get('Config', 'BaroUpdateInterval'))*60        #Update barometer
+            set_temptime=int(config.get('Config', 'TempUpdateInterval'))*60        #Update temperature
+            set_barotime=int(config.get('Config', 'BaroUpdateInterval'))*60        #Update barometer
             
             #Set id & setup temp sensors
             temp1name=config.get('Config', 'TempInside')                           #Inside temp
@@ -362,7 +378,7 @@ class read_config(threading.Thread):
               if error_animation_running==0: error_animation('baro').start()
             
             #Minimum speed required for recording average speed
-            spdavgmin=float(config.get('Config', 'SpdAvgReqMin'))
+            spdavg_min=float(config.get('Config', 'SpdAvgReqMin'))
             
             #Set conky content
             conklyline1_selected=int(config.get('Config', 'ConkyLine1'))
@@ -382,30 +398,35 @@ class read_config(threading.Thread):
             
             #Alarm system
             alarm_system_activate=config.getboolean('Config', 'AlarmSystemActivate')
-            anchor_alarm_activate=config.getboolean('Config', 'AlarmAnchorActivate')
-            set_anchor_alarm_updatetime=int(config.get('Config', 'AlarmAnchorInterval'))
-            set_anchor_alarm_distance=float(config.get('Config', 'AlarmAnchorDistance'))
+            alarm_anchor_active=config.getboolean('Config', 'AlarmAnchorActivate')
+            set_alarm_anchor_updatetime=int(config.get('Config', 'AlarmAnchorInterval'))
+            set_alarm_anchor_distance=float(config.get('Config', 'AlarmAnchorDistance'))
+            alarm_cog_active=config.getboolean('Config', 'AlarmCogActivate')
+            alarm_cog_speed=float(config.get('Config', 'AlarmCogSpeed'))
+            alarm_cog_min=float(config.get('Config', 'AlarmCogMin'))
+            alarm_cog_max=float(config.get('Config', 'AlarmCogMax'))
+            if alarm_cog_max < alarm_cog_min: alarm_cog_max+=360
             
             #Reset average speed
             if config.getboolean('Config', 'SpdAvgReset') is True:
               config.set('Config', 'SpdAvgReset', 'False')
               with open(ocs_dir+'OnboardComputerSystem.conf', 'w') as configfile:
                 config.write(configfile)
-              spdavgreset=True
+              spdavg_reset=True
             
             #Reset max speed
             if config.getboolean('Config', 'SpdMaxReset') is True:
               config.set('Config', 'SpdMaxReset', 'False')
               with open(ocs_dir+'OnboardComputerSystem.conf', 'w') as configfile:
                 config.write(configfile)
-              spdmaxreset=True
+              spdmax_reset=True
             
             #Reset distance travelled
             if config.getboolean('Config', 'DistanceReset') is True:
               config.set('Config', 'DistanceReset', 'False')
               with open(ocs_dir+'OnboardComputerSystem.conf', 'w') as configfile:
                 config.write(configfile)
-              distreset=True
+              dist_reset=True
               
             configtime=0
           if start_time_values==0:
@@ -452,13 +473,13 @@ class time_values(threading.Thread):
         if start_time_values==1:
           
           #Update OCS database
-          if (uptime>=setgpswaittime and datetime.now().strftime('%S')=='00'):
+          if (uptime>=set_gpswaittime and datetime.now().strftime('%S')=='00'):
             ocsdb_update_lock.acquire()
             ocsdb_update=1
             ocsdb_update_lock.release()
           
           #Update location database
-          if (uptime>=setgpswaittime and datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'):
+          if (uptime>=set_gpswaittime and datetime.now().strftime('%M')=='00' and datetime.now().strftime('%S')=='00'):
             locationdb_update_lock.acquire()
             locationdb_update=1
             locationdb_update_lock.release()
@@ -538,8 +559,8 @@ class read_data(threading.Thread):
   def run(self):
     try:
       disttime=0
-      barotime=setbarotime
-      temptime=settemptime
+      barotime=set_barotime
+      temptime=set_temptime
       gpsspd1=0
       gpsspd2=0
       gpsspd3=0
@@ -603,9 +624,9 @@ class read_data(threading.Thread):
       global distformat
       global distformatfull
       global uptimeformatfull
-      global spdavgreset
-      global spdmaxreset
-      global distreset
+      global spdavg_reset
+      global spdmax_reset
+      global dist_reset
       while True:
         if killer.kill_now or error_raised is True:
           break
@@ -616,20 +637,20 @@ class read_data(threading.Thread):
             uptimemax=uptime
           
           #Reset average speed
-          if spdavgreset is True:
+          if spdavg_reset is True:
             spdavg=0
             spdavgcount=0
-            spdavgreset=False
+            spdavg_reset=False
           
           #Reset max speed
-          if spdmaxreset is True:
+          if spdmax_reset is True:
             spdmax=0
-            spdmaxreset=False
+            spdmax_reset=False
           
           #Reset distance
-          if distreset is True:
+          if dist_reset is True:
             dist=0
-            distreset=False
+            dist_reset=False
           
           #Read GPS data
           if isnan(gpsd.fix.mode) is False:
@@ -646,10 +667,10 @@ class read_data(threading.Thread):
                   gpsspd2=gpsspd1
                   gpsspd1=gpsd.fix.speed
                   gpsspd=float((gpsspd1+gpsspd2+gpsspd3)/3)
-                  if gpsspd>= (spdavgmin*1.9438444924574):
+                  if gpsspd>= (spdavg_min*1.9438444924574):
                     spdavg=((spdavg*spdavgcount)+gpsspd)/(spdavgcount+1)
                     spdavgcount+=1
-                  if (uptime >= setgpswaittime and gpsspd > spdmax):
+                  if (uptime >= set_gpswaittime and gpsspd > spdmax):
                     spdmax=gpsspd
               if isnan(gpsd.fix.track) is False:
                   gpscog3=gpscog2
@@ -660,14 +681,14 @@ class read_data(threading.Thread):
               gpsfix=0
           
           #Read barometric pressure
-          if (baro_online is True and barotime >= setbarotime):
+          if (baro_online is True and barotime >= set_barotime):
             #baro_temp=baro_sensor.read_temperature()
             baro=float(baro_sensor.read_pressure())
             barotime=0
           barotime+=1
           
           #Read temperature
-          if (temptime >= settemptime):
+          if (temptime >= set_temptime):
             #Temperature sensor #1
             if temp1_online is True:
               temp1f = open(temp1device_file, 'r')
@@ -694,20 +715,20 @@ class read_data(threading.Thread):
           temptime+=1
           
           #Calculate distance travelled
-          if (gpsfix==1 and uptime>=setgpswaittime):
+          if (gpsfix==1 and uptime>=set_gpswaittime):
             if (distfirst==1):
               distlat=gpslat
               distlon=gpslon
               distfirst=0
-            if (disttime >= setdisttime):
+            if (disttime >= set_disttime):
               distprev=geopy.distance.geodesic((distlat, distlon), (gpslat, gpslon)).m
-              if distprev > setdistprevmin:
+              if distprev > set_distmin:
                   distlat=gpslat
                   distlon=gpslon
                   dist=dist+distprev
               disttime=0
             disttime+=1
-          disttotal=dist+diststart
+          disttotal=dist+dist_start
           
           #Format GPS time
           gpsdatetimeformat='00.00.0000 00:00:00'
@@ -717,7 +738,7 @@ class read_data(threading.Thread):
             gpsdatetimeformat=gpsdatetime.strftime('%d.%m.%Y %H:%M:%S')
           
           #UTC offset
-          if usenauticaltimezone is False:
+          if utcoffset_nauticaltimezone is False:
             utcoffsetposneg=str(utcoffset[0:1])
             utcoffsethours=int(utcoffset[1:3])
             utcoffsetminutes=int(utcoffset[-2:])
@@ -727,7 +748,7 @@ class read_data(threading.Thread):
             utcoffsetformat='UTC{0}'.format(utcoffset)
           
           #Nautical timezones (without accurate date line)
-          if (gpsfix==1 and uptime>=setgpswaittime):
+          if (gpsfix==1 and uptime>=set_gpswaittime):
             if -7.5 <= gpslon <= 7.5:
               nauticaltimezone='Z'
               nauticaltimeoffset=0
@@ -806,7 +827,7 @@ class read_data(threading.Thread):
           nauticaltimezoneformat='{0} (UT'.format(nauticaltimezone)
           nauticaltimezoneformat+='{0:+03d}'.format(nauticaltimeoffset)
           nauticaltimezoneformat+=')'
-          if usenauticaltimezone is True:
+          if utcoffset_nauticaltimezone is True:
             utcoffsethours=nauticaltimeoffset*-1
             utcoffsetminutes=0
             utcoffsetformat='UTC{0:+03d}:{1:02d}'.format(utcoffsethours,utcoffsetminutes)
@@ -954,7 +975,7 @@ class update_databases(threading.Thread):
             sqlite_file=ocsdb_file
             conn=sqlite3.connect(sqlite_file)
             c = conn.cursor()
-            c.execute("UPDATE OCS SET TIME='{TIME}', LAT='{LAT}', LON='{LON}', SPD='{SPD}', SPD_MAX='{SPD_MAX}', SPD_AVG='{SPD_AVG}', SPD_AVG_COUNT='{SPD_AVG_COUNT}', COG='{COG}', UPTIME='{UPTIME}', UPTIME_MAX='{UPTIME_MAX}', DIST_START='{DIST_START}', DIST='{DIST}', BARO='{BARO}', TEMP1='{TEMP1}', TEMP2='{TEMP2}', SUNRISE='{SUNRISE}', SUNSET='{SUNSET}', TZ='{TZ}', TZ_OFFSET='{TZ_OFFSET}'".format(TIME=currenttimestamp,LAT=gpslat,LON=gpslon,SPD=gpsspd,SPD_MAX=spdmax,SPD_AVG=spdavg,SPD_AVG_COUNT=spdavgcount,COG=gpscog,UPTIME=int(uptime),UPTIME_MAX=int(uptimemax),DIST_START=diststart,DIST=dist,BARO=baro,TEMP1=temp1,TEMP2=temp2,SUNRISE=sunriseformat,SUNSET=sunsetformat,TZ=nauticaltimezone,TZ_OFFSET=nauticaltimeoffset))
+            c.execute("UPDATE OCS SET TIME='{TIME}', LAT='{LAT}', LON='{LON}', SPD='{SPD}', SPD_MAX='{SPD_MAX}', SPD_AVG='{SPD_AVG}', SPD_AVG_COUNT='{SPD_AVG_COUNT}', COG='{COG}', UPTIME='{UPTIME}', UPTIME_MAX='{UPTIME_MAX}', DIST_START='{DIST_START}', DIST='{DIST}', BARO='{BARO}', TEMP1='{TEMP1}', TEMP2='{TEMP2}', SUNRISE='{SUNRISE}', SUNSET='{SUNSET}', TZ='{TZ}', TZ_OFFSET='{TZ_OFFSET}'".format(TIME=currenttimestamp,LAT=gpslat,LON=gpslon,SPD=gpsspd,SPD_MAX=spdmax,SPD_AVG=spdavg,SPD_AVG_COUNT=spdavgcount,COG=gpscog,UPTIME=int(uptime),UPTIME_MAX=int(uptimemax),DIST_START=dist_start,DIST=dist,BARO=baro,TEMP1=temp1,TEMP2=temp2,SUNRISE=sunriseformat,SUNSET=sunsetformat,TZ=nauticaltimezone,TZ_OFFSET=nauticaltimeoffset))
             conn.commit()
             conn.close()
             ocsdb_update_lock.acquire()
@@ -989,7 +1010,7 @@ class update_databases(threading.Thread):
             #calculate distance
             if lognumfirst == 0:
               logdistprev=geopy.distance.geodesic((loglat, loglon), (gpslat, gpslon)).m            
-            if (lognumfirst == 1) or (logdistprev > setlogdistmin):
+            if (lognumfirst == 1) or (logdistprev > set_logdistmin):
               sqlite_file=locationdb_file
               conn=sqlite3.connect(sqlite_file)
               c = conn.cursor()
@@ -1028,19 +1049,21 @@ class update_databases(threading.Thread):
 
 #Alarm system
 alarm_anchor_raised=False
+alarm_cog_raised=False
 start_alarm_system=0
 class alarm_system(threading.Thread):
   def __init__(self):
     threading.Thread.__init__(self)
   def run(self):
     try:
-      alarm_animation().start()
       global alarm_anchor_raised
+      global alarm_cog_raised
       global alarmformat
       global start_output_conky
       global start_output_data
-      anchor_alarm_first=True
-      anchor_alarm_updatetime=0
+      global start_alarm_animation
+      alarm_anchor_first=True
+      alarm_anchor_time=0
       while True:
         if killer.kill_now or error_raised is True:
           break
@@ -1051,26 +1074,42 @@ class alarm_system(threading.Thread):
             alarmformat='[ALARM SYSTEM ACTIVE]'
             
             #Anchor alarm
-            if anchor_alarm_activate is True:
-              if alarm_anchor_raised is False and gpsfix==1:
-                if anchor_alarm_first is True:
-                  anchor_alarm_lat=gpslat
-                  anchor_alarm_lon=gpslon
-                  anchor_alarm_first=False
-                if anchor_alarm_updatetime>=set_anchor_alarm_updatetime:
-                  anchor_prev_dist=geopy.distance.geodesic((anchor_alarm_lat, anchor_alarm_lon), (gpslat, gpslon)).m
-                  if anchor_prev_dist > set_anchor_alarm_distance:
-                      alarm_anchor_raised=True
-                  anchor_alarm_updatetime=0
-                anchor_alarm_updatetime+=1
+            if alarm_anchor_active is True:
+              if gpsfix==1:
+                if alarm_anchor_first is True:
+                  alarm_anchor_lat=gpslat
+                  alarm_anchor_lon=gpslon
+                  alarm_anchor_first=False
+                if alarm_anchor_time>=set_alarm_anchor_updatetime:
+                  alarm_anchor_prev_dist=geopy.distance.geodesic((alarm_anchor_lat, alarm_anchor_lon), (gpslat, gpslon)).m
+                  if alarm_anchor_prev_dist > set_alarm_anchor_distance:
+                    alarm_anchor_raised=True
+                  else:
+                    if alarm_anchor_raised is True: alarm_anchor_raised=False
+                  alarm_anchor_time=0
+                alarm_anchor_time+=1
             else:
-              alarm_anchor_raised=False
-              anchor_alarm_first=True
+              if alarm_anchor_raised is True: alarm_anchor_raised=False
+              if alarm_anchor_first is False: alarm_anchor_first=True
+              
+            #Course alarm
+            if alarm_cog_active is True:
+              if gpsfix==1 and gpsspd>=(alarm_cog_speed*1.9438444924574):
+                alarm_cog_value=int(gpscog)
+                if alarm_cog_value < alarm_cog_min: alarm_cog_value += 360
+                if alarm_cog_min!=alarm_cog_max and (alarm_cog_value<alarm_cog_min or alarm_cog_value>alarm_cog_max):
+                  alarm_cog_raised=True
+                else:
+                  if alarm_cog_raised is True: alarm_cog_raised=False
+            else:
+              if alarm_cog_raised is True: alarm_cog_raised=False
           
           #Inactive alarm system
           else:
             alarmformat='[ALARM SYSTEM INACTIVE]'
           
+          if start_alarm_animation==0:
+            start_alarm_animation=1
           if start_output_conky==0:
             start_output_conky=1
           if start_output_data==0:
@@ -1098,7 +1137,7 @@ class output_conky(threading.Thread):
         if killer.kill_now or error_raised is True:
           break
         if start_output_conky==1:
-          if (conkytime >= setconkytime):
+          if (conkytime >= set_conkytime):
             
             #Conky lines
             conkyline_uptime='UPTIME: '+uptimeformatfull
@@ -1188,6 +1227,7 @@ if __name__ == '__main__' and error_raised is not True:
   output_data().start()
   update_databases().start()
   alarm_system().start()
+  alarm_animation().start()
   while True:
     sleep(1)
     if killer.kill_now:
