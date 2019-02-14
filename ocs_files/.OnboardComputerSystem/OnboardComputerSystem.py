@@ -116,12 +116,14 @@ class alarm_animation(threading.Thread):
     default_alarm_message='[  M A S T E R   C A U T I O N  ]'
     alarm_message_anchor='[  A N C H O R   A L A R M  ]'
     alarm_message_cog='[  C O U R S E   A L A R M  ]'
+    alarm_message_timezone='[  N E W   T I M E Z O N E   A L A R M  ]'
+    alarm_message_time='[  T I M E   A L A R M  ]'
     
     while True:
       if killer.kill_now or error_raised:
         break
       if start_alarm_animation==1:
-        if alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True):
+        if alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_timezone_raised is True or alarm_time_raised is True):
           if alarm_animation_running is False: alarm_animation_running=True
           sys.stdout.write('%{c}'+default_alarm_message+'\n')
           sleep(0.8)
@@ -142,6 +144,24 @@ class alarm_animation(threading.Thread):
             sys.stdout.write('\n')
             sleep(0.8)
             sys.stdout.write('%{c}'+alarm_message_cog+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_timezone_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_timezone+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_timezone+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_time_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_time+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_time+'\n')
             sleep(0.8)
             sys.stdout.write('\n')
         else:
@@ -325,6 +345,9 @@ class read_config(threading.Thread):
       global alarm_cog_speed
       global alarm_cog_min
       global alarm_cog_max
+      global alarm_timezone_active
+      global alarm_time_active
+      global alarm_time_value
       spdavg_reset=False
       spdmax_reset=False
       dist_reset=False
@@ -406,6 +429,9 @@ class read_config(threading.Thread):
             alarm_cog_min=float(config.get('Config', 'AlarmCogMin'))
             alarm_cog_max=float(config.get('Config', 'AlarmCogMax'))
             if alarm_cog_max < alarm_cog_min: alarm_cog_max+=360
+            alarm_timezone_active=config.getboolean('Config', 'AlarmTimezoneActivate')
+            alarm_time_active=config.getboolean('Config', 'AlarmTimeActivate')
+            alarm_time_value=str(config.get('Config', 'AlarmTimeValue'))
             
             #Reset average speed
             if config.getboolean('Config', 'SpdAvgReset') is True:
@@ -1050,6 +1076,8 @@ class update_databases(threading.Thread):
 #Alarm system
 alarm_anchor_raised=False
 alarm_cog_raised=False
+alarm_timezone_raised=False
+alarm_time_raised=False
 start_alarm_system=0
 class alarm_system(threading.Thread):
   def __init__(self):
@@ -1058,11 +1086,14 @@ class alarm_system(threading.Thread):
     try:
       global alarm_anchor_raised
       global alarm_cog_raised
+      global alarm_timezone_raised
+      global alarm_time_raised
       global alarmformat
       global start_output_conky
       global start_output_data
       global start_alarm_animation
       alarm_anchor_first=True
+      alarm_timezone_first=True
       alarm_anchor_time=0
       while True:
         if killer.kill_now or error_raised is True:
@@ -1103,6 +1134,34 @@ class alarm_system(threading.Thread):
                   if alarm_cog_raised is True: alarm_cog_raised=False
             else:
               if alarm_cog_raised is True: alarm_cog_raised=False
+            
+            #Baro alarm
+            
+            #Temp alarm
+            
+            #Distance alarm
+            
+            #Speed alarm
+            
+            #Time alarm
+            if alarm_time_active is True:
+              if gpsfix==1 and alarm_time_raised is False:
+                alarm_time_first=False
+                if alarm_time_value==str((datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%H:%M')):
+                  alarm_time_raised=True
+            else:
+              if alarm_time_raised is True: alarm_time_raised=False
+            
+            #Timezone alarm
+            if alarm_timezone_active is True:
+              if gpsfix==1 and alarm_timezone_raised is False:
+                if alarm_timezone_first is True:
+                  alarm_timezone_old=nauticaltimezone
+                  alarm_timezone_first=False
+                if alarm_timezone_old!=nauticaltimezone:
+                  alarm_timezone_raised=True
+            else:
+              if alarm_timezone_raised is True: alarm_timezone_raised=False
           
           #Inactive alarm system
           else:
