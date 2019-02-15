@@ -34,14 +34,18 @@ ${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '2{p;q}' /ho
 
 ${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '3{p;q}' /home/laserwolf/.conkytext} 
 
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '4{p;q}' /home/laserwolf/.conkytext} 
+
 ${color #A9A28F}${font ProggyCleanTT:size=22}$alignc ---------------------------------------------------- 
 
 ${color #A9A28F}${font ProggyCleanTT:size=22}$alignc * O N B O A R D * C O M P U T E R * S Y S T E M * 
 
 ${color #A9A28F}${font ProggyCleanTT:size=22}$alignc ---------------------------------------------------- 
 
-${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '4{p;q}' /home/laserwolf/.conkytext} 
-
 ${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '5{p;q}' /home/laserwolf/.conkytext} 
 
 ${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '6{p;q}' /home/laserwolf/.conkytext} 
+
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '7{p;q}' /home/laserwolf/.conkytext} 
+
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '8{p;q}' /home/laserwolf/.conkytext} 

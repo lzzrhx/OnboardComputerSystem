@@ -115,6 +115,7 @@ class alarm_animation(threading.Thread):
     
     #Alarm messages
     default_alarm_message='[  M A S T E R   C A U T I O N  ]'
+    alarm_disclaimer_message='[  W A R N I N G :   U S E   S Y S T E M   A T   O W N   R I S K  ]'
     alarm_message_anchor='[  A N C H O R   A L A R M  ]'
     alarm_message_cog='[  C O U R S E   A L A R M  ]'
     alarm_message_spd_low='[  L O W   S P E E D   A L A R M  ]'
@@ -133,7 +134,12 @@ class alarm_animation(threading.Thread):
       if killer.kill_now or error_raised:
         break
       if start_alarm_animation==1:
-        if alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_spd_low_raised is True or alarm_spd_high_raised is True or alarm_dist_raised is True or alarm_baro_low_raised is True or alarm_baro_high_raised is True or alarm_temp1_low_raised is True or alarm_temp1_high_raised is True or alarm_temp2_low_raised is True or alarm_temp2_high_raised is True or alarm_timezone_raised is True or alarm_time_raised is True ):
+        if alarm_system_disclaimer_activate is True:
+          if alarm_animation_running is False: alarm_animation_running=True
+          sys.stdout.write('%{c}'+alarm_disclaimer_message+'\n')
+          sleep(0.8)
+          sys.stdout.write('\n')
+        elif alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_spd_low_raised is True or alarm_spd_high_raised is True or alarm_dist_raised is True or alarm_baro_low_raised is True or alarm_baro_high_raised is True or alarm_temp1_low_raised is True or alarm_temp1_high_raised is True or alarm_temp2_low_raised is True or alarm_temp2_high_raised is True or alarm_timezone_raised is True or alarm_time_raised is True ):
           if alarm_system_sound_enable is True: playsound(sound_dir+alarm_system_sound_file)
           if alarm_animation_running is False: alarm_animation_running=True
           sys.stdout.write('%{c}'+default_alarm_message+'\n')
@@ -402,6 +408,8 @@ class read_config(threading.Thread):
     try:
       configtime=set_configtime
       global start_time_values
+      global callsign
+      global mmsi
       global utcoffset_nauticaltimezone
       global utcoffset
       global dist_start
@@ -423,6 +431,8 @@ class read_config(threading.Thread):
       global conklyline4_selected
       global conklyline5_selected
       global conklyline6_selected
+      global conklyline7_selected
+      global conklyline8_selected
       global barounit_mmhg
       global tempunit_fahrenheit
       global dateformat_mmddyyy
@@ -430,6 +440,7 @@ class read_config(threading.Thread):
       global spdavg_reset
       global spdmax_reset
       global dist_reset
+      global alarm_system_disclaimer_activate
       global alarm_system_activate
       global alarm_system_sound_enable
       global alarm_system_sound_file
@@ -475,6 +486,11 @@ class read_config(threading.Thread):
             config = SafeConfigParser()
             config.optionxform = lambda option: option
             config.read(ocs_dir+'OnboardComputerSystem.conf')
+            
+            #Callsign & MMSI
+            callsign=str(config.get('Config', 'Callsign'))
+            callsign.upper()
+            mmsi=str(config.get('Config', 'MMSI'))
             
             #UTC offset
             utcoffset_nauticaltimezone=config.getboolean('Config', 'UseNauticalTimezone')
@@ -524,6 +540,8 @@ class read_config(threading.Thread):
             conklyline4_selected=int(config.get('Config', 'ConkyLine4'))
             conklyline5_selected=int(config.get('Config', 'ConkyLine5'))
             conklyline6_selected=int(config.get('Config', 'ConkyLine6'))
+            conklyline7_selected=int(config.get('Config', 'ConkyLine7'))
+            conklyline8_selected=int(config.get('Config', 'ConkyLine8'))
             
             #Set units
             dateformat_mmddyyy=config.getboolean('Config', 'DateMonthDayYear')
@@ -534,6 +552,7 @@ class read_config(threading.Thread):
             spdmax_show=config.getboolean('Config', 'ShowMaxSpd')
             
             #Alarm system
+            alarm_system_disclaimer_activate=config.getboolean('Alarm', 'AlarmDisclaimerActivate')
             alarm_system_activate=config.getboolean('Alarm', 'AlarmSystemActivate')
             alarm_system_sound_enable=config.getboolean('Alarm', 'AlarmSystemSoundEnable')
             alarm_system_sound_file=str(config.get('Alarm', 'AlarmSystemSoundFile'))
@@ -1419,15 +1438,16 @@ class output_conky(threading.Thread):
           if (conkytime >= set_conkytime):
             
             #Conky lines
-            conkyline_uptime='UPTIME: '+uptimeformatfull
+            conkyline_alarm=alarmformat
             conkyline_astronomy='SUNRISE: '+sunriseformat+'  //  SUNSET: '+sunsetformat
             conkyline_weather='BARO: '+baroformatfull+'  //  INSIDE: '+temp1formatfull+'  //  OUTSIDE: '+temp2formatfull
             conkyline_timezone='TIME OFFSET: '+utcoffsetformat+'  //  NAUTICAL TIMEZONE: '+nauticaltimezoneformat
             conkyline_coordinates='LAT: '+gpslatformatfull+'  //  LON: '+gpslonformatfull
             conkyline_spd='AVG SPD: '+spdavgformatfull
-            conkyline_alarm=alarmformat
             if spdmax_show is True: conkyline_spd+='  //  MAX SPD: '+spdmaxformatfull
-            conkyline_options=['',conkyline_uptime,conkyline_astronomy,conkyline_weather,conkyline_timezone,conkyline_coordinates,conkyline_spd,conkyline_alarm]
+            conkyline_callsign='CALLSIGN: '+callsign+'  //  MMSI: '+mmsi
+            conkyline_uptime='UPTIME: '+uptimeformatfull
+            conkyline_options=['',conkyline_alarm,conkyline_astronomy,conkyline_weather,conkyline_timezone,conkyline_coordinates,conkyline_spd,conkyline_callsign,conkyline_uptime]
             
             #Write text to file
             conkyline1=conkyline_options[conklyline1_selected]
@@ -1436,6 +1456,8 @@ class output_conky(threading.Thread):
             conkyline4=conkyline_options[conklyline4_selected]
             conkyline5=conkyline_options[conklyline5_selected]
             conkyline6=conkyline_options[conklyline6_selected]
+            conkyline7=conkyline_options[conklyline7_selected]
+            conkyline8=conkyline_options[conklyline8_selected]
             conkytext=conkyline1
             conkytext+='\n'
             conkytext+=conkyline2
@@ -1447,6 +1469,10 @@ class output_conky(threading.Thread):
             conkytext+=conkyline5
             conkytext+='\n'
             conkytext+=conkyline6
+            conkytext+='\n'
+            conkytext+=conkyline7
+            conkytext+='\n'
+            conkytext+=conkyline8
             conkyfile = open(home_dir+'.conkytext', 'w')
             conkyfile.writelines(conkytext)
             conkyfile.close()
