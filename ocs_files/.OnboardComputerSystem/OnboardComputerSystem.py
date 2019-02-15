@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from math import isnan
 from os import path, system
 from configparser import SafeConfigParser
+from playsound import playsound
 import threading
 import sqlite3
 import ephem
@@ -116,23 +117,24 @@ class alarm_animation(threading.Thread):
     default_alarm_message='[  M A S T E R   C A U T I O N  ]'
     alarm_message_anchor='[  A N C H O R   A L A R M  ]'
     alarm_message_cog='[  C O U R S E   A L A R M  ]'
-    alarm_message_timezone='[  N E W   T I M E Z O N E   A L A R M  ]'
-    alarm_message_time='[  T I M E   A L A R M  ]'
-    alarm_message_dist='[  D I S T A N C E   T R A V E L L E D   A L A R M  ]'
     alarm_message_spd_low='[  L O W   S P E E D   A L A R M  ]'
     alarm_message_spd_high='[ H I G H   S P E E D   A L A R M  ]'
+    alarm_message_dist='[  D I S T A N C E   T R A V E L L E D   A L A R M  ]'
     alarm_message_baro_low='[  L O W   B A R O M E T R I C   P R E S S U R E   A L A R M  ]'
     alarm_message_baro_high='[  H I G H   B A R O M E T R I C   P R E S S U R E   A L A R M  ]'
     alarm_message_temp1_low='[  L O W   I N S I D E   T E M P E R A T U R E   A L A R M  ]'
     alarm_message_temp1_high='[  H I G H   I N S I D E   T E M P E R A T U R E   A L A R M  ]'
     alarm_message_temp2_low='[  L O W   O U T S I D E   T E M P E R A T U R E   A L A R M  ]'
     alarm_message_temp2_high='[  H I G H   O U T S I D E   T E M P E R A T U R E   A L A R M  ]'
+    alarm_message_timezone='[  N E W   T I M E Z O N E   A L A R M  ]'
+    alarm_message_time='[  T I M E   A L A R M  ]'
     
     while True:
       if killer.kill_now or error_raised:
         break
       if start_alarm_animation==1:
-        if alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_timezone_raised is True or alarm_time_raised is True or alarm_dist_raised is True or alarm_spd_low_raised is True or alarm_spd_high_raised is True):
+        if alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_spd_low_raised is True or alarm_spd_high_raised is True or alarm_dist_raised is True or alarm_baro_low_raised is True or alarm_baro_high_raised is True or alarm_temp1_low_raised is True or alarm_temp1_high_raised is True or alarm_temp2_low_raised is True or alarm_temp2_high_raised is True or alarm_timezone_raised is True or alarm_time_raised is True ):
+          if alarm_system_sound_enable is True: playsound(sound_dir+alarm_system_sound_file)
           if alarm_animation_running is False: alarm_animation_running=True
           sys.stdout.write('%{c}'+default_alarm_message+'\n')
           sleep(0.8)
@@ -155,33 +157,6 @@ class alarm_animation(threading.Thread):
             sys.stdout.write('%{c}'+alarm_message_cog+'\n')
             sleep(0.8)
             sys.stdout.write('\n')
-          if alarm_timezone_raised is True:
-            sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_timezone+'\n')
-            sleep(0.8)
-            sys.stdout.write('\n')
-            sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_timezone+'\n')
-            sleep(0.8)
-            sys.stdout.write('\n')
-          if alarm_time_raised is True:
-            sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_time+'\n')
-            sleep(0.8)
-            sys.stdout.write('\n')
-            sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_time+'\n')
-            sleep(0.8)
-            sys.stdout.write('\n')
-          if alarm_dist_raised is True:
-            sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_dist+'\n')
-            sleep(0.8)
-            sys.stdout.write('\n')
-            sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_dist+'\n')
-            sleep(0.8)
-            sys.stdout.write('\n')
           if alarm_spd_low_raised is True:
             sleep(0.8)
             sys.stdout.write('%{c}'+alarm_message_spd_low+'\n')
@@ -198,6 +173,15 @@ class alarm_animation(threading.Thread):
             sys.stdout.write('\n')
             sleep(0.8)
             sys.stdout.write('%{c}'+alarm_message_spd_high+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_dist_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_dist+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_dist+'\n')
             sleep(0.8)
             sys.stdout.write('\n')
           if alarm_baro_low_raised is True:
@@ -254,6 +238,24 @@ class alarm_animation(threading.Thread):
             sys.stdout.write('%{c}'+alarm_message_temp2_high+'\n')
             sleep(0.8)
             sys.stdout.write('\n')
+          if alarm_timezone_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_timezone+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_timezone+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_time_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_time+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_time+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
         else:
           if alarm_animation_running is True: alarm_animation_running=False
       sleep(0.8)
@@ -270,7 +272,8 @@ try:
   #Set directories
   home_dir = path.expanduser('~') + '/'
   ocs_dir = home_dir + '.OnboardComputerSystem/'
-  db_dir = ocs_dir + 'databases/'
+  database_dir = ocs_dir + 'databases/'
+  sound_dir = ocs_dir + 'sounds/'
 
   #Set time values (in seconds)
   set_waittime=5             #Wait before starting
@@ -284,9 +287,9 @@ try:
   weatherdb_name='ocs-weather'
 
   #Database stuff
-  ocsdb_file = db_dir + ocsdb_name + '.db'
-  locationdb_file = db_dir + locationdb_name + '.db'
-  weatherdb_file = db_dir + weatherdb_name + '.db'
+  ocsdb_file = database_dir + ocsdb_name + '.db'
+  locationdb_file = database_dir + locationdb_name + '.db'
+  weatherdb_file = database_dir + weatherdb_name + '.db'
   ocsdb_online=path.isfile(ocsdb_file)
   locationdb_online=path.isfile(locationdb_file)
   weatherdb_online=path.isfile(weatherdb_file)
@@ -428,23 +431,22 @@ class read_config(threading.Thread):
       global spdmax_reset
       global dist_reset
       global alarm_system_activate
+      global alarm_system_sound_enable
+      global alarm_system_sound_file
       global alarm_anchor_active
-      global set_alarm_anchor_updatetime
-      global set_alarm_anchor_distance
+      global alarm_anchor_updatetime
+      global alarm_anchor_distance
       global alarm_cog_active
       global alarm_cog_speed
       global alarm_cog_min
       global alarm_cog_max
-      global alarm_timezone_active
-      global alarm_time_active
-      global alarm_time_value
-      global alarm_dist_active
-      global alarm_dist_value
       global alarm_spd_low_active
       global alarm_spd_low_req
       global alarm_spd_low_value
       global alarm_spd_high_active
       global alarm_spd_high_value
+      global alarm_dist_active
+      global alarm_dist_value
       global alarm_baro_low_active
       global alarm_baro_low_value
       global alarm_baro_high_active
@@ -457,6 +459,9 @@ class read_config(threading.Thread):
       global alarm_temp2_low_value
       global alarm_temp2_high_active
       global alarm_temp2_high_value
+      global alarm_timezone_active
+      global alarm_time_active
+      global alarm_time_value
       spdavg_reset=False
       spdmax_reset=False
       dist_reset=False
@@ -510,7 +515,7 @@ class read_config(threading.Thread):
               if error_animation_running==0: error_animation('baro').start()
             
             #Minimum speed required for recording average speed
-            spdavg_min=float(config.get('Config', 'SpdAvgReqMin'))
+            spdavg_min=int(config.get('Config', 'SpdAvgReqMin'))
             
             #Set conky content
             conklyline1_selected=int(config.get('Config', 'ConkyLine1'))
@@ -530,30 +535,27 @@ class read_config(threading.Thread):
             
             #Alarm system
             alarm_system_activate=config.getboolean('Alarm', 'AlarmSystemActivate')
+            alarm_system_sound_enable=config.getboolean('Alarm', 'AlarmSystemSoundEnable')
+            alarm_system_sound_file=str(config.get('Alarm', 'AlarmSystemSoundFile'))
             #Anchor
             alarm_anchor_active=config.getboolean('Alarm', 'AlarmAnchorActivate')
-            set_alarm_anchor_updatetime=int(config.get('Alarm', 'AlarmAnchorInterval'))
-            set_alarm_anchor_distance=float(config.get('Alarm', 'AlarmAnchorDistance'))
+            alarm_anchor_updatetime=int(config.get('Alarm', 'AlarmAnchorInterval'))
+            alarm_anchor_distance=float(config.get('Alarm', 'AlarmAnchorDistance'))
             #Course
             alarm_cog_active=config.getboolean('Alarm', 'AlarmCourseActivate')
             alarm_cog_speed=float(config.get('Alarm', 'AlarmCourseSpeed'))
             alarm_cog_min=float(config.get('Alarm', 'AlarmCourseMin'))
             alarm_cog_max=float(config.get('Alarm', 'AlarmCourseMax'))
             if alarm_cog_max < alarm_cog_min: alarm_cog_max+=360
-            #Timezone
-            alarm_timezone_active=config.getboolean('Alarm', 'AlarmTimezoneActivate')
-            #Time
-            alarm_time_active=config.getboolean('Alarm', 'AlarmTimeActivate')
-            alarm_time_value=str(config.get('Alarm', 'AlarmTimeValue'))
-            #Distance
-            alarm_dist_active=config.getboolean('Alarm', 'AlarmDistanceActivate')
-            alarm_dist_value=int(config.get('Alarm', 'AlarmDistanceValue'))
             #Speed
             alarm_spd_low_active=config.getboolean('Alarm', 'AlarmSpeedLowActivate')
             alarm_spd_low_req=int(config.get('Alarm', 'AlarmSpeedLowRequired'))
             alarm_spd_low_value=int(config.get('Alarm', 'AlarmSpeedLowValue'))
             alarm_spd_high_active=config.getboolean('Alarm', 'AlarmSpeedHighActivate')
             alarm_spd_high_value=int(config.get('Alarm', 'AlarmSpeedHighValue'))
+            #Distance
+            alarm_dist_active=config.getboolean('Alarm', 'AlarmDistanceActivate')
+            alarm_dist_value=int(config.get('Alarm', 'AlarmDistanceValue'))
             #Barometric pressure
             alarm_baro_low_active=config.getboolean('Alarm', 'AlarmBaroLowActivate')
             alarm_baro_low_value=int(config.get('Alarm', 'AlarmBaroLowValue'))
@@ -569,6 +571,11 @@ class read_config(threading.Thread):
             alarm_temp2_low_value=int(config.get('Alarm', 'AlarmTempOutsideLowValue'))
             alarm_temp2_high_active=config.getboolean('Alarm', 'AlarmTempOutsideHighActivate')
             alarm_temp2_high_value=int(config.get('Alarm', 'AlarmTempOutsideHighValue'))
+            #Timezone
+            alarm_timezone_active=config.getboolean('Alarm', 'AlarmTimezoneActivate')
+            #Time
+            alarm_time_active=config.getboolean('Alarm', 'AlarmTimeActivate')
+            alarm_time_value=str(config.get('Alarm', 'AlarmTimeValue'))
             
             #Reset average speed
             if config.getboolean('Config', 'SpdAvgReset') is True:
@@ -830,7 +837,7 @@ class read_data(threading.Thread):
                   gpsspd2=gpsspd1
                   gpsspd1=gpsd.fix.speed
                   gpsspd=float((gpsspd1+gpsspd2+gpsspd3)/3)
-                  if gpsspd>= (spdavg_min*1.9438444924574):
+                  if int(gpsspd*1.9438444924574)>=spdavg_min:
                     spdavg=((spdavg*spdavgcount)+gpsspd)/(spdavgcount+1)
                     spdavgcount+=1
                   if (uptime >= set_gpswaittime and gpsspd > spdmax):
@@ -1024,16 +1031,16 @@ class read_data(threading.Thread):
           gpslonformatfull='{0}° {1:06.3f}\'{2}'.format(gpslondeg,float(gpslonmin),gpslondir)
           
           #Format speed
-          gpsspdformat='{0:.1f}'.format((gpsspd * 1.9438444924574))
-          gpsspdformatfull='{0} KN'.format(gpsspdformat)
+          gpsspdformat=float(gpsspd*1.9438444924574)
+          gpsspdformatfull='{0:.1f} KN'.format(gpsspdformat)
           
           #Format average speed
-          spdavgformat='{0:.1f}'.format((spdavg * 1.9438444924574))
-          spdavgformatfull='{0} KN'.format(spdavgformat)
+          spdavgformat=float(spdavg*1.9438444924574)
+          spdavgformatfull='{0:.1f} KN'.format(spdavgformat)
           
           #Format max speed
-          spdmaxformat='{0:.1f}'.format((spdmax * 1.9438444924574))
-          spdmaxformatfull='{0} KN'.format(spdmaxformat)
+          spdmaxformat=float(spdmax*1.9438444924574)
+          spdmaxformatfull='{0:.1f} KN'.format(spdmaxformat)
           
           #Format course over ground
           gpscogformat=int(gpscog)
@@ -1047,25 +1054,25 @@ class read_data(threading.Thread):
           
           #Format barometric pressure
           if barounit_mmhg is True:
-            baroformat='{0}'.format(int((baro/100)*0.750061683))
+            baroformat=int((baro/100)*0.750061683)
             baroformatfull='{0} mmHg'.format(baroformat)
           else:
-            baroformat='{0}'.format(int(baro/100))
+            baroformat=int(baro/100)
             baroformatfull='{0} MBAR'.format(baroformat)
           if baro_online is False:
             baroformatfull='-'
           
           #Format temperature
           if tempunit_fahrenheit is True:
-            temp1format='{0:.1f}'.format((float(temp1)*1.8)+32)
-            temp1formatfull='{0}°F'.format(temp1format)
-            temp2format='{0:.1f}'.format((float(temp2)*1.8)+32)
-            temp2formatfull='{0}°F'.format(temp2format)
+            temp1format=float((float(temp1)*1.8)+32)
+            temp1formatfull='{0:.1f}°F'.format(temp1format)
+            temp2format=float((float(temp2)*1.8)+32)
+            temp2formatfull='{0:.1f}°F'.format(temp2format)
           else:
-            temp1format='{0:.1f}'.format(float(temp1))
-            temp1formatfull='{0}°C'.format(temp1format)
-            temp2format='{0:.1f}'.format(float(temp2))
-            temp2formatfull='{0}°C'.format(temp2format)
+            temp1format=float(temp1)
+            temp1formatfull='{0:.1f}°C'.format(temp1format)
+            temp2format=float(temp2)
+            temp2formatfull='{0:.1f}°C'.format(temp2format)
           if temp1_online is False:
             temp1formatfull='-'
           if temp2_online is False:
@@ -1213,17 +1220,17 @@ class update_databases(threading.Thread):
 #Alarm system
 alarm_anchor_raised=False
 alarm_cog_raised=False
-alarm_timezone_raised=False
-alarm_time_raised=False
-alarm_dist_raised=False
 alarm_spd_low_raised=False
 alarm_spd_high_raised=False
+alarm_dist_raised=False
 alarm_baro_low_raised=False
 alarm_baro_high_raised=False
 alarm_temp1_low_raised=False
 alarm_temp1_high_raised=False
 alarm_temp2_low_raised=False
 alarm_temp2_high_raised=False
+alarm_timezone_raised=False
+alarm_time_raised=False
 start_alarm_system=0
 class alarm_system(threading.Thread):
   def __init__(self):
@@ -1232,17 +1239,17 @@ class alarm_system(threading.Thread):
     try:
       global alarm_anchor_raised
       global alarm_cog_raised
-      global alarm_timezone_raised
-      global alarm_time_raised
-      global alarm_dist_raised
       global alarm_spd_low_raised
       global alarm_spd_high_raised
+      global alarm_dist_raised
       global alarm_baro_low_raised
       global alarm_baro_high_raised
       global alarm_temp1_low_raised
       global alarm_temp1_high_raised
       global alarm_temp2_low_raised
       global alarm_temp2_high_raised
+      global alarm_timezone_raised
+      global alarm_time_raised
       global alarmformat
       global start_output_conky
       global start_output_data
@@ -1266,9 +1273,9 @@ class alarm_system(threading.Thread):
                   alarm_anchor_lat=gpslat
                   alarm_anchor_lon=gpslon
                   alarm_anchor_first=False
-                if alarm_anchor_time>=set_alarm_anchor_updatetime:
+                if alarm_anchor_time>=alarm_anchor_updatetime:
                   alarm_anchor_prev_dist=geopy.distance.geodesic((alarm_anchor_lat, alarm_anchor_lon), (gpslat, gpslon)).m
-                  if alarm_anchor_prev_dist > set_alarm_anchor_distance:
+                  if alarm_anchor_prev_dist > alarm_anchor_distance:
                     alarm_anchor_raised=True
                   elif alarm_anchor_raised is True: alarm_anchor_raised=False
                   alarm_anchor_time=0
@@ -1279,7 +1286,7 @@ class alarm_system(threading.Thread):
               
             #Course alarm
             if alarm_cog_active is True:
-              if gpsfix==1 and gpsspd>=(alarm_cog_speed*1.9438444924574):
+              if gpsfix==1 and int(gpsspdformat)>=alarm_cog_speed:
                 alarm_cog_value=int(gpscog)
                 if alarm_cog_value < alarm_cog_min: alarm_cog_value += 360
                 if alarm_cog_min!=alarm_cog_max and (alarm_cog_value<alarm_cog_min or alarm_cog_value>alarm_cog_max):
@@ -1287,18 +1294,10 @@ class alarm_system(threading.Thread):
                 elif alarm_cog_raised is True: alarm_cog_raised=False
             elif alarm_cog_raised is True: alarm_cog_raised=False
             
-            #Distance alarm
-            if alarm_dist_active is True:
-              if gpsfix==1:
-                if int(disttotal*0.000539956803)>=alarm_dist_value:
-                  alarm_dist_raised=True
-                elif alarm_dist_raised is True: alarm_dist_raised=False
-            elif alarm_dist_raised is True: alarm_dist_raised=False
-            
             #Low speed alarm
             if alarm_spd_low_active is True:
               if gpsfix==1:
-                if int(gpsspd*1.9438444924574)>=alarm_spd_low_req and int(gpsspd*1.9438444924574)<=alarm_spd_low_value:
+                if int(gpsspdformat)>=alarm_spd_low_req and int(gpsspdformat)<=alarm_spd_low_value:
                   alarm_spd_low_raised=True
                 elif alarm_spd_low_raised is True: alarm_spd_low_raised=False
             elif alarm_spd_low_raised is True: alarm_spd_low_raised=False
@@ -1306,27 +1305,18 @@ class alarm_system(threading.Thread):
             #High speed alarm
             if alarm_spd_high_active is True:
               if gpsfix==1:
-                if int(gpsspd*1.9438444924574)>=alarm_spd_high_value:
+                if int(gpsspdformat)>=alarm_spd_high_value:
                   alarm_spd_high_raised=True
                 elif alarm_spd_high_raised is True: alarm_spd_high_raised=False
             elif alarm_spd_high_raised is True: alarm_spd_high_raised=False
             
-            #Time alarm
-            if alarm_time_active is True:
-              if gpsfix==1 and alarm_time_raised is False:
-                if alarm_time_value==str((datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%H:%M')):
-                  alarm_time_raised=True
-            elif alarm_time_raised is True: alarm_time_raised=False
-            
-            #Timezone alarm
-            if alarm_timezone_active is True:
-              if gpsfix==1 and alarm_timezone_raised is False:
-                if alarm_timezone_first is True:
-                  alarm_timezone_old=nauticaltimezone
-                  alarm_timezone_first=False
-                if alarm_timezone_old!=nauticaltimezone:
-                  alarm_timezone_raised=True
-            elif alarm_timezone_raised is True: alarm_timezone_raised=False
+            #Distance alarm
+            if alarm_dist_active is True:
+              if gpsfix==1:
+                if int(distformat)>=alarm_dist_value:
+                  alarm_dist_raised=True
+                elif alarm_dist_raised is True: alarm_dist_raised=False
+            elif alarm_dist_raised is True: alarm_dist_raised=False
             
             #Low baro alarm
             if alarm_baro_low_active is True:
@@ -1375,6 +1365,23 @@ class alarm_system(threading.Thread):
                   alarm_temp2_high_raised=True
                 elif alarm_temp2_high_raised is True: alarm_temp2_high_raised=False
             elif alarm_temp2_high_raised is True: alarm_temp2_high_raised=False
+            
+            #Timezone alarm
+            if alarm_timezone_active is True:
+              if gpsfix==1 and alarm_timezone_raised is False:
+                if alarm_timezone_first is True:
+                  alarm_timezone_old=nauticaltimezone
+                  alarm_timezone_first=False
+                if alarm_timezone_old!=nauticaltimezone:
+                  alarm_timezone_raised=True
+            elif alarm_timezone_raised is True: alarm_timezone_raised=False
+            
+            #Time alarm
+            if alarm_time_active is True:
+              if gpsfix==1 and alarm_time_raised is False:
+                if alarm_time_value==str((datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%H:%M')):
+                  alarm_time_raised=True
+            elif alarm_time_raised is True: alarm_time_raised=False
           
           #Inactive alarm system
           else:
