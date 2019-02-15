@@ -118,7 +118,8 @@ class alarm_animation(threading.Thread):
     alarm_disclaimer_message='[  W A R N I N G :   U S E   S Y S T E M   A T   O W N   R I S K  ]'
     alarm_message_anchor='[  A N C H O R   A L A R M  ]'
     alarm_message_cog='[  C O U R S E   A L A R M  ]'
-    alarm_message_spd_low='[  L O W   S P E E D   A L A R M  ]'
+    alarm_message_lat='[  L A T I T U D E   A L A R M  ]'
+    alarm_message_lon='[  L O N G I T U D E   A L A R M  ]'
     alarm_message_spd_high='[ H I G H   S P E E D   A L A R M  ]'
     alarm_message_dist='[  D I S T A N C E   T R A V E L L E D   A L A R M  ]'
     alarm_message_baro_low='[  L O W   B A R O M E T R I C   P R E S S U R E   A L A R M  ]'
@@ -129,6 +130,8 @@ class alarm_animation(threading.Thread):
     alarm_message_temp2_high='[  H I G H   O U T S I D E   T E M P E R A T U R E   A L A R M  ]'
     alarm_message_timezone='[  N E W   T I M E Z O N E   A L A R M  ]'
     alarm_message_time='[  T I M E   A L A R M  ]'
+    alarm_message_sunrise='[  S U N R I S E   A L A R M  ]'
+    alarm_message_sunset='[  S U N S E T   A L A R M  ]'
     
     while True:
       if killer.kill_now or error_raised:
@@ -139,8 +142,8 @@ class alarm_animation(threading.Thread):
           sys.stdout.write('%{c}'+alarm_disclaimer_message+'\n')
           sleep(0.8)
           sys.stdout.write('\n')
-        elif alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_spd_low_raised is True or alarm_spd_high_raised is True or alarm_dist_raised is True or alarm_baro_low_raised is True or alarm_baro_high_raised is True or alarm_temp1_low_raised is True or alarm_temp1_high_raised is True or alarm_temp2_low_raised is True or alarm_temp2_high_raised is True or alarm_timezone_raised is True or alarm_time_raised is True ):
-          if alarm_system_sound_enable is True: playsound(sound_dir+alarm_system_sound_file)
+        elif alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_lat_low_raised is True or alarm_lat_high_raised is True or alarm_lon_low_raised is True or alarm_lon_high_raised is True or alarm_spd_low_raised is True or alarm_spd_high_raised is True or alarm_dist_raised is True or alarm_baro_low_raised is True or alarm_baro_high_raised is True or alarm_temp1_low_raised is True or alarm_temp1_high_raised is True or alarm_temp2_low_raised is True or alarm_temp2_high_raised is True or alarm_timezone_raised is True or alarm_time_raised is True or alarm_sunrise_raised is True or alarm_sunset_raised is True):
+          #if alarm_system_sound_enable is True: playsound(sound_dir+alarm_system_sound_file)
           if alarm_animation_running is False: alarm_animation_running=True
           sys.stdout.write('%{c}'+default_alarm_message+'\n')
           sleep(0.8)
@@ -161,6 +164,24 @@ class alarm_animation(threading.Thread):
             sys.stdout.write('\n')
             sleep(0.8)
             sys.stdout.write('%{c}'+alarm_message_cog+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_lat_low_raised is True or alarm_lat_high_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_lat+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_lat+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_lon_low_raised is True or alarm_lon_high_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_lon+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_lon+'\n')
             sleep(0.8)
             sys.stdout.write('\n')
           if alarm_spd_low_raised is True:
@@ -260,6 +281,24 @@ class alarm_animation(threading.Thread):
             sys.stdout.write('\n')
             sleep(0.8)
             sys.stdout.write('%{c}'+alarm_message_time+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_sunrise_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_sunrise+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_sunrise+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_sunset_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_sunset+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_sunset+'\n')
             sleep(0.8)
             sys.stdout.write('\n')
         else:
@@ -451,6 +490,14 @@ class read_config(threading.Thread):
       global alarm_cog_speed
       global alarm_cog_min
       global alarm_cog_max
+      global alarm_lat_low_active
+      global alarm_lat_low_value
+      global alarm_lat_high_active
+      global alarm_lat_high_value
+      global alarm_lon_low_active
+      global alarm_lon_low_value
+      global alarm_lon_high_active
+      global alarm_lon_high_value
       global alarm_spd_low_active
       global alarm_spd_low_req
       global alarm_spd_low_value
@@ -473,6 +520,10 @@ class read_config(threading.Thread):
       global alarm_timezone_active
       global alarm_time_active
       global alarm_time_value
+      global alarm_sunrise_active
+      global alarm_sunrise_value
+      global alarm_sunset_active
+      global alarm_sunset_value
       spdavg_reset=False
       spdmax_reset=False
       dist_reset=False
@@ -486,6 +537,9 @@ class read_config(threading.Thread):
             config = SafeConfigParser()
             config.optionxform = lambda option: option
             config.read(ocs_dir+'OnboardComputerSystem.conf')
+            
+            #Version
+            version=str(config.get('Config', 'Version'))
             
             #Callsign & MMSI
             callsign=str(config.get('Config', 'Callsign'))
@@ -552,7 +606,7 @@ class read_config(threading.Thread):
             spdmax_show=config.getboolean('Config', 'ShowMaxSpd')
             
             #Alarm system
-            alarm_system_disclaimer_activate=config.getboolean('Alarm', 'AlarmDisclaimerActivate')
+            alarm_system_disclaimer_activate=config.getboolean('Config', 'DisclaimerActivate')
             alarm_system_activate=config.getboolean('Alarm', 'AlarmSystemActivate')
             alarm_system_sound_enable=config.getboolean('Alarm', 'AlarmSystemSoundEnable')
             alarm_system_sound_file=str(config.get('Alarm', 'AlarmSystemSoundFile'))
@@ -566,6 +620,16 @@ class read_config(threading.Thread):
             alarm_cog_min=float(config.get('Alarm', 'AlarmCourseMin'))
             alarm_cog_max=float(config.get('Alarm', 'AlarmCourseMax'))
             if alarm_cog_max < alarm_cog_min: alarm_cog_max+=360
+            #Latitude
+            alarm_lat_low_active=config.getboolean('Alarm', 'AlarmLatitudeLowActivate')
+            alarm_lat_low_value=float(config.get('Alarm', 'AlarmLatitudeLowValue'))
+            alarm_lat_high_active=config.getboolean('Alarm', 'AlarmLatitudeHighActivate')
+            alarm_lat_high_value=float(config.get('Alarm', 'AlarmLatitudeHighValue'))
+            #Longitude
+            alarm_lon_low_active=config.getboolean('Alarm', 'AlarmLongitudeLowActivate')
+            alarm_lon_low_value=float(config.get('Alarm', 'AlarmLongitudeLowValue'))
+            alarm_lon_high_active=config.getboolean('Alarm', 'AlarmLongitudeHighActivate')
+            alarm_lon_high_value=float(config.get('Alarm', 'AlarmLongitudeHighValue'))
             #Speed
             alarm_spd_low_active=config.getboolean('Alarm', 'AlarmSpeedLowActivate')
             alarm_spd_low_req=int(config.get('Alarm', 'AlarmSpeedLowRequired'))
@@ -595,6 +659,12 @@ class read_config(threading.Thread):
             #Time
             alarm_time_active=config.getboolean('Alarm', 'AlarmTimeActivate')
             alarm_time_value=str(config.get('Alarm', 'AlarmTimeValue'))
+            #Sunrise
+            alarm_sunrise_active=config.getboolean('Alarm', 'AlarmSunriseActivate')
+            alarm_sunrise_value=str(config.get('Alarm', 'AlarmSunriseValue'))
+            #Sunset
+            alarm_sunset_active=config.getboolean('Alarm', 'AlarmSunsetActivate')
+            alarm_sunset_value=str(config.get('Alarm', 'AlarmSunsetValue'))
             
             #Reset average speed
             if config.getboolean('Config', 'SpdAvgReset') is True:
@@ -777,7 +847,9 @@ class read_data(threading.Thread):
       global temp2
       global dist
       global disttotal
+      global sunrise
       global sunriseformat
+      global sunset
       global sunsetformat
       global nauticaltimezone
       global nauticaltimeoffset
@@ -1239,6 +1311,10 @@ class update_databases(threading.Thread):
 #Alarm system
 alarm_anchor_raised=False
 alarm_cog_raised=False
+alarm_lat_low_raised=False
+alarm_lat_high_raised=False
+alarm_lon_low_raised=False
+alarm_lon_high_raised=False
 alarm_spd_low_raised=False
 alarm_spd_high_raised=False
 alarm_dist_raised=False
@@ -1250,6 +1326,8 @@ alarm_temp2_low_raised=False
 alarm_temp2_high_raised=False
 alarm_timezone_raised=False
 alarm_time_raised=False
+alarm_sunrise_raised=False
+alarm_sunset_raised=False
 start_alarm_system=0
 class alarm_system(threading.Thread):
   def __init__(self):
@@ -1258,6 +1336,10 @@ class alarm_system(threading.Thread):
     try:
       global alarm_anchor_raised
       global alarm_cog_raised
+      global alarm_lat_low_raised
+      global alarm_lat_high_raised
+      global alarm_lon_low_raised
+      global alarm_lon_high_raised
       global alarm_spd_low_raised
       global alarm_spd_high_raised
       global alarm_dist_raised
@@ -1269,6 +1351,8 @@ class alarm_system(threading.Thread):
       global alarm_temp2_high_raised
       global alarm_timezone_raised
       global alarm_time_raised
+      global alarm_sunrise_raised
+      global alarm_sunset_raised
       global alarmformat
       global start_output_conky
       global start_output_data
@@ -1312,6 +1396,38 @@ class alarm_system(threading.Thread):
                   alarm_cog_raised=True
                 elif alarm_cog_raised is True: alarm_cog_raised=False
             elif alarm_cog_raised is True: alarm_cog_raised=False
+            
+            #Low latitude alarm
+            if alarm_lat_low_active is True:
+              if gpsfix==1:
+                if gpslat<=alarm_lat_low_value:
+                  alarm_lat_low_raised=True
+                elif alarm_lat_low_raised is True: alarm_lat_low_raised=False
+            elif alarm_lat_low_raised is True: alarm_lat_low_raised=False
+            
+            #High latitide alarm
+            if alarm_lat_high_active is True:
+              if gpsfix==1:
+                if gpslat>=alarm_lat_high_value:
+                  alarm_lat_high_raised=True
+                elif alarm_lat_high_raised is True: alarm_lat_high_raised=False
+            elif alarm_lat_high_raised is True: alarm_lat_high_raised=False
+            
+            #Low longitude alarm
+            if alarm_lon_low_active is True:
+              if gpsfix==1:
+                if gpslon<=alarm_lon_low_value:
+                  alarm_lon_low_raised=True
+                elif alarm_lon_low_raised is True: alarm_lon_low_raised=False
+            elif alarm_lon_low_raised is True: alarm_lon_low_raised=False
+            
+            #High longitude alarm
+            if alarm_lon_high_active is True:
+              if gpsfix==1:
+                if gpslon>=alarm_lon_high_value:
+                  alarm_lon_high_raised=True
+                elif alarm_lon_high_raised is True: alarm_lon_high_raised=False
+            elif alarm_lon_high_raised is True: alarm_lon_high_raised=False
             
             #Low speed alarm
             if alarm_spd_low_active is True:
@@ -1401,6 +1517,32 @@ class alarm_system(threading.Thread):
                 if alarm_time_value==str((datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%H:%M')):
                   alarm_time_raised=True
             elif alarm_time_raised is True: alarm_time_raised=False
+            
+            #Sunrise alarm
+            if alarm_sunrise_active is True:
+              if gpsfix==1 and astronomyfirst==0 and alarm_sunrise_raised is False:
+                alarm_sunrise_value_posneg=str(alarm_sunrise_value[0:1])
+                alarm_sunrise_value_hours=int(alarm_sunrise_value[1:3])
+                alarm_sunrise_value_minutes=int(alarm_sunrise_value[-2:])
+                if alarm_sunrise_value_posneg == '-':
+                  alarm_sunrise_value_hours=int('-'+str(alarm_sunrise_value_hours))
+                  alarm_sunrise_value_minutes=int('-'+str(alarm_sunrise_value_minutes))
+                if (sunrise.datetime()+timedelta(hours=alarm_sunrise_value_hours,minutes=alarm_sunrise_value_minutes)).strftime('%H:%M')==str(datetime.utcnow().strftime('%H:%M')):
+                  alarm_sunrise_raised=True
+            elif alarm_sunrise_raised is True: alarm_sunrise_raised=False
+            
+            #Sunset alarm
+            if alarm_sunset_active is True:
+              if gpsfix==1 and astronomyfirst==0 and alarm_sunset_raised is False:
+                alarm_sunset_value_posneg=str(alarm_sunset_value[0:1])
+                alarm_sunset_value_hours=int(alarm_sunset_value[1:3])
+                alarm_sunset_value_minutes=int(alarm_sunset_value[-2:])
+                if alarm_sunset_value_posneg == '-':
+                  alarm_sunset_value_hours=int('-'+str(alarm_sunset_value_hours))
+                  alarm_sunset_value_minutes=int('-'+str(alarm_sunset_value_minutes))
+                if (sunset.datetime()+timedelta(hours=alarm_sunset_value_hours,minutes=alarm_sunset_value_minutes)).strftime('%H:%M')==str(datetime.utcnow().strftime('%H:%M')):
+                  alarm_sunset_raised=True
+            elif alarm_sunset_raised is True: alarm_sunset_raised=False
           
           #Inactive alarm system
           else:
@@ -1438,16 +1580,17 @@ class output_conky(threading.Thread):
           if (conkytime >= set_conkytime):
             
             #Conky lines
-            conkyline_alarm=alarmformat
+            conkyline_uptime='UPTIME: '+uptimeformatfull
+
             conkyline_astronomy='SUNRISE: '+sunriseformat+'  //  SUNSET: '+sunsetformat
             conkyline_weather='BARO: '+baroformatfull+'  //  INSIDE: '+temp1formatfull+'  //  OUTSIDE: '+temp2formatfull
             conkyline_timezone='TIME OFFSET: '+utcoffsetformat+'  //  NAUTICAL TIMEZONE: '+nauticaltimezoneformat
             conkyline_coordinates='LAT: '+gpslatformatfull+'  //  LON: '+gpslonformatfull
             conkyline_spd='AVG SPD: '+spdavgformatfull
             if spdmax_show is True: conkyline_spd+='  //  MAX SPD: '+spdmaxformatfull
+            conkyline_alarm=alarmformat
             conkyline_callsign='CALLSIGN: '+callsign+'  //  MMSI: '+mmsi
-            conkyline_uptime='UPTIME: '+uptimeformatfull
-            conkyline_options=['',conkyline_alarm,conkyline_astronomy,conkyline_weather,conkyline_timezone,conkyline_coordinates,conkyline_spd,conkyline_callsign,conkyline_uptime]
+            conkyline_options=['',conkyline_uptime,conkyline_astronomy,conkyline_weather,conkyline_timezone,conkyline_coordinates,conkyline_spd,conkyline_alarm,conkyline_callsign]
             
             #Write text to file
             conkyline1=conkyline_options[conklyline1_selected]
