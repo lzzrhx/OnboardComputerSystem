@@ -119,14 +119,20 @@ class alarm_animation(threading.Thread):
     alarm_message_timezone='[  N E W   T I M E Z O N E   A L A R M  ]'
     alarm_message_time='[  T I M E   A L A R M  ]'
     alarm_message_dist='[  D I S T A N C E   T R A V E L L E D   A L A R M  ]'
-    alarm_message_spdlow='[  L O W   S P E E D   A L A R M  ]'
-    alarm_message_spdhigh='[ H I G H   S P E E D   A L A R M  ]'
+    alarm_message_spd_low='[  L O W   S P E E D   A L A R M  ]'
+    alarm_message_spd_high='[ H I G H   S P E E D   A L A R M  ]'
+    alarm_message_baro_low='[  L O W   B A R O M E T R I C   P R E S S U R E   A L A R M  ]'
+    alarm_message_baro_high='[  H I G H   B A R O M E T R I C   P R E S S U R E   A L A R M  ]'
+    alarm_message_temp1_low='[  L O W   I N S I D E   T E M P E R A T U R E   A L A R M  ]'
+    alarm_message_temp1_high='[  H I G H   I N S I D E   T E M P E R A T U R E   A L A R M  ]'
+    alarm_message_temp2_low='[  L O W   O U T S I D E   T E M P E R A T U R E   A L A R M  ]'
+    alarm_message_temp2_high='[  H I G H   O U T S I D E   T E M P E R A T U R E   A L A R M  ]'
     
     while True:
       if killer.kill_now or error_raised:
         break
       if start_alarm_animation==1:
-        if alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_timezone_raised is True or alarm_time_raised is True or alarm_dist_raised is True or alarm_spdlow_raised is True or alarm_spdhigh_raised is True):
+        if alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_timezone_raised is True or alarm_time_raised is True or alarm_dist_raised is True or alarm_spd_low_raised is True or alarm_spd_high_raised is True):
           if alarm_animation_running is False: alarm_animation_running=True
           sys.stdout.write('%{c}'+default_alarm_message+'\n')
           sleep(0.8)
@@ -176,22 +182,76 @@ class alarm_animation(threading.Thread):
             sys.stdout.write('%{c}'+alarm_message_dist+'\n')
             sleep(0.8)
             sys.stdout.write('\n')
-          if alarm_spdlow_raised is True:
+          if alarm_spd_low_raised is True:
             sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_spdlow+'\n')
-            sleep(0.8)
-            sys.stdout.write('\n')
-            sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_spdlow+'\n')
-            sleep(0.8)
-            sys.stdout.write('\n')
-          if alarm_spdhigh_raised is True:
-            sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_spdhigh+'\n')
+            sys.stdout.write('%{c}'+alarm_message_spd_low+'\n')
             sleep(0.8)
             sys.stdout.write('\n')
             sleep(0.8)
-            sys.stdout.write('%{c}'+alarm_message_spdhigh+'\n')
+            sys.stdout.write('%{c}'+alarm_message_spd_low+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_spd_high_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_spd_high+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_spd_high+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_baro_low_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_baro_low+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_baro_low+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_baro_high_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_baro_high+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_baro_high+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_temp1_low_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_temp1_low+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_temp1_low+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_temp1_high_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_temp1_high+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_temp1_high+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_temp2_low_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_temp2_low+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_temp2_low+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+          if alarm_temp2_high_raised is True:
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_temp2_high+'\n')
+            sleep(0.8)
+            sys.stdout.write('\n')
+            sleep(0.8)
+            sys.stdout.write('%{c}'+alarm_message_temp2_high+'\n')
             sleep(0.8)
             sys.stdout.write('\n')
         else:
@@ -380,11 +440,23 @@ class read_config(threading.Thread):
       global alarm_time_value
       global alarm_dist_active
       global alarm_dist_value
-      global alarm_spdlow_active
-      global alarm_spdlow_req
-      global alarm_spdlow_value
-      global alarm_spdhigh_active
-      global alarm_spdhigh_value
+      global alarm_spd_low_active
+      global alarm_spd_low_req
+      global alarm_spd_low_value
+      global alarm_spd_high_active
+      global alarm_spd_high_value
+      global alarm_baro_low_active
+      global alarm_baro_low_value
+      global alarm_baro_high_active
+      global alarm_baro_high_value
+      global alarm_temp1_low_active
+      global alarm_temp1_low_value
+      global alarm_temp1_high_active
+      global alarm_temp1_high_value
+      global alarm_temp2_low_active
+      global alarm_temp2_low_value
+      global alarm_temp2_high_active
+      global alarm_temp2_high_value
       spdavg_reset=False
       spdmax_reset=False
       dist_reset=False
@@ -457,25 +529,46 @@ class read_config(threading.Thread):
             spdmax_show=config.getboolean('Config', 'ShowMaxSpd')
             
             #Alarm system
-            alarm_system_activate=config.getboolean('Config', 'AlarmSystemActivate')
-            alarm_anchor_active=config.getboolean('Config', 'AlarmAnchorActivate')
-            set_alarm_anchor_updatetime=int(config.get('Config', 'AlarmAnchorInterval'))
-            set_alarm_anchor_distance=float(config.get('Config', 'AlarmAnchorDistance'))
-            alarm_cog_active=config.getboolean('Config', 'AlarmCourseActivate')
-            alarm_cog_speed=float(config.get('Config', 'AlarmCourseSpeed'))
-            alarm_cog_min=float(config.get('Config', 'AlarmCourseMin'))
-            alarm_cog_max=float(config.get('Config', 'AlarmCourseMax'))
+            alarm_system_activate=config.getboolean('Alarm', 'AlarmSystemActivate')
+            #Anchor
+            alarm_anchor_active=config.getboolean('Alarm', 'AlarmAnchorActivate')
+            set_alarm_anchor_updatetime=int(config.get('Alarm', 'AlarmAnchorInterval'))
+            set_alarm_anchor_distance=float(config.get('Alarm', 'AlarmAnchorDistance'))
+            #Course
+            alarm_cog_active=config.getboolean('Alarm', 'AlarmCourseActivate')
+            alarm_cog_speed=float(config.get('Alarm', 'AlarmCourseSpeed'))
+            alarm_cog_min=float(config.get('Alarm', 'AlarmCourseMin'))
+            alarm_cog_max=float(config.get('Alarm', 'AlarmCourseMax'))
             if alarm_cog_max < alarm_cog_min: alarm_cog_max+=360
-            alarm_timezone_active=config.getboolean('Config', 'AlarmTimezoneActivate')
-            alarm_time_active=config.getboolean('Config', 'AlarmTimeActivate')
-            alarm_time_value=str(config.get('Config', 'AlarmTimeValue'))
-            alarm_dist_active=config.getboolean('Config', 'AlarmDistanceActivate')
-            alarm_dist_value=int(config.get('Config', 'AlarmDistanceValue'))
-            alarm_spdlow_active=config.getboolean('Config', 'AlarmSpeedLowActivate')
-            alarm_spdlow_req=int(config.get('Config', 'AlarmSpeedLowRequired'))
-            alarm_spdlow_value=int(config.get('Config', 'AlarmSpeedLowValue'))
-            alarm_spdhigh_active=config.getboolean('Config', 'AlarmSpeedHighActivate')
-            alarm_spdhigh_value=int(config.get('Config', 'AlarmSpeedHighValue'))
+            #Timezone
+            alarm_timezone_active=config.getboolean('Alarm', 'AlarmTimezoneActivate')
+            #Time
+            alarm_time_active=config.getboolean('Alarm', 'AlarmTimeActivate')
+            alarm_time_value=str(config.get('Alarm', 'AlarmTimeValue'))
+            #Distance
+            alarm_dist_active=config.getboolean('Alarm', 'AlarmDistanceActivate')
+            alarm_dist_value=int(config.get('Alarm', 'AlarmDistanceValue'))
+            #Speed
+            alarm_spd_low_active=config.getboolean('Alarm', 'AlarmSpeedLowActivate')
+            alarm_spd_low_req=int(config.get('Alarm', 'AlarmSpeedLowRequired'))
+            alarm_spd_low_value=int(config.get('Alarm', 'AlarmSpeedLowValue'))
+            alarm_spd_high_active=config.getboolean('Alarm', 'AlarmSpeedHighActivate')
+            alarm_spd_high_value=int(config.get('Alarm', 'AlarmSpeedHighValue'))
+            #Barometric pressure
+            alarm_baro_low_active=config.getboolean('Alarm', 'AlarmBaroLowActivate')
+            alarm_baro_low_value=int(config.get('Alarm', 'AlarmBaroLowValue'))
+            alarm_baro_high_active=config.getboolean('Alarm', 'AlarmBaroHighActivate')
+            alarm_baro_high_value=int(config.get('Alarm', 'AlarmBaroHighValue'))
+            #Temp inside
+            alarm_temp1_low_active=config.getboolean('Alarm', 'AlarmTempInsideLowActivate')
+            alarm_temp1_low_value=int(config.get('Alarm', 'AlarmTempInsideLowValue'))
+            alarm_temp1_high_active=config.getboolean('Alarm', 'AlarmTempInsideHighActivate')
+            alarm_temp1_high_value=int(config.get('Alarm', 'AlarmTempInsideHighValue'))
+            #Temp outside
+            alarm_temp2_low_active=config.getboolean('Alarm', 'AlarmTempOutsideLowActivate')
+            alarm_temp2_low_value=int(config.get('Alarm', 'AlarmTempOutsideLowValue'))
+            alarm_temp2_high_active=config.getboolean('Alarm', 'AlarmTempOutsideHighActivate')
+            alarm_temp2_high_value=int(config.get('Alarm', 'AlarmTempOutsideHighValue'))
             
             #Reset average speed
             if config.getboolean('Config', 'SpdAvgReset') is True:
@@ -1123,8 +1216,14 @@ alarm_cog_raised=False
 alarm_timezone_raised=False
 alarm_time_raised=False
 alarm_dist_raised=False
-alarm_spdlow_raised=False
-alarm_spdhigh_raised=False
+alarm_spd_low_raised=False
+alarm_spd_high_raised=False
+alarm_baro_low_raised=False
+alarm_baro_high_raised=False
+alarm_temp1_low_raised=False
+alarm_temp1_high_raised=False
+alarm_temp2_low_raised=False
+alarm_temp2_high_raised=False
 start_alarm_system=0
 class alarm_system(threading.Thread):
   def __init__(self):
@@ -1136,8 +1235,14 @@ class alarm_system(threading.Thread):
       global alarm_timezone_raised
       global alarm_time_raised
       global alarm_dist_raised
-      global alarm_spdlow_raised
-      global alarm_spdhigh_raised
+      global alarm_spd_low_raised
+      global alarm_spd_high_raised
+      global alarm_baro_low_raised
+      global alarm_baro_high_raised
+      global alarm_temp1_low_raised
+      global alarm_temp1_high_raised
+      global alarm_temp2_low_raised
+      global alarm_temp2_high_raised
       global alarmformat
       global start_output_conky
       global start_output_data
@@ -1191,20 +1296,20 @@ class alarm_system(threading.Thread):
             elif alarm_dist_raised is True: alarm_dist_raised=False
             
             #Low speed alarm
-            if alarm_spdlow_active is True:
+            if alarm_spd_low_active is True:
               if gpsfix==1:
-                if int(gpsspd*1.9438444924574)>=alarm_spdlow_req and int(gpsspd*1.9438444924574)<=alarm_spdlow_value:
-                  alarm_spdlow_raised=True
-                elif alarm_spdlow_raised is True: alarm_spdlow_raised=False
-            elif alarm_spdlow_raised is True: alarm_spdlow_raised=False
+                if int(gpsspd*1.9438444924574)>=alarm_spd_low_req and int(gpsspd*1.9438444924574)<=alarm_spd_low_value:
+                  alarm_spd_low_raised=True
+                elif alarm_spd_low_raised is True: alarm_spd_low_raised=False
+            elif alarm_spd_low_raised is True: alarm_spd_low_raised=False
             
             #High speed alarm
-            if alarm_spdhigh_active is True:
+            if alarm_spd_high_active is True:
               if gpsfix==1:
-                if int(gpsspd*1.9438444924574)>=alarm_spdhigh_value:
-                  alarm_spdhigh_raised=True
-                elif alarm_spdhigh_raised is True: alarm_spdhigh_raised=False
-            elif alarm_spdhigh_raised is True: alarm_spdhigh_raised=False
+                if int(gpsspd*1.9438444924574)>=alarm_spd_high_value:
+                  alarm_spd_high_raised=True
+                elif alarm_spd_high_raised is True: alarm_spd_high_raised=False
+            elif alarm_spd_high_raised is True: alarm_spd_high_raised=False
             
             #Time alarm
             if alarm_time_active is True:
@@ -1222,6 +1327,54 @@ class alarm_system(threading.Thread):
                 if alarm_timezone_old!=nauticaltimezone:
                   alarm_timezone_raised=True
             elif alarm_timezone_raised is True: alarm_timezone_raised=False
+            
+            #Low baro alarm
+            if alarm_baro_low_active is True:
+              if gpsfix==1:
+                if baroformat<=alarm_baro_low_value:
+                  alarm_baro_low_raised=True
+                elif alarm_baro_low_raised is True: alarm_baro_low_raised=False
+            elif alarm_baro_low_raised is True: alarm_baro_low_raised=False
+            
+            #High baro alarm
+            if alarm_baro_high_active is True:
+              if gpsfix==1:
+                if baroformat>=alarm_baro_high_value:
+                  alarm_baro_high_raised=True
+                elif alarm_baro_high_raised is True: alarm_baro_high_raised=False
+            elif alarm_baro_high_raised is True: alarm_baro_high_raised=False
+            
+            #Low temp inside alarm
+            if alarm_temp1_low_active is True:
+              if gpsfix==1:
+                if int(temp1format)<=alarm_temp1_low_value:
+                  alarm_temp1_low_raised=True
+                elif alarm_temp1_low_raised is True: alarm_temp1_low_raised=False
+            elif alarm_temp1_low_raised is True: alarm_temp1_low_raised=False
+            
+            #High temp inside alarm
+            if alarm_temp1_high_active is True:
+              if gpsfix==1:
+                if int(temp1format)>=alarm_temp1_high_value:
+                  alarm_temp1_high_raised=True
+                elif alarm_temp1_high_raised is True: alarm_temp1_high_raised=False
+            elif alarm_temp1_high_raised is True: alarm_temp1_high_raised=False
+            
+            #Low temp outside alarm
+            if alarm_temp2_low_active is True:
+              if gpsfix==1:
+                if int(temp2format)<=alarm_temp2_low_value:
+                  alarm_temp2_low_raised=True
+                elif alarm_temp2_low_raised is True: alarm_temp2_low_raised=False
+            elif alarm_temp2_low_raised is True: alarm_temp2_low_raised=False
+            
+            #High temp outside alarm
+            if alarm_temp2_high_active is True:
+              if gpsfix==1:
+                if int(temp2format)>=alarm_temp2_high_value:
+                  alarm_temp2_high_raised=True
+                elif alarm_temp2_high_raised is True: alarm_temp2_high_raised=False
+            elif alarm_temp2_high_raised is True: alarm_temp2_high_raised=False
           
           #Inactive alarm system
           else:
