@@ -131,11 +131,17 @@
 			</item>
 		</menu>
 		<separator/>
+		<item label=" ALARM SETTINGS ">
+			<action name="Execute">
+				<execute>urxvt -name ocs-config -e ~/.OnboardComputerSystem/ocs-alarm-curses.py</execute>
+			</action>
+  </item>
+		<separator/>
 		<item label=" SYSTEM SETTINGS ">
 			<action name="Execute">
 				<execute>urxvt -name ocs-config -e ~/.OnboardComputerSystem/ocs-config-curses.py</execute>
 			</action>
-        </item>
+  </item>
 		<separator/>
 		<menu id="root-menu-81114" label=" POWER ">
 			<item label=" SHUTDOWN ">

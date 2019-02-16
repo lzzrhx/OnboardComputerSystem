@@ -10,6 +10,7 @@ import curses
 import sys
 import locale
 from configparser import SafeConfigParser
+import datetime
 
 locale.setlocale(locale.LC_ALL,"")
 
@@ -64,96 +65,265 @@ home_dir = path.expanduser('~') + '/'           #Home directory
 ocs_dir = home_dir + '.OnboardComputerSystem/'  #Onboard Computer System directory
 
 #config parser
+config_filename='OnboardComputerSystem.conf'
 config = SafeConfigParser()
-config.read(ocs_dir+'OnboardComputerSystem.conf')
+config.optionxform = lambda option: option
+config.read(ocs_dir+config_filename)
 
 #Create the list
-list_entries = {'list':[]}
+list_entries = []
 item_count=0
 entry_width=100
 
+
+def item_options(title,item_name):
+  global item_title
+  global item_content
+  global option_count
+  item_title=title.upper()
+  item_content=str(config.get('Config', item_name))        
+  option_count=0;list_entries.extend ([{'item_title': title, 'item_name': item_name, 'selected_option': 0, 'item_type': 'options', 'item_options':[]}]);
+
+def option(option_title,option_value):
+  global option_count
+  option_title=option_title.upper()
+  if item_content==option_value:
+    list_entries[item_count]['selected_option']=option_count;
+  list_entries[item_count]['item_options'].extend ([{'option_title': data_margin+item_title+':'+(option_title+data_margin).rjust(entry_width-len(item_title)-2),'option_value': option_value}])
+  option_count+=1
+
+
+
+#Disclaimer
+item_options('Disable disclaimer','DisclaimerActivate')
+option('No','True');
+option('Yes','False');
+item_count+=1
+
+
+
+#Callsign
+
+
+
+#MMSI
+
+
+
 #UTC offset
-item_name='UtcOffset'
-item_content=str(config.get('Config', item_name))
-item_title='TIME OFFSET';
-
-option_count=0;selected_option=0;list_entries['list'].extend ([{'title': item_title, 'selected':[0], 'data':[]}]);
-
-option_title='UTC-01:00';option_content='-01:00';
-if item_content==option_content: selected_option=option_count
-option_count+=1;list_entries['list'][item_count]['selected'][0]=selected_option;list_entries['list'][item_count]['data'].extend ([{'title': data_margin+item_title+':'+(option_title+data_margin).rjust(entry_width-len(item_title)-2),'value': option_content}]);
-
-option_title='UTC+00:00';option_content='+00:00';
-if item_content==option_content: selected_option=option_count
-option_count+=1;list_entries['list'][item_count]['selected'][0]=selected_option;list_entries['list'][item_count]['data'].extend ([{'title': data_margin+item_title+':'+(option_title+data_margin).rjust(entry_width-len(item_title)-2),'value': option_content}]);
-
-option_title='UTC+01:00';option_content='+01:00';
-if item_content==option_content: selected_option=option_count
-option_count+=1;list_entries['list'][item_count]['selected'][0]=selected_option;list_entries['list'][item_count]['data'].extend ([{'title': data_margin+item_title+':'+(option_title+data_margin).rjust(entry_width-len(item_title)-2),'value': option_content}]);
-
+item_options('Time offset','UtcOffset')
+option_loop_value = -12
+while option_loop_value <= 12:
+  option_loop_value_new=option_loop_value
+  option_loop_value_neg=str(option_loop_value)[0:1]
+  if option_loop_value_neg == '-': option_loop_value_new=str(option_loop_value)[1:]
+  option_loop_value_new='{0:02.0f}:{1:02.0f}'.format(*divmod(float(option_loop_value_new) * 60, 60))
+  if option_loop_value_neg == '-': option_loop_value_new='-'+str(option_loop_value_new)
+  else: option_loop_value_new='+'+str(option_loop_value_new)
+  option_loop_title='UTC'+option_loop_value_new
+  option(option_loop_title,option_loop_value_new);
+  option_loop_value+=0.5
 item_count+=1
 
 
 
 #Use nautical timezone
-item_name='UseNauticalTimezone'
-item_content=str(config.get('Config', item_name))
-item_title='USE NAUTICAL TIMEZONE (OVERRIDES TIME OFFSET)';
-
-option_count=0;selected_option=0;list_entries['list'].extend ([{'title': item_title, 'selected':[0], 'data':[]}]);
-
-option_title='NO';option_content='False';
-if item_content==option_content: selected_option=option_count
-option_count+=1;list_entries['list'][item_count]['selected'][0]=selected_option;list_entries['list'][item_count]['data'].extend ([{'title': data_margin+item_title+':'+(option_title+data_margin).rjust(entry_width-len(item_title)-2),'value': option_content}]);
-
-option_title='YES';option_content='True';
-if item_content==option_content: selected_option=option_count
-option_count+=1;list_entries['list'][item_count]['selected'][0]=selected_option;list_entries['list'][item_count]['data'].extend ([{'title': data_margin+item_title+':'+(option_title+data_margin).rjust(entry_width-len(item_title)-2),'value': option_content}]);
-
-item_count+=1
-
-#Starting distance
-item_name='DistanceStart'
-item_content=str(config.get('Config', item_name))
-item_title='STARTING DISTANCE IN NAUTICAL MILES (FOR LOG)';
-
-option_count=0;selected_option=0;list_entries['list'].extend ([{'title': item_title, 'selected':[0], 'data':[]}]);
-
-option_title=str(item_content);option_content=str(item_content);
-if item_content==option_content: selected_option=option_count
-option_count+=1;list_entries['list'][item_count]['selected'][0]=selected_option;list_entries['list'][item_count]['data'].extend ([{'title': data_margin+item_title+':'+(option_title+data_margin).rjust(entry_width-len(item_title)-2),'value': option_content}]);
-
+item_options('Use nautical timezone (overrides time offset)','UseNauticalTimezone')
+option('No','False');
+option('Yes','True');
 item_count+=1
 
 
-#Starting distance
-option_count=0;selected_option=0;list_entries['list'].extend ([{'title': item_title, 'selected':[0], 'data':[]}]);
 
-option_title='SAVE SETTINGS';option_content='SAVE';
-list_entries['list'][item_count]['data'].extend ([{'title': '  '+option_title+'  ','value': option_content}]);
-
+#DistanceStart
+item_options('Starting distance for log','DistanceStart')
+option_loop_value = 0
+while option_loop_value <= 100000:
+  option(str(option_loop_value)+' NM',str(option_loop_value));
+  option_loop_value+=100
 item_count+=1
 
-#item_title='TITLE2';item_content='TEXT2';list_entries['list'].extend ([{'title': data_margin+item_title+':'+(data_margin+item_content).rjust(entry_width-len(item_title)-2)}]);
-#item_title='TITLE3';item_content='TEXT3';list_entries['list'].extend ([{'title': data_margin+item_title+':'+(data_margin+item_content).rjust(entry_width-len(item_title)-2)}]);
-#item_title='TITLE4';item_content='TEXT4';list_entries['list'].extend ([{'title': data_margin+item_title+':'+(data_margin+item_content).rjust(entry_width-len(item_title)-2)}]);
-#entry_width=len(item_title)
-#Output data
-#num_data_entries=0
-#list_entries['list'].extend ([{'title': item_title, 'data':[]}]);
-#num_data_entries+=1;list_entries['list'][count]['data'].extend ([{'title': data_margin+'123'+':'+('456'+data_margin).rjust(entry_width-len('123')-2)}]);
-#list_entries['list'].extend ([{'title': data_margin+item_title+':'+(item_content+data_margin).rjust(entry_width-len(item_title)-2)}]);
-#num_data_entries+=1;list_entries['list'][count]['data'].extend ([{'title': data_margin+gpsspdlabel+':'+(gpsspdformatfull+data_margin).rjust(entry_width-len(gpsspdlabel)-2)}]);
-#num_data_entries+=1;list_entries['list'][count]['data'].extend ([{'title': data_margin+gpscoglabel+':'+(gpscogformatfull+data_margin).rjust(entry_width-len(gpscoglabel)-2)}]);
-#num_data_entries+=1;list_entries['list'][count]['data'].extend ([{'title': data_margin+distlabel+':'+(distformatfull+data_margin).rjust(entry_width-len(distlabel)-2)}]);
 
 
-pos2=None
-oldpos2=None
-lastentry2=1
+#TempInside
+
+
+
+#TempOutside
+
+
+
+#Barometric pressure usit: mmHg
+item_options('Barometric pressure unit','BaroUnitMmhg')
+option('Mbar','False');
+option('mmHg','True');
+item_count+=1
+
+
+
+#Temperature unit
+item_options('Temperature unit','TempUnitFahrenheit')
+option('Celsius','False');
+option('Fahrenheit','True');
+item_count+=1
+
+
+
+#Date format
+item_options('Date format','DateMonthDayYear')
+option('DD.MM.YYYY','False');
+option('MM.DD.YYYY','True');
+item_count+=1
+
+
+
+#Datalines
+def dataline(number):
+  global item_count
+  item_options('Data line '+number,'DataLine'+number)
+  option('(Empty)','0');
+  option('Uptime','1');
+  option('Sunrise / Sunset','2');
+  option('Barometric pressure / temperatures','3');
+  option('Time offset / timezone','4');
+  option('Latitude / longitude','5');
+  option('Average / max speed','6');
+  option('Alarm system status','7');
+  option('Callsign / MMSI','8');
+  item_count+=1
+dataline('1')
+dataline('2')
+dataline('3')
+dataline('4')
+dataline('5')
+dataline('6')
+dataline('7')
+dataline('8')
+
+
+
+#Required distance for new entry in location history
+item_options('Required distance for new entry in location history','LogEntryMinDistance')
+option_loop_value = 10
+while option_loop_value <= 10000:
+  option(str(option_loop_value)+' meters',str(option_loop_value));
+  option_loop_value+=10
+item_count+=1
+
+
+
+#SpdAvgReqMin
+item_options('Required speed before calculating average speed','SpdAvgReqMin')
+option_loop_value = float(0.25)
+while option_loop_value <= 5:
+  option_loop_value_new='{0:.02f}'.format(option_loop_value)
+  option(option_loop_value_new+' KN',option_loop_value_new);
+  option_loop_value+=0.25
+item_count+=1
+
+
+
+#Show max speed
+item_options('Show max speed','ShowMaxSpd')
+option('No','False');
+option('Yes','True');
+item_count+=1
+
+
+
+#Reset average speed
+item_options('Reset average speed','SpdAvgReset')
+option('No','False');
+option('Yes','True');
+item_count+=1
+
+
+
+#Reset max speed
+item_options('Reset max speed','SpdMaxReset')
+option('No','False');
+option('Yes','True');
+item_count+=1
+
+
+
+#Reset distance travelled
+item_options('Reset distance travelled','DistanceReset')
+option('No','False');
+option('Yes','True');
+item_count+=1
+
+
+show_distupdatedistance=False
+show_distupdateinterval=False
+show_tempupdateinterval=False
+show_baroupdateinterval=False
+show_baroconnected=False
+
+#Required distance travelled before updating distance travelled
+if show_distupdatedistance is True:
+  item_options('Required distance for updating distance travelled','DistUpdateDistance')
+  option_loop_value = 1
+  while option_loop_value <= 100:
+    option(str(option_loop_value)+' meters',str(option_loop_value));
+    option_loop_value+=1
+  item_count+=1
+
+
+
+#Interval for updating distance travelled
+if show_distupdateinterval is True:
+  item_options('Interval for updating distance travelled','DistUpdateInterval')
+  option_loop_value = 1
+  while option_loop_value <= 60:
+    option(str(option_loop_value)+' sec',str(option_loop_value));
+    option_loop_value+=1
+  item_count+=1
+
+
+
+#Interval for updating temperature data
+if show_tempupdateinterval is True:
+  item_options('Interval for updating temperature data','TempUpdateInterval')
+  option_loop_value = 1
+  while option_loop_value <= 60:
+    option(str(option_loop_value)+' min',str(option_loop_value));
+    option_loop_value+=1
+  item_count+=1
+
+
+
+#Interval for updating barometric pressure data
+if show_baroupdateinterval is True:
+  item_options('Interval for updating barometric pressure data','BaroUpdateInterval')
+  option_loop_value = 1
+  while option_loop_value <= 60:
+    option(str(option_loop_value)+' min',str(option_loop_value));
+    option_loop_value+=1
+  item_count+=1
+
+
+#Enable barometric pressure sensor
+if show_baroconnected is True:
+  item_options('Enable barometric pressure sensor','BaroConnected')
+  option('Yes','True');
+  option('No','False');
+  item_count+=1
+
+
+
+#Save settings
+#option_count=0;selected_option=0;list_entries.extend ([{'item_title': item_title, 'item_name': 0, 'selected_option': 0, 'item_type': 2, 'item_options':[]}]);
+#option_title='SAVE SETTINGS';option_content='SAVE';
+#list_entries[item_count]['item_options'].extend ([{'option_title': '  '+option_title+'  ','option_value': option_content}]);
+#item_count+=1
+
+
+
+
 
 #Display data
-entrycount = len(list_entries['list'])
+entrycount = len(list_entries)
 data_line=''.rjust(entry_width,'-')
 lastentry=entrycount-1
 needed_space=entrycount
@@ -165,7 +335,11 @@ entry_range_last=entrycount
 pos=0
 oldpos=None
 x = None
-while x!=ord('q') and x!=27:
+pos2=None
+oldpos2=None
+lastentry2=0
+
+while x!=ord('q') and x!=27 and x!=10:
   if pos != oldpos or pos2 != oldpos2:
     oldpos = pos
     dataspace=0
@@ -186,14 +360,14 @@ while x!=ord('q') and x!=27:
     entry_range=range(entry_range_first,entry_range_last)
     for index in entry_range:
       if pos2!=oldpos2:
-        list_entries['list'][pos]['selected'][0]=pos2
-      selected_option=list_entries['list'][index]['selected'][0]
-      entry_text=list_entries['list'][index]['data'][selected_option]['title']
+        list_entries[pos]['selected_option']=pos2
+      selected_option=list_entries[index]['selected_option']
+      entry_text=list_entries[index]['item_options'][selected_option]['option_title']
       if pos==index:
         screen.addstr(title_line3_pos+margin+entry_num+dataspace,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_selected)
-        pos2=list_entries['list'][index]['selected'][0]
+        pos2=list_entries[index]['selected_option']
         oldpos2=pos2
-        lastentry2=len(list_entries['list'][index]['data'])-1
+        lastentry2=len(list_entries[index]['item_options'])-1
       else:
         screen.addstr(title_line3_pos+margin+entry_num+dataspace,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu)
       entry_num+=1
@@ -222,6 +396,19 @@ while x!=ord('q') and x!=27:
       pos2 = lastentry2
 
 #Exit
+if x == 10:
+  count=0
+  for index in list_entries:
+    name=str(list_entries[count]['item_name'])
+    selected=list_entries[count]['selected_option']
+    value=str(list_entries[count]['item_options'][selected]['option_value'])
+    config.set('Config', name, value)
+    count+=1
+
+  with open(ocs_dir+config_filename, 'w') as configfile:
+    config.write(configfile)
+    configfile.close()
+
 curses.nocbreak(); screen.keypad(0); curses.echo()
 curses.endwin()
 system('clear')

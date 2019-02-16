@@ -464,14 +464,14 @@ class read_config(threading.Thread):
       global baro_online
       global baro_sensor
       global spdavg_min
-      global conklyline1_selected
-      global conklyline2_selected
-      global conklyline3_selected
-      global conklyline4_selected
-      global conklyline5_selected
-      global conklyline6_selected
-      global conklyline7_selected
-      global conklyline8_selected
+      global dataline1_selected
+      global dataline2_selected
+      global dataline3_selected
+      global dataline4_selected
+      global dataline5_selected
+      global dataline6_selected
+      global dataline7_selected
+      global dataline8_selected
       global barounit_mmhg
       global tempunit_fahrenheit
       global dateformat_mmddyyy
@@ -534,9 +534,10 @@ class read_config(threading.Thread):
           if (configtime >= set_configtime):
           
             #Read config file
+            config_filename='OnboardComputerSystem.conf'
             config = SafeConfigParser()
             config.optionxform = lambda option: option
-            config.read(ocs_dir+'OnboardComputerSystem.conf')
+            config.read(ocs_dir+config_filename)
             
             #Version
             version=str(config.get('Config', 'Version'))
@@ -585,17 +586,17 @@ class read_config(threading.Thread):
               if error_animation_running==0: error_animation('baro').start()
             
             #Minimum speed required for recording average speed
-            spdavg_min=int(config.get('Config', 'SpdAvgReqMin'))
+            spdavg_min=float(config.get('Config', 'SpdAvgReqMin'))
             
             #Set conky content
-            conklyline1_selected=int(config.get('Config', 'ConkyLine1'))
-            conklyline2_selected=int(config.get('Config', 'ConkyLine2'))
-            conklyline3_selected=int(config.get('Config', 'ConkyLine3'))
-            conklyline4_selected=int(config.get('Config', 'ConkyLine4'))
-            conklyline5_selected=int(config.get('Config', 'ConkyLine5'))
-            conklyline6_selected=int(config.get('Config', 'ConkyLine6'))
-            conklyline7_selected=int(config.get('Config', 'ConkyLine7'))
-            conklyline8_selected=int(config.get('Config', 'ConkyLine8'))
+            dataline1_selected=int(config.get('Config', 'DataLine1'))
+            dataline2_selected=int(config.get('Config', 'DataLine2'))
+            dataline3_selected=int(config.get('Config', 'DataLine3'))
+            dataline4_selected=int(config.get('Config', 'DataLine4'))
+            dataline5_selected=int(config.get('Config', 'DataLine5'))
+            dataline6_selected=int(config.get('Config', 'DataLine6'))
+            dataline7_selected=int(config.get('Config', 'DataLine7'))
+            dataline8_selected=int(config.get('Config', 'DataLine8'))
             
             #Set units
             dateformat_mmddyyy=config.getboolean('Config', 'DateMonthDayYear')
@@ -669,22 +670,25 @@ class read_config(threading.Thread):
             #Reset average speed
             if config.getboolean('Config', 'SpdAvgReset') is True:
               config.set('Config', 'SpdAvgReset', 'False')
-              with open(ocs_dir+'OnboardComputerSystem.conf', 'w') as configfile:
+              with open(ocs_dir+config_filename, 'w') as configfile:
                 config.write(configfile)
+                configfile.close()
               spdavg_reset=True
             
             #Reset max speed
             if config.getboolean('Config', 'SpdMaxReset') is True:
               config.set('Config', 'SpdMaxReset', 'False')
-              with open(ocs_dir+'OnboardComputerSystem.conf', 'w') as configfile:
+              with open(ocs_dir+config_filename, 'w') as configfile:
                 config.write(configfile)
+                configfile.close()
               spdmax_reset=True
             
             #Reset distance travelled
             if config.getboolean('Config', 'DistanceReset') is True:
               config.set('Config', 'DistanceReset', 'False')
-              with open(ocs_dir+'OnboardComputerSystem.conf', 'w') as configfile:
+              with open(ocs_dir+config_filename, 'w') as configfile:
                 config.write(configfile)
+                configfile.close()
               dist_reset=True
               
             configtime=0
@@ -928,7 +932,7 @@ class read_data(threading.Thread):
                   gpsspd2=gpsspd1
                   gpsspd1=gpsd.fix.speed
                   gpsspd=float((gpsspd1+gpsspd2+gpsspd3)/3)
-                  if int(gpsspd*1.9438444924574)>=spdavg_min:
+                  if float(gpsspd*1.9438444924574)>=spdavg_min:
                     spdavg=((spdavg*spdavgcount)+gpsspd)/(spdavgcount+1)
                     spdavgcount+=1
                   if (uptime >= set_gpswaittime and gpsspd > spdmax):
@@ -1580,45 +1584,44 @@ class output_conky(threading.Thread):
           if (conkytime >= set_conkytime):
             
             #Conky lines
-            conkyline_uptime='UPTIME: '+uptimeformatfull
-
-            conkyline_astronomy='SUNRISE: '+sunriseformat+'  //  SUNSET: '+sunsetformat
-            conkyline_weather='BARO: '+baroformatfull+'  //  INSIDE: '+temp1formatfull+'  //  OUTSIDE: '+temp2formatfull
-            conkyline_timezone='TIME OFFSET: '+utcoffsetformat+'  //  NAUTICAL TIMEZONE: '+nauticaltimezoneformat
-            conkyline_coordinates='LAT: '+gpslatformatfull+'  //  LON: '+gpslonformatfull
-            conkyline_spd='AVG SPD: '+spdavgformatfull
-            if spdmax_show is True: conkyline_spd+='  //  MAX SPD: '+spdmaxformatfull
-            conkyline_alarm=alarmformat
-            conkyline_callsign='CALLSIGN: '+callsign+'  //  MMSI: '+mmsi
-            conkyline_options=['',conkyline_uptime,conkyline_astronomy,conkyline_weather,conkyline_timezone,conkyline_coordinates,conkyline_spd,conkyline_alarm,conkyline_callsign]
+            dataline_uptime='UPTIME: '+uptimeformatfull
+            dataline_astronomy='SUNRISE: '+sunriseformat+'  //  SUNSET: '+sunsetformat
+            dataline_weather='BARO: '+baroformatfull+'  //  INSIDE: '+temp1formatfull+'  //  OUTSIDE: '+temp2formatfull
+            dataline_timezone='TIME OFFSET: '+utcoffsetformat+'  //  NAUTICAL TIMEZONE: '+nauticaltimezoneformat
+            dataline_coordinates='LAT: '+gpslatformatfull+'  //  LON: '+gpslonformatfull
+            dataline_spd='AVG SPD: '+spdavgformatfull
+            if spdmax_show is True: dataline_spd+='  //  MAX SPD: '+spdmaxformatfull
+            dataline_alarm=alarmformat
+            dataline_callsign='CALLSIGN: '+callsign+'  //  MMSI: '+mmsi
+            dataline_options=['',dataline_uptime,dataline_astronomy,dataline_weather,dataline_timezone,dataline_coordinates,dataline_spd,dataline_alarm,dataline_callsign]
             
             #Write text to file
-            conkyline1=conkyline_options[conklyline1_selected]
-            conkyline2=conkyline_options[conklyline2_selected]
-            conkyline3=conkyline_options[conklyline3_selected]
-            conkyline4=conkyline_options[conklyline4_selected]
-            conkyline5=conkyline_options[conklyline5_selected]
-            conkyline6=conkyline_options[conklyline6_selected]
-            conkyline7=conkyline_options[conklyline7_selected]
-            conkyline8=conkyline_options[conklyline8_selected]
-            conkytext=conkyline1
-            conkytext+='\n'
-            conkytext+=conkyline2
-            conkytext+='\n'
-            conkytext+=conkyline3
-            conkytext+='\n'
-            conkytext+=conkyline4
-            conkytext+='\n'
-            conkytext+=conkyline5
-            conkytext+='\n'
-            conkytext+=conkyline6
-            conkytext+='\n'
-            conkytext+=conkyline7
-            conkytext+='\n'
-            conkytext+=conkyline8
-            conkyfile = open(home_dir+'.conkytext', 'w')
-            conkyfile.writelines(conkytext)
-            conkyfile.close()
+            dataline1=dataline_options[dataline1_selected]
+            dataline2=dataline_options[dataline2_selected]
+            dataline3=dataline_options[dataline3_selected]
+            dataline4=dataline_options[dataline4_selected]
+            dataline5=dataline_options[dataline5_selected]
+            dataline6=dataline_options[dataline6_selected]
+            dataline7=dataline_options[dataline7_selected]
+            dataline8=dataline_options[dataline8_selected]
+            datatext=dataline1
+            datatext+='\n'
+            datatext+=dataline2
+            datatext+='\n'
+            datatext+=dataline3
+            datatext+='\n'
+            datatext+=dataline4
+            datatext+='\n'
+            datatext+=dataline5
+            datatext+='\n'
+            datatext+=dataline6
+            datatext+='\n'
+            datatext+=dataline7
+            datatext+='\n'
+            datatext+=dataline8
+            datafile = open(home_dir+'.datatext', 'w')
+            datafile.writelines(datatext)
+            datafile.close()
             
             conkytime=0
           conkytime+=1

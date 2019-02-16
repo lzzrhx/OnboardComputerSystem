@@ -6,6 +6,7 @@ menu="${menu}%{A:~/Apps/zyGrib/zyGrib &:}[ GRIB ]%{A}   "
 menu="${menu}%{A:urxvt -cd ~ -name ocs-location-history -e ~/.OnboardComputerSystem/ocs-location-curses.py &:}[ LOC ]%{A}   "
 menu="${menu}%{A:urxvt -cd ~ -name ocs-weather-history -e ~/.OnboardComputerSystem/ocs-weather-curses.py &:}[ WTHR ]%{A}   "
 menu="${menu}%{A:pcmanfm ~/ &:}[ HDD ]%{A}   "
+menu="${menu}%{A:urxvt -cd ~ -name ocs-config -e ~/.OnboardComputerSystem/ocs-alarm-curses.py &:}[ ALRM ]%{A}   "
 menu="${menu}%{A:urxvt -cd ~ -name ocs-config -e ~/.OnboardComputerSystem/ocs-config-curses.py &:}[ CONF ]%{A}   "
 menu="${menu}%{A:sudo poweroff:}%{A3:sudo reboot:}%{F#976B67}[ OFF ]%{F-}%{A}%{A}"
 
