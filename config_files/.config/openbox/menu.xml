@@ -136,7 +136,6 @@
 				<execute>urxvt -name ocs-config -e ~/.OnboardComputerSystem/ocs-alarm-curses.py</execute>
 			</action>
   </item>
-		<separator/>
 		<item label=" SYSTEM SETTINGS ">
 			<action name="Execute">
 				<execute>urxvt -name ocs-config -e ~/.OnboardComputerSystem/ocs-config-curses.py</execute>

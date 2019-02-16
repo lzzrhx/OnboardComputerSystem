@@ -167,7 +167,7 @@ item_input_alphanumeric('Temperature sensor ID (outside)','TempOutside','15')
 item_count+=1
 
 #Barometric pressure usit: mmHg
-item_options('Barometric pressure unit','BaroUnitMmhg')
+item_options('Pressure unit','BaroUnitMmhg')
 option('Mbar','False');
 option('mmHg','True');
 item_count+=1

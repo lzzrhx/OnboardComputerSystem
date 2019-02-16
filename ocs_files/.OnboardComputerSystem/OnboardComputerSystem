@@ -10,5 +10,5 @@ menu="${menu}%{A:urxvt -cd ~ -name ocs-config -e ~/.OnboardComputerSystem/ocs-al
 menu="${menu}%{A:urxvt -cd ~ -name ocs-config -e ~/.OnboardComputerSystem/ocs-config-curses.py &:}[ CONF ]%{A}   "
 menu="${menu}%{A:sudo poweroff:}%{A3:sudo reboot:}%{F#976B67}[ OFF ]%{F-}%{A}%{A}"
 
-echo $menu | lemonbar -g "x30xx" -p -B "#000000" -F "#A9A28F" -f "ProggyCleanTT:size=20" -a 20 | sh &
-python3 -u ~/.OnboardComputerSystem/OnboardComputerSystem.py | lemonbar -b -g "x30xx" -p -B "#000000" -F "#A9A28F" -f "ProggyCleanTT:size=20"
+echo $menu | lemonbar -g "x30xx" -p -B "#101010" -F "#A9A28F" -f "ProggyCleanTT:size=20" -a 20 | sh &
+python3 -u ~/.OnboardComputerSystem/OnboardComputerSystem.py | lemonbar -b -g "x30xx" -p -B "#101010" -F "#A9A28F" -f "ProggyCleanTT:size=20"
