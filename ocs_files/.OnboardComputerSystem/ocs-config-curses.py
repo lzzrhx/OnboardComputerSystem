@@ -16,11 +16,9 @@ locale.setlocale(locale.LC_ALL,"")
 
 #Set values
 main_title='SYSTEM SETTINGS'
-margin=2
 data_margin=5
 scroll_offset=2
-scroll_continuous=0
-scroll_continuous2=0
+
 title_width=100
 
 #Set terminal title
@@ -36,29 +34,17 @@ screen.keypad(1)
 curses.curs_set(0)
 screen.border(0)
 curses_size=screen.getmaxyx();
-title_line1_pos=margin
-title_line2_pos=title_line1_pos+1
-title_line3_pos=title_line2_pos+1
-data_top = title_line3_pos+margin
-data_bottom = curses_size[0]-margin
-data_space=data_bottom-data_top
+
+
+
 data_margin=''.rjust(data_margin)
 
-#Set colors
-curses.init_pair(1,curses.COLOR_WHITE, curses.COLOR_BLACK)
-curses.init_pair(2,curses.COLOR_BLACK, curses.COLOR_WHITE)
-screen.bkgd(curses.color_pair(1))
-style_title = curses.color_pair(1)
-style_menu = curses.color_pair(1)
-style_menu_selected = curses.color_pair(2)
-style_data = curses.color_pair(1)
+
 
 #Show title
 title_text='* '+main_title+' *'
 title_line=''.rjust(title_width,'-')
-screen.addstr(title_line1_pos,int((curses_size[1]-len(title_line))/2), title_line, style_title)
-screen.addstr(title_line2_pos,int((curses_size[1]-len(title_text))/2), title_text, style_title)
-screen.addstr(title_line3_pos,int((curses_size[1]-len(title_line))/2), title_line, style_title)
+
 
 #Set directories
 home_dir = path.expanduser('~') + '/'           #Home directory
@@ -323,91 +309,183 @@ if show_baroconnected is True:
 
 
 #Display data
-entrycount = len(list_entries)
+
 data_line=''.rjust(entry_width,'-')
-lastentry=entrycount-1
+
+
+
+
+
+
+
+
+#Set numbers
+margin=2
+num_buttons=1
+scroll_continuous=0
+scroll_continuous2=0
+
+#Set text
+quit_text='Press "Y" to quit or "N" to cancel'.upper()
+button_save_text='Save'
+
+#Buttons
+button_spacing=3
+button_spacing=''.rjust(button_spacing,' ')
+button_save=button_spacing+button_save_text.upper()+button_spacing
+
+#Set colors
+curses.init_pair(1,curses.COLOR_WHITE, curses.COLOR_BLACK)
+curses.init_pair(2,curses.COLOR_BLACK, curses.COLOR_WHITE)
+curses.init_pair(3,curses.COLOR_BLACK, curses.COLOR_CYAN)
+screen.bkgd(curses.color_pair(1))
+style_title = curses.color_pair(1)
+style_menu = curses.color_pair(1)
+style_menu_selected = curses.color_pair(2)
+style_menu_edit = curses.color_pair(3)
+style_button = curses.color_pair(3)
+style_button_selected = curses.color_pair(2)
+
+title_line1_pos=margin
+title_line2_pos=title_line1_pos+1
+title_line3_pos=title_line2_pos+1
+
+#Calculate space
+data_top = title_line3_pos+margin
+data_bottom = curses_size[0]-margin-1
+data_space=data_bottom-data_top
+entrycount = len(list_entries)
+lastentry=entrycount-1+num_buttons
+lastentry2=None
 needed_space=entrycount
 if needed_space>data_space:
   entry_range_first=needed_space-data_space
 else:
   entry_range_first=0
 entry_range_last=entrycount
-pos=0
-oldpos=None
-x = None
-pos2=None
-oldpos2=None
-lastentry2=0
 
-while x!=ord('q') and x!=27 and x!=10:
-  if pos != oldpos or pos2 != oldpos2:
-    oldpos = pos
-    dataspace=0
-    entry_num=0
+#Start output
+entry_pos=0
+curses_button = None
+curses_action=None
+curses_mode=None
+while curses_action!='exit' and curses_action!='save':
+  screen.clear()
+  
+  #Title
+  screen.addstr(title_line1_pos,int((curses_size[1]-len(title_line))/2), title_line, style_title)
+  screen.addstr(title_line2_pos,int((curses_size[1]-len(title_text))/2), title_text, style_title)
+  screen.addstr(title_line3_pos,int((curses_size[1]-len(title_line))/2), title_line, style_title)
+  
+  #Quit dialog
+  if curses_action=='quit':
+    screen.addstr(title_line3_pos+margin,int((curses_size[1]-len(quit_text))/2), quit_text, style_title)
+    curses_button = screen.getch()
+    if curses_button==ord('y'):
+      curses_action='exit'
+    elif curses_button==ord('n'):
+      curses_action=None
+  
+  else:
+
+    #Navigate up/down
+    if curses_mode==None:
+      #Go up
+      if curses_action=='up':
+        if entry_pos > 0:
+          entry_pos += -1
+        elif scroll_continuous==1:
+          entry_pos = lastentry
+      #Go down
+      if curses_action=='down':
+        if entry_pos < lastentry:
+          entry_pos += 1
+        elif scroll_continuous==1:
+          entry_pos = 0
+        
+    #Calculate number of entries to show
     if needed_space>data_space:
-      if pos-scroll_offset<entry_range_first:
+      if entry_pos-scroll_offset<entry_range_first:
         new_scroll_offset=scroll_offset
-        if pos<scroll_offset:
-          new_scroll_offset=pos
-        entry_range_first=pos-new_scroll_offset
-        entry_range_last=pos-new_scroll_offset+data_space
-      elif pos+1+scroll_offset>entry_range_last:
+        if entry_pos<scroll_offset:
+          new_scroll_offset=entry_pos
+        entry_range_first=entry_pos-new_scroll_offset
+        entry_range_last=entry_pos-new_scroll_offset+data_space
+      elif entry_pos+1+scroll_offset>entry_range_last:
         new_scroll_offset=scroll_offset
-        if pos+1>entrycount-scroll_offset:
-          new_scroll_offset=entrycount-pos-1
-        entry_range_first=pos+1+new_scroll_offset-data_space
-        entry_range_last=pos+1+new_scroll_offset
+        if entry_pos+1>entrycount-scroll_offset:
+          new_scroll_offset=entrycount-entry_pos-1
+        entry_range_first=entry_pos+1+new_scroll_offset-data_space
+        entry_range_last=entry_pos+1+new_scroll_offset
     entry_range=range(entry_range_first,entry_range_last)
-    for index in entry_range:
-      if pos2!=oldpos2:
-        list_entries[pos]['selected_option']=pos2
-      selected_option=list_entries[index]['selected_option']
-      entry_text=list_entries[index]['item_options'][selected_option]['option_title']
-      if pos==index:
-        screen.addstr(title_line3_pos+margin+entry_num+dataspace,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_selected)
-        pos2=list_entries[index]['selected_option']
-        oldpos2=pos2
-        lastentry2=len(list_entries[index]['item_options'])-1
-      else:
-        screen.addstr(title_line3_pos+margin+entry_num+dataspace,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu)
+    
+    #Show entries
+    entry_num=0
+    for entry_num_current in entry_range:
+      
+      #Entry type "options"
+      style_menu_current=style_menu
+      if list_entries[entry_num_current]['item_type']=='options':
+        #currently selected entry
+        if entry_pos==entry_num_current:
+          entry_pos2=list_entries[entry_num_current]['selected_option']
+          lastentry2=len(list_entries[entry_num_current]['item_options'])-1
+          #Go to "change option" mode
+          if curses_action=='enter':
+            if curses_mode=='change_option': curses_mode=None
+            else: curses_mode='change_option'
+          if curses_mode=='change_option':
+            #Select previous
+            if curses_action=='left':
+              if entry_pos2 > 0:
+                entry_pos2 += -1
+              elif scroll_continuous2==1:
+                entry_pos2 = lastentry2
+            #Select next
+            if curses_action=='right':
+              if entry_pos2 < lastentry2:
+                entry_pos2 += 1
+              elif scroll_continuous2==1:
+                entry_pos2 = 0
+            #Change selected option
+            list_entries[entry_pos]['selected_option']=entry_pos2
+            style_menu_current=style_menu_edit
+          #If not in "change option" mode
+          else:
+            style_menu_current=style_menu_selected
+        #Show current type of entries
+        selected_option=list_entries[entry_num_current]['selected_option']
+        entry_text=list_entries[entry_num_current]['item_options'][selected_option]['option_title']
+        screen.addstr(title_line3_pos+margin+entry_num,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_current)
+      
       entry_num+=1
-    screen.refresh()
-  x = screen.getch()
-  if x == 258:
-    if pos < lastentry:
-      pos += 1
-    elif scroll_continuous==1:
-      pos = 0
-  elif x == 259:
-    if pos > 0:
-      pos += -1
-    elif scroll_continuous==1:
-      pos = lastentry
 
-  if x == 261: #right
-    if pos2 < lastentry2:
-      pos2 += 1
-    elif scroll_continuous2==1:
-      pos2 = 0
-  elif x == 260: #left
-    if pos2 > 0:
-      pos2 += -1
-    elif scroll_continuous2==1:
-      pos2 = lastentry2
+    #Buttons  
+    if entry_pos==lastentry:
+      screen.addstr(curses_size[0]-margin,int((curses_size[1]-len(button_save))/2), button_save, style_menu_selected)
+      if curses_action=='enter':
+        curses_action='save'
+    else:
+      screen.addstr(curses_size[0]-margin,int((curses_size[1]-len(button_save))/2), button_save, style_menu)
+    
+    #Keyboard input
+    if curses_action!='save':
+      curses_button = screen.getch()
+      if curses_button==ord('q') or curses_button==27:
+        curses_action='quit'
+      elif curses_button == 10:
+        curses_action='enter'
+      elif curses_button == 259:
+        curses_action='up'
+      elif curses_button == 258:
+        curses_action='down'
+      elif curses_button == 261:
+        curses_action='right'
+      elif curses_button == 260:
+        curses_action='left'
 
-#Exit
-if x == 10:
-  count=0
-  for index in list_entries:
-    name=str(list_entries[count]['item_name'])
-    selected=list_entries[count]['selected_option']
-    value=str(list_entries[count]['item_options'][selected]['option_value'])
-    config.set('Config', name, value)
-    count+=1
 
-  with open(ocs_dir+config_filename, 'w') as configfile:
-    config.write(configfile)
-    configfile.close()
+
 
 curses.nocbreak(); screen.keypad(0); curses.echo()
 curses.endwin()
