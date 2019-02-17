@@ -314,13 +314,67 @@
       </action>
     </keybind>
     <!-- Keybindings for running applications -->
-    <keybind key="W-e">
+    <keybind key="C-A-o">
       <action name="Execute">
         <startupnotify>
           <enabled>true</enabled>
-          <name>Konqueror</name>
+          <name>opencpn</name>
         </startupnotify>
-        <command>kfmclient openProfile filemanagement</command>
+        <command>opencpn</command>
+      </action>
+    </keybind>
+    <keybind key="C-A-g">
+      <action name="Execute">
+        <startupnotify>
+          <enabled>true</enabled>
+          <name>zygrib</name>
+        </startupnotify>
+        <command>~/Apps/zyGrib/zyGrib</command>
+      </action>
+    </keybind>
+    <keybind key="C-A-l">
+      <action name="Execute">
+        <startupnotify>
+          <enabled>true</enabled>
+          <name>locationhistory</name>
+        </startupnotify>
+        <command>urxvt -cd ~ -name ocs-location-history -e ~/.OnboardComputerSystem/ocs-location-curses.py</command>
+      </action>
+    </keybind>
+    <keybind key="C-A-w">
+      <action name="Execute">
+        <startupnotify>
+          <enabled>true</enabled>
+          <name>weatherhistory</name>
+        </startupnotify>
+        <command>urxvt -cd ~ -name ocs-weather-history -e ~/.OnboardComputerSystem/ocs-weather-curses.py</command>
+      </action>
+    </keybind>
+    <keybind key="C-A-h">
+      <action name="Execute">
+        <startupnotify>
+          <enabled>true</enabled>
+          <name>pcmanfm</name>
+        </startupnotify>
+        <command>pcmanfm</command>
+      </action>
+    </keybind>
+    <keybind key="C-A-a">
+      <action name="Execute">
+        <startupnotify>
+          <enabled>true</enabled>
+          <name>alarmsystem</name>
+        </startupnotify>
+        <command>urxvt -cd ~ -name ocs-config -e ~/.OnboardComputerSystem/ocs-alarm-curses.py</command>
+      </action>
+    </keybind>
+    <keybind key="C-A-c">
+      <action name="Execute">
+        <startupnotify>
+          <enabled>true</enabled>
+          <name>systemsettings</name>
+        </startupnotify>
+        <command>urxvt -cd ~ -name ocs-config -e ~/.OnboardComputerSystem/ocs-config-curses.py</command>
       </action>
     </keybind>
     <!-- screenshot when Print is pressed -->

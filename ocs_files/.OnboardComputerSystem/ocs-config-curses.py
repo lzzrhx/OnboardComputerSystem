@@ -1,6 +1,11 @@
 #! /usr/bin/python3
 # -*- coding: utf-8 -*-
 
+#Setup
+main_title='System settings'
+config_category='Config'
+config_category2='Alarm'
+
 #Import stuff
 from os import path, environ, system
 from configparser import SafeConfigParser
@@ -8,22 +13,7 @@ import sys
 import locale
 import curses
 
-#Setup
-locale.setlocale(locale.LC_ALL,"")
-environ.setdefault('ESCDELAY', '25')
-
-#Setup ncurses
-screen = curses.initscr()
-curses.noecho()
-curses.cbreak()
-curses.start_color()
-screen.keypad(1)
-curses.curs_set(0)
-curses_size=screen.getmaxyx();
-screen.border(0)
-
 #Set values
-callsign_length=20
 set_width=100
 margin=2
 data_margin_num=5
@@ -32,14 +22,28 @@ scroll_continuous1=1
 scroll_continuous2=1
 
 #Set text
-main_title='System settings'.upper()
+main_title=main_title.upper()
 quit_text='Press "Y" to quit or "N" to cancel'
 button_save_text='Save settings'
 
 #Set registered key inputs (in groups)
 list_numbers=['0','1','2','3','4','5','6','7','8','9']
-list_alphabet=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+list_alphabet=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','é','è']
 list_special_chars=['-','"']
+list_coordinates_chars_lat=['n','s']
+list_coordinates_chars_lon=['e','w']
+
+#Setup ncurses
+locale.setlocale(locale.LC_ALL,"")
+environ.setdefault('ESCDELAY', '25')
+screen = curses.initscr()
+curses.noecho()
+curses.cbreak()
+curses.start_color()
+screen.keypad(1)
+curses.curs_set(0)
+curses_size=screen.getmaxyx();
+screen.border(0)
 
 #Set colors
 curses.init_pair(1,curses.COLOR_WHITE, curses.COLOR_BLACK)
@@ -63,7 +67,6 @@ ocs_dir = home_dir + '.OnboardComputerSystem/'  #Onboard Computer System directo
 
 #Config parser
 config_filename='OnboardComputerSystem.conf'
-config_category='Config'
 config = SafeConfigParser()
 config.optionxform = lambda option: option
 config.read(ocs_dir+config_filename)
@@ -87,10 +90,46 @@ def option(option_title,option_value):
   option_count+=1
 
 #Item with alphanumeric input
-def item_input_alphanumeric(item_title,item_name,number,enable_numbers='true',enable_alphabet='false',enable_special_chars='false',enable_space='false'):
+def item_input_alphanumeric(item_title,item_name,number,skip_chars_start='0',skip_chars_end='0',prefix='',suffix='',enable_numbers='true',enable_alphabet='false',enable_special_chars='false',enable_space='false'):
   global item_count
   item_content=str(config.get(config_category, item_name))
-  list_entries.extend ([{'item_title': item_title, 'item_name': item_name, 'item_type': 'input_alphanumeric', 'item_subtype': number, 'enable_numbers': enable_numbers, 'enable_alphabet': enable_alphabet, 'enable_special_chars': enable_special_chars, 'enable_space': enable_space, 'item_content': item_content}]);
+  list_entries.extend ([{'item_title': item_title, 'item_name': item_name, 'item_type': 'input_alphanumeric', 'item_subtype': number, 'skip_chars_start': skip_chars_start, 'skip_chars_end': skip_chars_end, 'prefix': prefix, 'suffix': suffix, 'enable_numbers': enable_numbers, 'enable_alphabet': enable_alphabet, 'enable_special_chars': enable_special_chars, 'enable_space': enable_space, 'item_content': item_content}]);
+  item_count+=1
+
+#Item with gps coordinates input
+def item_input_coordinates(item_title,item_name,axis='lat'):
+  global item_count
+  item_content=str(config.get(config_category, item_name))
+  #Format latitude
+  if axis=='lat':
+    gpslat=item_content
+    if str(gpslat)[0] == "-":
+      gpslatformat=float(str(gpslat)[1:])
+      gpslatdir='S'
+    else:
+      gpslatformat=float(gpslat)
+      gpslatdir='N'
+    gpslatsplit=str(gpslatformat).split('.')
+    gpslatdeg=int(gpslatsplit[0])
+    gpslatmin='{0:.3f}'.format((float('0.%s' % gpslatsplit[1])*60))
+    gpslatformatfull='{0:02d}° {1:06.3f}\'{2}'.format(gpslatdeg,float(gpslatmin),gpslatdir)
+    item_content=gpslatformatfull
+  #Format longitude
+  elif axis=='lon':
+    gpslon=item_content
+    if str(gpslon)[0] == "-":
+      gpslonformat=float(str(gpslon)[1:])
+      gpslondir='W'
+    else:
+      gpslonformat=float(gpslon)
+      gpslondir='E'
+    gpslonsplit=str(gpslonformat).split('.')
+    gpslondeg=int(gpslonsplit[0])
+    gpslonmin='{0:.3f}'.format((float('0.%s' % gpslonsplit[1])*60))
+    gpslonformatfull='{0:03d}° {1:06.3f}\'{2}'.format(gpslondeg,float(gpslonmin),gpslondir)
+    item_content=gpslonformatfull
+  #Add item to the list
+  list_entries.extend ([{'item_title': item_title, 'item_name': item_name, 'item_type': 'input_coordinates', 'item_subtype': axis, 'item_content': item_content}]);
   item_count+=1
 
 #Seperator
@@ -123,13 +162,14 @@ option('Disable','False');
 item_count+=1
 
 #Callsign
-item_input_alphanumeric('Identification, callsign','Callsign',callsign_length,'true','true','true','true')
+callsign_length=30
+item_input_alphanumeric('Identification, set callsign','Callsign',callsign_length,'0','0','','','true','true','true','true')
 
 #MMSI
-item_input_alphanumeric('Identification, MMSI','MMSI','9')
+item_input_alphanumeric('Identification, set MMSI','MMSI','9')
 
 #UtcOffset
-item_options('Time, Time offset','UtcOffset')
+item_options('Time, set time offset','UtcOffset')
 option_loop_value = -12
 while option_loop_value <= 12:
   option_loop_value_new=option_loop_value
@@ -150,33 +190,28 @@ option('Enable','True');
 item_count+=1
 
 #DistanceStart
-item_options('Log, start distance','DistanceStart')
-option_loop_value = 0
-while option_loop_value <= 100000:
-  option(str(option_loop_value)+' NM',str(option_loop_value));
-  option_loop_value+=100
-item_count+=1
+item_input_alphanumeric('Distance travelled, set start value','DistanceStart','6','0','0','',' NM')
 
 #TempInside
-item_input_alphanumeric('Temperature sensor ID, inside','TempInside','15','true','true','true','false')
+item_input_alphanumeric('Temperature sensor inside, set ID','TempInside','15','3','0','','','true','true')
 
 #TempOutside
-item_input_alphanumeric('Temperature sensor ID, outside','TempOutside','15','true','true','true','false')
+item_input_alphanumeric('Temperature sensor outside, set ID','TempOutside','15','3','0','','','true','true')
 
 #BaroUnitMmhg
-item_options('Units, pressure','BaroUnitMmhg')
+item_options('Units, set pressure unit','BaroUnitMmhg')
 option('Mbar','False');
 option('mmHg','True');
 item_count+=1
 
 #TempUnitFahrenheit
-item_options('Units, temperature','TempUnitFahrenheit')
+item_options('Units, set temperature unit','TempUnitFahrenheit')
 option('Celsius','False');
 option('Fahrenheit','True');
 item_count+=1
 
 #DateMonthDayYear
-item_options('Units, date format','DateMonthDayYear')
+item_options('Units, set date format','DateMonthDayYear')
 option('DD.MM.YYYY','False');
 option('MM.DD.YYYY','True');
 item_count+=1
@@ -184,7 +219,7 @@ item_count+=1
 #Datalines
 def dataline(number):
   global item_count
-  item_options('Data line #'+number,'DataLine'+number)
+  item_options('Data line #'+number+', set content','DataLine'+number)
   option('(Empty)','0');
   option('Uptime','1');
   option('Sunrise / Sunset','2');
@@ -205,7 +240,7 @@ dataline('7')
 dataline('8')
 
 #LogEntryMinDistance
-item_options('Location history, required distance for new entry','LogEntryMinDistance')
+item_options('Location history, set distance required for new entry','LogEntryMinDistance')
 option_loop_value = 10
 while option_loop_value <= 10000:
   option(str(option_loop_value)+' meters',str(option_loop_value));
@@ -213,7 +248,7 @@ while option_loop_value <= 10000:
 item_count+=1
 
 #SpdAvgReqMin
-item_options('Average speed, required speed before calculating','SpdAvgReqMin')
+item_options('Average speed, set speed required for activating calculation','SpdAvgReqMin')
 option_loop_value = float(0.25)
 while option_loop_value <= 5:
   option_loop_value_new='{0:.02f}'.format(option_loop_value)
@@ -240,7 +275,7 @@ option('Yes','True');
 item_count+=1
 
 #DistanceReset
-item_options('Log, reset','DistanceReset')
+item_options('Distance travelled, reset','DistanceReset')
 option('No','False');
 option('Yes','True');
 item_count+=1
@@ -474,10 +509,19 @@ while curses_action!='exit' and curses_action!='save':
               
         #Entry type "input_alphanumeric"
         elif list_entries[entry_num_current]['item_type']=='input_alphanumeric':
+          prefix=list_entries[entry_num_current]['prefix']
+          prefix_len=len(prefix)
+          suffix=list_entries[entry_num_current]['suffix']
+          suffix_len=len(suffix)
           #currently selected entry
           if entry_pos==entry_num_current:
-            if entry_pos_old!=entry_pos: entry_pos2=0
+            firstentry2=0
             lastentry2=int(list_entries[entry_num_current]['item_subtype'])-1
+            skip_chars_start=int(list_entries[entry_num_current]['skip_chars_start'])
+            skip_chars_end=int(list_entries[entry_num_current]['skip_chars_end'])
+            if skip_chars_start!=0: firstentry2=skip_chars_start
+            if skip_chars_end!=0: lastentry2=lastentry2-skip_chars_end
+            if entry_pos_old!=entry_pos: entry_pos2=firstentry2
             #Go in/out of "change option" mode
             enable_space=list_entries[entry_num_current]['enable_space']
             enable_numbers=list_entries[entry_num_current]['enable_numbers']
@@ -485,18 +529,18 @@ while curses_action!='exit' and curses_action!='save':
             enable_special_chars=list_entries[entry_num_current]['enable_special_chars']
             if curses_mode==None and curses_action=='enter':
               curses_mode='input_alphanumeric';
-              curses_action_valid=['up','down','left','right','esc'];
+              curses_action_valid=['left','right','esc'];
               if enable_space=='true': curses_action_valid.extend(['del','space','backspace']);
               if enable_numbers=='true': curses_action_valid.extend(list_numbers);
               if enable_alphabet=='true': curses_action_valid.extend(list_alphabet);
               if enable_special_chars=='true': curses_action_valid.extend(list_special_chars)
-            elif curses_mode=='input_alphanumeric' and (curses_action=='enter' or curses_action=='esc'): curses_mode=None;curses_action_valid=curses_action_valid_default;entry_pos2=0
+            elif curses_mode=='input_alphanumeric' and (curses_action=='enter' or curses_action=='esc'): curses_mode=None;curses_action_valid=curses_action_valid_default;entry_pos2=firstentry2
             curses_action_valid.append('enter')
             if curses_mode=='input_alphanumeric':
               entry_content=(list_entries[entry_num_current]['item_content']).rjust(lastentry2+1)
               #Select previous
               if curses_action=='left':
-                if entry_pos2 > 0:
+                if entry_pos2 > firstentry2:
                   entry_pos2 += -1
                 elif scroll_continuous2==1:
                   entry_pos2 = lastentry2
@@ -505,7 +549,7 @@ while curses_action!='exit' and curses_action!='save':
                 if entry_pos2 < lastentry2:
                   entry_pos2 += 1
                 elif scroll_continuous2==1:
-                  entry_pos2 = 0
+                  entry_pos2 = firstentry2
               #Input number
               elif curses_action=='del' or curses_action=='space' or curses_action=='backspace' or curses_action in list_numbers or curses_action in list_alphabet or curses_action in list_special_chars:
                 if curses_action=='del' or curses_action=='space' or curses_action=='backspace':
@@ -515,7 +559,7 @@ while curses_action!='exit' and curses_action!='save':
                 entry_content_new=change_char(entry_content,entry_pos2,entered_char)
                 list_entries[entry_num_current]['item_content']=entry_content_new
                 if curses_action=='backspace':
-                  if entry_pos2 > 0:
+                  if entry_pos2 > firstentry2:
                     entry_pos2 += -1
                   elif scroll_continuous2==1:
                     entry_pos2 = lastentry2
@@ -523,7 +567,68 @@ while curses_action!='exit' and curses_action!='save':
                   if entry_pos2 < lastentry2:
                     entry_pos2 += 1
                   elif scroll_continuous2==1:
-                    entry_pos2 = 0
+                    entry_pos2 = firstentry2
+            #Style selected entry
+            else:
+              style_menu_current=style_menu_selected
+          #Show entry
+          entry_text_item=list_entries[entry_num_current]['item_title']
+          entry_text_content=list_entries[entry_num_current]['item_content']
+          if prefix_len>0: entry_text_content=prefix+entry_text_content
+          if suffix_len>0: entry_text_content=entry_text_content+suffix
+          entry_text=(data_margin+entry_text_item+':'+(entry_text_content+data_margin).rjust(entry_width-len(entry_text_item)-2)).upper()
+          screen.addstr(title_end_pos+margin+entry_num,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_current)
+          #Highlight selected char
+          if entry_pos==entry_num_current and curses_mode=='input_alphanumeric':              
+              style_menu_current=style_menu_edit
+              entry_text_content=(list_entries[entry_num_current]['item_content']).rjust(lastentry2+1+skip_chars_end)
+              entry_text_content_selected_char=entry_text_content[entry_pos2].upper()
+              screen.addstr(title_end_pos+margin+entry_num,int(curses_size[1]/2)+50-data_margin_num-(lastentry2+skip_chars_end+suffix_len-entry_pos2)+1, entry_text_content_selected_char, style_menu_current)
+              
+        #Entry type "input_coordinates"
+        elif list_entries[entry_num_current]['item_type']=='input_coordinates':
+          #currently selected entry
+          if entry_pos==entry_num_current:
+            non_edit_chars=[1,5,8,9]
+            firstentry2=0
+            if list_entries[entry_num_current]['item_subtype']=='lat':lastentry2=12-1;axis='lat'
+            elif list_entries[entry_num_current]['item_subtype']=='lon':lastentry2=13-1;axis='lon'
+            if entry_pos_old!=entry_pos: entry_pos2=firstentry2
+            #Go in/out of "change option" mode
+            if curses_mode==None and curses_action=='enter':
+              curses_mode='input_coordinates';
+              curses_action_valid=['left','right','esc'];
+              curses_action_valid.extend(list_numbers);
+              curses_action_valid.extend(list_coordinates_chars_lat);
+              curses_action_valid.extend(list_coordinates_chars_lon);
+            elif curses_mode=='input_coordinates' and (curses_action=='enter' or curses_action=='esc'): curses_mode=None;curses_action_valid=curses_action_valid_default;entry_pos2=firstentry2
+            curses_action_valid.append('enter')
+            if curses_mode=='input_coordinates':
+              entry_content=(list_entries[entry_num_current]['item_content']).rjust(lastentry2+1)
+              #Select previous
+              if curses_action=='left':
+                if entry_pos2 > firstentry2:
+                  entry_pos2 += -1
+                elif scroll_continuous2==1:
+                  entry_pos2 = lastentry2
+                while (lastentry2-entry_pos2) in non_edit_chars: entry_pos2-=1
+              #Select next
+              elif curses_action=='right':
+                if entry_pos2 < lastentry2:
+                  entry_pos2 += 1
+                elif scroll_continuous2==1:
+                  entry_pos2 = firstentry2
+                while (lastentry2-entry_pos2) in non_edit_chars: entry_pos2+=1
+              #Input number
+              elif ((lastentry2-entry_pos2)==0 and ((axis=='lat' and curses_action in list_coordinates_chars_lat) or (axis=='lon' and curses_action in list_coordinates_chars_lon))) or ((lastentry2-entry_pos2)!=0 and curses_action in list_numbers):
+                entered_char=curses_action
+                entry_content_new=change_char(entry_content,entry_pos2,entered_char)
+                list_entries[entry_num_current]['item_content']=entry_content_new
+                if entry_pos2 < lastentry2:
+                  entry_pos2 += 1
+                elif scroll_continuous2==1:
+                  entry_pos2 = firstentry2
+                while (lastentry2-entry_pos2) in non_edit_chars: entry_pos2+=1
             #Style selected entry
             else:
               style_menu_current=style_menu_selected
@@ -533,7 +638,7 @@ while curses_action!='exit' and curses_action!='save':
           entry_text=(data_margin+entry_text_item+':'+(entry_text_content+data_margin).rjust(entry_width-len(entry_text_item)-2)).upper()
           screen.addstr(title_end_pos+margin+entry_num,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_current)
           #Highlight selected char
-          if entry_pos==entry_num_current and curses_mode=='input_alphanumeric':              
+          if entry_pos==entry_num_current and curses_mode=='input_coordinates':              
               style_menu_current=style_menu_edit
               entry_text_content=(list_entries[entry_num_current]['item_content']).rjust(lastentry2+1)
               entry_text_content_selected_char=entry_text_content[entry_pos2].upper()
@@ -627,6 +732,23 @@ if curses_action=='save':
       name=str(list_entries[count]['item_name'])
       value=list_entries[count]['item_content']
       add_entry=True
+    #GPS coordinates input entries
+    elif list_entries[count]['item_type']=='input_coordinates':      
+      name=str(list_entries[count]['item_name'])
+      value=list_entries[count]['item_content']
+      axis=list_entries[count]['item_subtype']
+      gpsdir=''
+      if (axis=='lat' and value[-1]=="S") or (axis=='lon' and value[-1]=="W"):
+          value=value[:-1]
+          gpsdir='-'
+      gpssplit=value.split('° ')
+      gpsdeg=int(gpssplit[0])
+      gpssplit=gpssplit[1].split("'")
+      gpsmin=float(gpssplit[0])/60
+      gpsvalue=float(gpsdeg)+gpsmin
+      value=gpsdir+str(gpsvalue)
+      add_entry=True
+    #Add entry to config parser
     if add_entry is True: config.set(config_category, name, value)
     count+=1
   #Save to config file

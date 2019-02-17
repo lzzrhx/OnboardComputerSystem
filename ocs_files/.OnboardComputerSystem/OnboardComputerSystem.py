@@ -120,6 +120,7 @@ class alarm_animation(threading.Thread):
     alarm_message_cog='[  C O U R S E   A L A R M  ]'
     alarm_message_lat='[  L A T I T U D E   A L A R M  ]'
     alarm_message_lon='[  L O N G I T U D E   A L A R M  ]'
+    alarm_message_spd_low='[ L O W   S P E E D   A L A R M  ]'
     alarm_message_spd_high='[ H I G H   S P E E D   A L A R M  ]'
     alarm_message_dist='[  D I S T A N C E   T R A V E L L E D   A L A R M  ]'
     alarm_message_baro_low='[  L O W   B A R O M E T R I C   P R E S S U R E   A L A R M  ]'
@@ -322,7 +323,7 @@ try:
 
   #Set time values (in seconds)
   set_waittime=5             #Wait before starting
-  set_configtime=5          #Update data from config file
+  set_configtime=3           #Update data from config file
   set_conkytime=3            #Update Conky
   set_gpswaittime=30         #Wait for gps at boot
 
@@ -1461,7 +1462,7 @@ class alarm_system(threading.Thread):
             if alarm_dist_active is True:
               alarm_count+=1
               if gpsfix==1:
-                if int(distformat)>=alarm_dist_value:
+                if int(disttotal*0.000539956803)>=alarm_dist_value:
                   alarm_dist_raised=True
                 elif alarm_dist_raised is True: alarm_dist_raised=False
             elif alarm_dist_raised is True: alarm_dist_raised=False
@@ -1568,11 +1569,30 @@ class alarm_system(threading.Thread):
             elif alarm_sunset_raised is True: alarm_sunset_raised=False
           
             #Format alarm text
-            alarmformat='[ ALARM SYSTEM ACTIVE ]'
+            alarmformat='[ALARM SYSTEM ACTIVE]'
           
           #Inactive alarm system
           else:
             alarmformat='[ALARM SYSTEM INACTIVE]'
+            alarm_anchor_raised=False
+            alarm_cog_raised=False
+            alarm_lat_low_raised=False
+            alarm_lat_high_raised=False
+            alarm_lon_low_raised=False
+            alarm_lon_high_raised=False
+            alarm_spd_low_raised=False
+            alarm_spd_high_raised=False
+            alarm_dist_raised=False
+            alarm_baro_low_raised=False
+            alarm_baro_high_raised=False
+            alarm_temp1_low_raised=False
+            alarm_temp1_high_raised=False
+            alarm_temp2_low_raised=False
+            alarm_temp2_high_raised=False
+            alarm_timezone_raised=False
+            alarm_time_raised=False
+            alarm_sunrise_raised=False
+            alarm_sunset_raised=False
           
           if start_alarm_animation==0:
             start_alarm_animation=1
