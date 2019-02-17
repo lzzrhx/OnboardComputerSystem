@@ -633,10 +633,10 @@ class read_config(threading.Thread):
             alarm_lon_high_value=float(config.get('Alarm', 'AlarmLongitudeHighValue'))
             #Speed
             alarm_spd_low_active=config.getboolean('Alarm', 'AlarmSpeedLowActivate')
-            alarm_spd_low_req=int(config.get('Alarm', 'AlarmSpeedLowRequired'))
-            alarm_spd_low_value=int(config.get('Alarm', 'AlarmSpeedLowValue'))
+            alarm_spd_low_req=float(config.get('Alarm', 'AlarmSpeedLowRequired'))
+            alarm_spd_low_value=float(config.get('Alarm', 'AlarmSpeedLowValue'))
             alarm_spd_high_active=config.getboolean('Alarm', 'AlarmSpeedHighActivate')
-            alarm_spd_high_value=int(config.get('Alarm', 'AlarmSpeedHighValue'))
+            alarm_spd_high_value=float(config.get('Alarm', 'AlarmSpeedHighValue'))
             #Distance
             alarm_dist_active=config.getboolean('Alarm', 'AlarmDistanceActivate')
             alarm_dist_value=int(config.get('Alarm', 'AlarmDistanceValue'))
@@ -647,14 +647,14 @@ class read_config(threading.Thread):
             alarm_baro_high_value=int(config.get('Alarm', 'AlarmBaroHighValue'))
             #Temp inside
             alarm_temp1_low_active=config.getboolean('Alarm', 'AlarmTempInsideLowActivate')
-            alarm_temp1_low_value=int(config.get('Alarm', 'AlarmTempInsideLowValue'))
+            alarm_temp1_low_value=float(config.get('Alarm', 'AlarmTempInsideLowValue'))
             alarm_temp1_high_active=config.getboolean('Alarm', 'AlarmTempInsideHighActivate')
-            alarm_temp1_high_value=int(config.get('Alarm', 'AlarmTempInsideHighValue'))
+            alarm_temp1_high_value=float(config.get('Alarm', 'AlarmTempInsideHighValue'))
             #Temp outside
             alarm_temp2_low_active=config.getboolean('Alarm', 'AlarmTempOutsideLowActivate')
-            alarm_temp2_low_value=int(config.get('Alarm', 'AlarmTempOutsideLowValue'))
+            alarm_temp2_low_value=float(config.get('Alarm', 'AlarmTempOutsideLowValue'))
             alarm_temp2_high_active=config.getboolean('Alarm', 'AlarmTempOutsideHighActivate')
-            alarm_temp2_high_value=int(config.get('Alarm', 'AlarmTempOutsideHighValue'))
+            alarm_temp2_high_value=float(config.get('Alarm', 'AlarmTempOutsideHighValue'))
             #Timezone
             alarm_timezone_active=config.getboolean('Alarm', 'AlarmTimezoneActivate')
             #Time
@@ -1371,10 +1371,11 @@ class alarm_system(threading.Thread):
         #Active alarm system
         if start_alarm_system==1:
           if alarm_system_activate is True:
-            alarmformat='[ALARM SYSTEM ACTIVE]'
+            alarm_count=0
             
             #Anchor alarm
             if alarm_anchor_active is True:
+              alarm_count+=1
               if gpsfix==1:
                 if alarm_anchor_first is True:
                   alarm_anchor_lat=gpslat
@@ -1393,6 +1394,7 @@ class alarm_system(threading.Thread):
               
             #Course alarm
             if alarm_cog_active is True:
+              alarm_count+=1
               if gpsfix==1 and int(gpsspdformat)>=alarm_cog_speed:
                 alarm_cog_value=int(gpscog)
                 if alarm_cog_value < alarm_cog_min: alarm_cog_value += 360
@@ -1403,6 +1405,7 @@ class alarm_system(threading.Thread):
             
             #Low latitude alarm
             if alarm_lat_low_active is True:
+              alarm_count+=1
               if gpsfix==1:
                 if gpslat<=alarm_lat_low_value:
                   alarm_lat_low_raised=True
@@ -1411,6 +1414,7 @@ class alarm_system(threading.Thread):
             
             #High latitide alarm
             if alarm_lat_high_active is True:
+              alarm_count+=1
               if gpsfix==1:
                 if gpslat>=alarm_lat_high_value:
                   alarm_lat_high_raised=True
@@ -1419,6 +1423,7 @@ class alarm_system(threading.Thread):
             
             #Low longitude alarm
             if alarm_lon_low_active is True:
+              alarm_count+=1
               if gpsfix==1:
                 if gpslon<=alarm_lon_low_value:
                   alarm_lon_low_raised=True
@@ -1427,6 +1432,7 @@ class alarm_system(threading.Thread):
             
             #High longitude alarm
             if alarm_lon_high_active is True:
+              alarm_count+=1
               if gpsfix==1:
                 if gpslon>=alarm_lon_high_value:
                   alarm_lon_high_raised=True
@@ -1435,22 +1441,25 @@ class alarm_system(threading.Thread):
             
             #Low speed alarm
             if alarm_spd_low_active is True:
+              alarm_count+=1
               if gpsfix==1:
-                if int(gpsspdformat)>=alarm_spd_low_req and int(gpsspdformat)<=alarm_spd_low_value:
+                if gpsspdformat>=alarm_spd_low_req and gpsspdformat<=alarm_spd_low_value:
                   alarm_spd_low_raised=True
                 elif alarm_spd_low_raised is True: alarm_spd_low_raised=False
             elif alarm_spd_low_raised is True: alarm_spd_low_raised=False
             
             #High speed alarm
             if alarm_spd_high_active is True:
+              alarm_count+=1
               if gpsfix==1:
-                if int(gpsspdformat)>=alarm_spd_high_value:
+                if gpsspdformat>=alarm_spd_high_value:
                   alarm_spd_high_raised=True
                 elif alarm_spd_high_raised is True: alarm_spd_high_raised=False
             elif alarm_spd_high_raised is True: alarm_spd_high_raised=False
             
             #Distance alarm
             if alarm_dist_active is True:
+              alarm_count+=1
               if gpsfix==1:
                 if int(distformat)>=alarm_dist_value:
                   alarm_dist_raised=True
@@ -1459,6 +1468,7 @@ class alarm_system(threading.Thread):
             
             #Low baro alarm
             if alarm_baro_low_active is True:
+              alarm_count+=1
               if gpsfix==1:
                 if baroformat<=alarm_baro_low_value:
                   alarm_baro_low_raised=True
@@ -1467,6 +1477,7 @@ class alarm_system(threading.Thread):
             
             #High baro alarm
             if alarm_baro_high_active is True:
+              alarm_count+=1
               if gpsfix==1:
                 if baroformat>=alarm_baro_high_value:
                   alarm_baro_high_raised=True
@@ -1475,38 +1486,43 @@ class alarm_system(threading.Thread):
             
             #Low temp inside alarm
             if alarm_temp1_low_active is True:
+              alarm_count+=1
               if gpsfix==1:
-                if int(temp1format)<=alarm_temp1_low_value:
+                if temp1format<=alarm_temp1_low_value:
                   alarm_temp1_low_raised=True
                 elif alarm_temp1_low_raised is True: alarm_temp1_low_raised=False
             elif alarm_temp1_low_raised is True: alarm_temp1_low_raised=False
             
             #High temp inside alarm
             if alarm_temp1_high_active is True:
+              alarm_count+=1
               if gpsfix==1:
-                if int(temp1format)>=alarm_temp1_high_value:
+                if temp1format>=alarm_temp1_high_value:
                   alarm_temp1_high_raised=True
                 elif alarm_temp1_high_raised is True: alarm_temp1_high_raised=False
             elif alarm_temp1_high_raised is True: alarm_temp1_high_raised=False
             
             #Low temp outside alarm
             if alarm_temp2_low_active is True:
+              alarm_count+=1
               if gpsfix==1:
-                if int(temp2format)<=alarm_temp2_low_value:
+                if temp2format<=alarm_temp2_low_value:
                   alarm_temp2_low_raised=True
                 elif alarm_temp2_low_raised is True: alarm_temp2_low_raised=False
             elif alarm_temp2_low_raised is True: alarm_temp2_low_raised=False
             
             #High temp outside alarm
             if alarm_temp2_high_active is True:
+              alarm_count+=1
               if gpsfix==1:
-                if int(temp2format)>=alarm_temp2_high_value:
+                if temp2format>=alarm_temp2_high_value:
                   alarm_temp2_high_raised=True
                 elif alarm_temp2_high_raised is True: alarm_temp2_high_raised=False
             elif alarm_temp2_high_raised is True: alarm_temp2_high_raised=False
             
             #Timezone alarm
             if alarm_timezone_active is True:
+              alarm_count+=1
               if gpsfix==1 and alarm_timezone_raised is False:
                 if alarm_timezone_first is True:
                   alarm_timezone_old=nauticaltimezone
@@ -1517,6 +1533,7 @@ class alarm_system(threading.Thread):
             
             #Time alarm
             if alarm_time_active is True:
+              alarm_count+=1
               if gpsfix==1 and alarm_time_raised is False:
                 if alarm_time_value==str((datetime.utcnow()+timedelta(hours=utcoffsethours,minutes=utcoffsetminutes)).strftime('%H:%M')):
                   alarm_time_raised=True
@@ -1524,6 +1541,7 @@ class alarm_system(threading.Thread):
             
             #Sunrise alarm
             if alarm_sunrise_active is True:
+              alarm_count+=1
               if gpsfix==1 and astronomyfirst==0 and alarm_sunrise_raised is False:
                 alarm_sunrise_value_posneg=str(alarm_sunrise_value[0:1])
                 alarm_sunrise_value_hours=int(alarm_sunrise_value[1:3])
@@ -1537,6 +1555,7 @@ class alarm_system(threading.Thread):
             
             #Sunset alarm
             if alarm_sunset_active is True:
+              alarm_count+=1
               if gpsfix==1 and astronomyfirst==0 and alarm_sunset_raised is False:
                 alarm_sunset_value_posneg=str(alarm_sunset_value[0:1])
                 alarm_sunset_value_hours=int(alarm_sunset_value[1:3])
@@ -1547,6 +1566,9 @@ class alarm_system(threading.Thread):
                 if (sunset.datetime()+timedelta(hours=alarm_sunset_value_hours,minutes=alarm_sunset_value_minutes)).strftime('%H:%M')==str(datetime.utcnow().strftime('%H:%M')):
                   alarm_sunset_raised=True
             elif alarm_sunset_raised is True: alarm_sunset_raised=False
+          
+            #Format alarm text
+            alarmformat='[ ALARM SYSTEM ACTIVE ]'
           
           #Inactive alarm system
           else:

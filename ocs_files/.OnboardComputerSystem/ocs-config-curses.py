@@ -31,7 +31,7 @@ scroll_continuous1=1
 scroll_continuous2=1
 
 #Set text
-main_title='SYSTEM SETTINGS'
+main_title='System settings'.upper()
 quit_text='Press "Y" to quit or "N" to cancel'.upper()
 button_save_text='Save settings'
 
@@ -62,6 +62,7 @@ ocs_dir = home_dir + '.OnboardComputerSystem/'  #Onboard Computer System directo
 
 #Config parser
 config_filename='OnboardComputerSystem.conf'
+config_category='Config'
 config = SafeConfigParser()
 config.optionxform = lambda option: option
 config.read(ocs_dir+config_filename)
@@ -74,7 +75,7 @@ def change_char(s, p, r):
 def item_options(title,item_name):
   global item_content
   global option_count
-  item_content=str(config.get('Config', item_name))        
+  item_content=str(config.get(config_category, item_name))        
   option_count=0;list_entries.extend ([{'item_title': title, 'item_name': item_name, 'selected_option': 0, 'item_type': 'options', 'item_options':[]}]);
 #Option
 def option(option_title,option_value):
@@ -86,25 +87,31 @@ def option(option_title,option_value):
 
 #Item with number input
 def item_input_numbers(item_title,item_name,number):
-  item_content=str(config.get('Config', item_name))
+  global item_count
+  item_content=str(config.get(config_category, item_name))
   list_entries.extend ([{'item_title': item_title, 'item_name': item_name, 'item_type': 'input_numbers', 'item_subtype': number, 'item_content': item_content}]);
+  item_count+=1
 
 #Item with alphanumeric input
 def item_input_alphanumeric(item_title,item_name,number):
-  item_content=str(config.get('Config', item_name))
+  global item_count
+  item_content=str(config.get(config_category, item_name))
   list_entries.extend ([{'item_title': item_title, 'item_name': item_name, 'item_type': 'input_alphanumeric', 'item_subtype': number, 'item_content': item_content}]);
+  item_count+=1
+
+#Seperator
+def item_seperator(subtype='space',content='-'):
+  global item_count
+  list_entries.extend ([{'item_type': 'seperator', 'item_subtype': subtype, 'item_content': content}]);
+  item_count+=1
 
 #Create the list of items
-data_margin=''.rjust(data_margin_num)
-entry_width=set_width
 list_entries = []
 item_count=0
 
 
 
 ############################################################################################################
-
-
 
 
 
@@ -123,11 +130,9 @@ item_count+=1
 
 #Callsign
 item_input_alphanumeric('Callsign','Callsign',callsign_length)
-item_count+=1
 
 #MMSI
 item_input_numbers('MMSI number','MMSI','9')
-item_count+=1
 
 #UTC offset
 item_options('Time offset','UtcOffset')
@@ -160,11 +165,9 @@ item_count+=1
 
 #Inside temperature sensor ID
 item_input_alphanumeric('Temperature sensor ID (inside)','TempInside','15')
-item_count+=1
 
 #Inside temperature sensor ID
 item_input_alphanumeric('Temperature sensor ID (outside)','TempOutside','15')
-item_count+=1
 
 #Barometric pressure usit: mmHg
 item_options('Pressure unit','BaroUnitMmhg')
@@ -305,6 +308,16 @@ title_start_pos=margin
 title_text_pos=title_start_pos+1
 title_end_pos=title_text_pos+1
 
+#Entries
+entry_width=set_width
+data_margin=''.rjust(data_margin_num)
+
+#Seperators
+seperator_width1=int(entry_width)
+seperator_width2=int(entry_width-(entry_width/4))
+seperator_width3=int(entry_width/2)
+seperator_width4=int(entry_width/4)
+
 #Buttons
 num_buttons=1
 button_save='[ '+button_save_text.upper()+' ]'
@@ -362,12 +375,14 @@ while curses_action!='exit' and curses_action!='save':
         curses_action_valid=curses_action_valid_default
         #Go up
         if curses_action=='up':
+          if entry_pos_up_skip!=0: entry_pos=entry_pos-entry_pos_up_skip
           if entry_pos > 0:
             entry_pos += -1
           elif scroll_continuous1==1:
             entry_pos = lastentry
         #Go down
         elif curses_action=='down':
+          if entry_pos_down_skip!=0: entry_pos=entry_pos+entry_pos_down_skip
           if entry_pos < lastentry:
             entry_pos += 1
           elif scroll_continuous1==1:
@@ -391,8 +406,40 @@ while curses_action!='exit' and curses_action!='save':
       
       #Show entries
       entry_num=0
+      entry_pos_up_skip=0
+      entry_pos_down_skip=0
       for entry_num_current in entry_range:
         style_menu_current=style_menu
+        
+        #Skip up if previous entry seperator
+        if entry_pos>0:
+          if list_entries[entry_pos-1]['item_type']=='seperator':
+            entry_pos_up_skip=1
+            if (entry_pos-1)>0:
+              if list_entries[entry_pos-2]['item_type']=='seperator':
+                entry_pos_up_skip=2
+                if (entry_pos-2)>0:
+                  if list_entries[entry_pos-3]['item_type']=='seperator':
+                    entry_pos_up_skip=3
+        #Skip down if next entry seperator
+        if entry_pos<(lastentry-num_buttons):
+          if list_entries[entry_pos+1]['item_type']=='seperator':
+            entry_pos_down_skip=1
+            if (entry_pos+1)<(lastentry-num_buttons):
+              if list_entries[entry_pos+2]['item_type']=='seperator':
+                entry_pos_down_skip=2
+                if (entry_pos+2)<(lastentry-num_buttons):
+                  if list_entries[entry_pos+3]['item_type']=='seperator':
+                    entry_pos_down_skip=3
+        
+        #Entry type "seperator"
+        if list_entries[entry_num_current]['item_type']=='seperator' and list_entries[entry_num_current]['item_subtype']!='space':
+          if list_entries[entry_num_current]['item_subtype']=='custom':
+            entry_text=(list_entries[entry_num_current]['item_content']).upper()
+          elif list_entries[entry_num_current]['item_subtype']=='fill':
+            entry_text=list_entries[entry_num_current]['item_content']
+            entry_text=''.rjust(seperator_width2,entry_text)
+          screen.addstr(title_end_pos+margin+entry_num,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_current)
         
         #Entry type "options"
         if list_entries[entry_num_current]['item_type']=='options':
@@ -632,7 +679,7 @@ if curses_action=='save':
       name=str(list_entries[count]['item_name'])
       value=list_entries[count]['item_content']
       add_entry=True
-    if add_entry is True: config.set('Config', name, value)
+    if add_entry is True: config.set(config_category, name, value)
     count+=1
   #Save to config file
   with open(ocs_dir+config_filename, 'w') as configfile:
