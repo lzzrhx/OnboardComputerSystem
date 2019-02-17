@@ -123,19 +123,19 @@ show_baroupdateinterval=False
 show_baroconnected=False
 
 #Disclaimer
-item_options('Disable disclaimer','DisclaimerActivate')
-option('No','True');
-option('Yes','False');
+item_options('Disclaimer','DisclaimerActivate')
+option('Enable','True');
+option('Disable','False');
 item_count+=1
 
 #Callsign
-item_input_alphanumeric('Callsign','Callsign',callsign_length)
+item_input_alphanumeric('Identification, callsign','Callsign',callsign_length)
 
 #MMSI
-item_input_numbers('MMSI number','MMSI','9')
+item_input_numbers('Identification, MMSI','MMSI','9')
 
 #UTC offset
-item_options('Time offset','UtcOffset')
+item_options('Time, Time offset','UtcOffset')
 option_loop_value = -12
 while option_loop_value <= 12:
   option_loop_value_new=option_loop_value
@@ -150,13 +150,13 @@ while option_loop_value <= 12:
 item_count+=1
 
 #Use nautical timezone
-item_options('Use nautical timezone (overrides time offset)','UseNauticalTimezone')
-option('No','False');
-option('Yes','True');
+item_options('Time, use nautical timezone (overrides time offset)','UseNauticalTimezone')
+option('Disable','False');
+option('Enable','True');
 item_count+=1
 
 #DistanceStart
-item_options('Starting distance for log','DistanceStart')
+item_options('Log, start distance','DistanceStart')
 option_loop_value = 0
 while option_loop_value <= 100000:
   option(str(option_loop_value)+' NM',str(option_loop_value));
@@ -164,25 +164,25 @@ while option_loop_value <= 100000:
 item_count+=1
 
 #Inside temperature sensor ID
-item_input_alphanumeric('Temperature sensor ID (inside)','TempInside','15')
+item_input_alphanumeric('Temperature sensor ID, inside','TempInside','15')
 
 #Inside temperature sensor ID
-item_input_alphanumeric('Temperature sensor ID (outside)','TempOutside','15')
+item_input_alphanumeric('Temperature sensor ID, outside','TempOutside','15')
 
 #Barometric pressure usit: mmHg
-item_options('Pressure unit','BaroUnitMmhg')
+item_options('Units, pressure','BaroUnitMmhg')
 option('Mbar','False');
 option('mmHg','True');
 item_count+=1
 
 #Temperature unit
-item_options('Temperature unit','TempUnitFahrenheit')
+item_options('Units, temperature','TempUnitFahrenheit')
 option('Celsius','False');
 option('Fahrenheit','True');
 item_count+=1
 
 #Date format
-item_options('Date format','DateMonthDayYear')
+item_options('Units, date format','DateMonthDayYear')
 option('DD.MM.YYYY','False');
 option('MM.DD.YYYY','True');
 item_count+=1
@@ -190,7 +190,7 @@ item_count+=1
 #Datalines
 def dataline(number):
   global item_count
-  item_options('Data line '+number,'DataLine'+number)
+  item_options('Data line #'+number,'DataLine'+number)
   option('(Empty)','0');
   option('Uptime','1');
   option('Sunrise / Sunset','2');
@@ -211,7 +211,7 @@ dataline('7')
 dataline('8')
 
 #Required distance for new entry in location history
-item_options('Required distance for new entry in location history','LogEntryMinDistance')
+item_options('Location history, required distance for new entry','LogEntryMinDistance')
 option_loop_value = 10
 while option_loop_value <= 10000:
   option(str(option_loop_value)+' meters',str(option_loop_value));
@@ -219,7 +219,7 @@ while option_loop_value <= 10000:
 item_count+=1
 
 #SpdAvgReqMin
-item_options('Required speed before calculating average speed','SpdAvgReqMin')
+item_options('Average speed, required speed before calculating','SpdAvgReqMin')
 option_loop_value = float(0.25)
 while option_loop_value <= 5:
   option_loop_value_new='{0:.02f}'.format(option_loop_value)
@@ -228,32 +228,32 @@ while option_loop_value <= 5:
 item_count+=1
 
 #Show max speed
-item_options('Show max speed','ShowMaxSpd')
-option('No','False');
-option('Yes','True');
+item_options('Max speed, display','ShowMaxSpd')
+option('Disable','False');
+option('Enable','True');
 item_count+=1
 
 #Reset average speed
-item_options('Reset average speed','SpdAvgReset')
+item_options('Average speed, reset','SpdAvgReset')
 option('No','False');
 option('Yes','True');
 item_count+=1
 
 #Reset max speed
-item_options('Reset max speed','SpdMaxReset')
+item_options('Max speed, reset','SpdMaxReset')
 option('No','False');
 option('Yes','True');
 item_count+=1
 
 #Reset distance travelled
-item_options('Reset distance travelled','DistanceReset')
+item_options('Log, reset','DistanceReset')
 option('No','False');
 option('Yes','True');
 item_count+=1
 
 #Required distance travelled before updating distance travelled
 if show_distupdatedistance is True:
-  item_options('Required distance for updating distance travelled','DistUpdateDistance')
+  item_options('Log, required distance for updating','DistUpdateDistance')
   option_loop_value = 1
   while option_loop_value <= 100:
     option(str(option_loop_value)+' meters',str(option_loop_value));
@@ -262,7 +262,7 @@ if show_distupdatedistance is True:
 
 #Interval for updating distance travelled
 if show_distupdateinterval is True:
-  item_options('Interval for updating distance travelled','DistUpdateInterval')
+  item_options('Log, update interval','DistUpdateInterval')
   option_loop_value = 1
   while option_loop_value <= 60:
     option(str(option_loop_value)+' sec',str(option_loop_value));
@@ -271,7 +271,7 @@ if show_distupdateinterval is True:
 
 #Interval for updating temperature data
 if show_tempupdateinterval is True:
-  item_options('Interval for updating temperature data','TempUpdateInterval')
+  item_options('Temperature, update interval','TempUpdateInterval')
   option_loop_value = 1
   while option_loop_value <= 60:
     option(str(option_loop_value)+' min',str(option_loop_value));
@@ -280,7 +280,7 @@ if show_tempupdateinterval is True:
 
 #Interval for updating barometric pressure data
 if show_baroupdateinterval is True:
-  item_options('Interval for updating barometric pressure data','BaroUpdateInterval')
+  item_options('Pressure, update interval','BaroUpdateInterval')
   option_loop_value = 1
   while option_loop_value <= 60:
     option(str(option_loop_value)+' min',str(option_loop_value));
@@ -289,9 +289,9 @@ if show_baroupdateinterval is True:
 
 #Enable barometric pressure sensor
 if show_baroconnected is True:
-  item_options('Enable barometric pressure sensor','BaroConnected')
-  option('Yes','True');
-  option('No','False');
+  item_options('Pressure, barometric pressure sensor','BaroConnected')
+  option('Enable','True');
+  option('Disable','False');
   item_count+=1
 
 
