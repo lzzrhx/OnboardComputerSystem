@@ -20,6 +20,7 @@ curses.start_color()
 screen.keypad(1)
 curses.curs_set(0)
 curses_size=screen.getmaxyx();
+screen.border(0)
 
 #Set values
 callsign_length=20
@@ -32,7 +33,7 @@ scroll_continuous2=1
 
 #Set text
 main_title='System settings'.upper()
-quit_text='Press "Y" to quit or "N" to cancel'.upper()
+quit_text='Press "Y" to quit or "N" to cancel'
 button_save_text='Save settings'
 
 #Set registered key inputs (in groups)
@@ -85,18 +86,11 @@ def option(option_title,option_value):
   list_entries[item_count]['item_options'].extend ([{'option_title': option_title,'option_value': option_value}])
   option_count+=1
 
-#Item with number input
-def item_input_numbers(item_title,item_name,number):
-  global item_count
-  item_content=str(config.get(config_category, item_name))
-  list_entries.extend ([{'item_title': item_title, 'item_name': item_name, 'item_type': 'input_numbers', 'item_subtype': number, 'item_content': item_content}]);
-  item_count+=1
-
 #Item with alphanumeric input
-def item_input_alphanumeric(item_title,item_name,number):
+def item_input_alphanumeric(item_title,item_name,number,enable_numbers='true',enable_alphabet='false',enable_special_chars='false',enable_space='false'):
   global item_count
   item_content=str(config.get(config_category, item_name))
-  list_entries.extend ([{'item_title': item_title, 'item_name': item_name, 'item_type': 'input_alphanumeric', 'item_subtype': number, 'item_content': item_content}]);
+  list_entries.extend ([{'item_title': item_title, 'item_name': item_name, 'item_type': 'input_alphanumeric', 'item_subtype': number, 'enable_numbers': enable_numbers, 'enable_alphabet': enable_alphabet, 'enable_special_chars': enable_special_chars, 'enable_space': enable_space, 'item_content': item_content}]);
   item_count+=1
 
 #Seperator
@@ -122,19 +116,19 @@ show_tempupdateinterval=False
 show_baroupdateinterval=False
 show_baroconnected=False
 
-#Disclaimer
+#DisclaimerActivate
 item_options('Disclaimer','DisclaimerActivate')
 option('Enable','True');
 option('Disable','False');
 item_count+=1
 
 #Callsign
-item_input_alphanumeric('Identification, callsign','Callsign',callsign_length)
+item_input_alphanumeric('Identification, callsign','Callsign',callsign_length,'true','true','true','true')
 
 #MMSI
-item_input_numbers('Identification, MMSI','MMSI','9')
+item_input_alphanumeric('Identification, MMSI','MMSI','9')
 
-#UTC offset
+#UtcOffset
 item_options('Time, Time offset','UtcOffset')
 option_loop_value = -12
 while option_loop_value <= 12:
@@ -149,7 +143,7 @@ while option_loop_value <= 12:
   option_loop_value+=0.5
 item_count+=1
 
-#Use nautical timezone
+#UseNauticalTimezone
 item_options('Time, use nautical timezone (overrides time offset)','UseNauticalTimezone')
 option('Disable','False');
 option('Enable','True');
@@ -163,25 +157,25 @@ while option_loop_value <= 100000:
   option_loop_value+=100
 item_count+=1
 
-#Inside temperature sensor ID
-item_input_alphanumeric('Temperature sensor ID, inside','TempInside','15')
+#TempInside
+item_input_alphanumeric('Temperature sensor ID, inside','TempInside','15','true','true','true','false')
 
-#Inside temperature sensor ID
-item_input_alphanumeric('Temperature sensor ID, outside','TempOutside','15')
+#TempOutside
+item_input_alphanumeric('Temperature sensor ID, outside','TempOutside','15','true','true','true','false')
 
-#Barometric pressure usit: mmHg
+#BaroUnitMmhg
 item_options('Units, pressure','BaroUnitMmhg')
 option('Mbar','False');
 option('mmHg','True');
 item_count+=1
 
-#Temperature unit
+#TempUnitFahrenheit
 item_options('Units, temperature','TempUnitFahrenheit')
 option('Celsius','False');
 option('Fahrenheit','True');
 item_count+=1
 
-#Date format
+#DateMonthDayYear
 item_options('Units, date format','DateMonthDayYear')
 option('DD.MM.YYYY','False');
 option('MM.DD.YYYY','True');
@@ -210,7 +204,7 @@ dataline('6')
 dataline('7')
 dataline('8')
 
-#Required distance for new entry in location history
+#LogEntryMinDistance
 item_options('Location history, required distance for new entry','LogEntryMinDistance')
 option_loop_value = 10
 while option_loop_value <= 10000:
@@ -227,31 +221,31 @@ while option_loop_value <= 5:
   option_loop_value+=0.25
 item_count+=1
 
-#Show max speed
+#ShowMaxSpd
 item_options('Max speed, display','ShowMaxSpd')
 option('Disable','False');
 option('Enable','True');
 item_count+=1
 
-#Reset average speed
+#SpdAvgReset
 item_options('Average speed, reset','SpdAvgReset')
 option('No','False');
 option('Yes','True');
 item_count+=1
 
-#Reset max speed
+#SpdMaxReset
 item_options('Max speed, reset','SpdMaxReset')
 option('No','False');
 option('Yes','True');
 item_count+=1
 
-#Reset distance travelled
+#DistanceReset
 item_options('Log, reset','DistanceReset')
 option('No','False');
 option('Yes','True');
 item_count+=1
 
-#Required distance travelled before updating distance travelled
+#DistUpdateDistance
 if show_distupdatedistance is True:
   item_options('Log, required distance for updating','DistUpdateDistance')
   option_loop_value = 1
@@ -260,7 +254,7 @@ if show_distupdatedistance is True:
     option_loop_value+=1
   item_count+=1
 
-#Interval for updating distance travelled
+#DistUpdateInterval
 if show_distupdateinterval is True:
   item_options('Log, update interval','DistUpdateInterval')
   option_loop_value = 1
@@ -269,7 +263,7 @@ if show_distupdateinterval is True:
     option_loop_value+=1
   item_count+=1
 
-#Interval for updating temperature data
+#TempUpdateInterval
 if show_tempupdateinterval is True:
   item_options('Temperature, update interval','TempUpdateInterval')
   option_loop_value = 1
@@ -278,7 +272,7 @@ if show_tempupdateinterval is True:
     option_loop_value+=1
   item_count+=1
 
-#Interval for updating barometric pressure data
+#BaroUpdateInterval
 if show_baroupdateinterval is True:
   item_options('Pressure, update interval','BaroUpdateInterval')
   option_loop_value = 1
@@ -287,7 +281,7 @@ if show_baroupdateinterval is True:
     option_loop_value+=1
   item_count+=1
 
-#Enable barometric pressure sensor
+#BaroConnected
 if show_baroconnected is True:
   item_options('Pressure, barometric pressure sensor','BaroConnected')
   option('Enable','True');
@@ -311,6 +305,7 @@ title_end_pos=title_text_pos+1
 #Entries
 entry_width=set_width
 data_margin=''.rjust(data_margin_num)
+fill_space=''.rjust(entry_width)
 
 #Seperators
 seperator_width1=int(entry_width)
@@ -320,6 +315,7 @@ seperator_width4=int(entry_width/4)
 
 #Buttons
 num_buttons=1
+quit_dialog=' '+quit_text.upper()+' '
 button_save='[ '+button_save_text.upper()+' ]'
 
 #Calculate space
@@ -345,12 +341,8 @@ curses_mode=None
 curses_first=True
 curses_action_valid=None
 while curses_action!='exit' and curses_action!='save':
-  
-  #Clear screen and show stuff
   if curses_first is True or curses_action in curses_action_valid:
-    screen.clear()
-    screen.border(0)
-    
+
     #Title
     screen.addstr(title_start_pos,int((curses_size[1]-len(title_line))/2), title_line, style_title)
     screen.addstr(title_text_pos,int((curses_size[1]-len(title_text))/2), title_text, style_title)
@@ -360,10 +352,11 @@ while curses_action!='exit' and curses_action!='save':
     if curses_mode==None and (curses_action=='q' or curses_action=='esc'): curses_mode='quit'
     if curses_mode=='quit':
       curses_action_valid=['y','n']
-      screen.addstr(title_end_pos+margin,int((curses_size[1]-len(quit_text))/2), quit_text, style_title)
+      screen.addstr(curses_size[0]-margin,int((curses_size[1]-len(quit_dialog))/2), quit_dialog, style_menu_selected)
       if curses_action=='y':
         curses_action='exit'
       elif curses_action=='n':
+        screen.addstr(curses_size[0]-margin,int((curses_size[1]-len(fill_space))/2), fill_space, style_title)
         curses_mode=None
     
     #List of items
@@ -433,13 +426,15 @@ while curses_action!='exit' and curses_action!='save':
                     entry_pos_down_skip=3
         
         #Entry type "seperator"
-        if list_entries[entry_num_current]['item_type']=='seperator' and list_entries[entry_num_current]['item_subtype']!='space':
-          if list_entries[entry_num_current]['item_subtype']=='custom':
-            entry_text=(list_entries[entry_num_current]['item_content']).upper()
-          elif list_entries[entry_num_current]['item_subtype']=='fill':
-            entry_text=list_entries[entry_num_current]['item_content']
-            entry_text=''.rjust(seperator_width2,entry_text)
-          screen.addstr(title_end_pos+margin+entry_num,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_current)
+        if list_entries[entry_num_current]['item_type']=='seperator':
+          screen.addstr(title_end_pos+margin+entry_num,int((curses_size[1]-len(fill_space))/2), fill_space, style_title)
+          if list_entries[entry_num_current]['item_subtype']!='space':
+            if list_entries[entry_num_current]['item_subtype']=='custom':
+              entry_text=(list_entries[entry_num_current]['item_content']).upper()
+            elif list_entries[entry_num_current]['item_subtype']=='fill':
+              entry_text=list_entries[entry_num_current]['item_content']
+              entry_text=''.rjust(seperator_width2,entry_text)
+            screen.addstr(title_end_pos+margin+entry_num,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_current)
         
         #Entry type "options"
         if list_entries[entry_num_current]['item_type']=='options':
@@ -476,72 +471,25 @@ while curses_action!='exit' and curses_action!='save':
           entry_text_option=list_entries[entry_num_current]['item_options'][selected_option]['option_title']
           entry_text=(data_margin+entry_text_item+':'+(entry_text_option+data_margin).rjust(entry_width-len(entry_text_item)-2)).upper()
           screen.addstr(title_end_pos+margin+entry_num,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_current)
-          
-        #Entry type "input numbers"
-        elif list_entries[entry_num_current]['item_type']=='input_numbers':
-          #currently selected entry
-          if entry_pos==entry_num_current:
-            if entry_pos_old!=entry_pos: entry_pos2=0
-            lastentry2=int(list_entries[entry_num_current]['item_subtype'])-1
-            #Go in/out of "change option" mode
-            if curses_mode==None and curses_action=='enter': curses_mode='input_numbers';curses_action_valid=['up','down','left','right','esc','del','space','backspace'];curses_action_valid.extend(list_numbers)
-            elif curses_mode=='input_numbers' and (curses_action=='enter' or curses_action=='esc'): curses_mode=None;curses_action_valid=curses_action_valid_default;entry_pos2=0
-            curses_action_valid.append('enter')
-            if curses_mode=='input_numbers':
-              entry_content=list_entries[entry_num_current]['item_content'].rjust(lastentry2+1)
-              #Select previous
-              if curses_action=='left':
-                if entry_pos2 > 0:
-                  entry_pos2 += -1
-                elif scroll_continuous2==1:
-                  entry_pos2 = lastentry2
-              #Select next
-              elif curses_action=='right':
-                if entry_pos2 < lastentry2:
-                  entry_pos2 += 1
-                elif scroll_continuous2==1:
-                  entry_pos2 = 0
-              #Input number
-              elif curses_action=='del' or curses_action=='space' or curses_action=='backspace' or curses_action in list_numbers:
-                if curses_action=='del' or curses_action=='space' or curses_action=='backspace':
-                  entered_char=' '
-                else:
-                  entered_char=curses_action
-                entry_content_new=change_char(entry_content,entry_pos2,entered_char)
-                list_entries[entry_num_current]['item_content']=entry_content_new
-                if curses_action=='backspace':
-                  if entry_pos2 > 0:
-                    entry_pos2 += -1
-                  elif scroll_continuous2==1:
-                    entry_pos2 = lastentry2
-                else:
-                  if entry_pos2 < lastentry2:
-                    entry_pos2 += 1
-                  elif scroll_continuous2==1:
-                    entry_pos2 = 0
-            #Style selected entry
-            else:
-              style_menu_current=style_menu_selected
-          #Show entry
-          entry_text_item=list_entries[entry_num_current]['item_title']
-          entry_text_content=list_entries[entry_num_current]['item_content']
-          entry_text=(data_margin+entry_text_item+':'+(entry_text_content+data_margin).rjust(entry_width-len(entry_text_item)-2)).upper()
-          screen.addstr(title_end_pos+margin+entry_num,int((curses_size[1]-len(entry_text))/2), entry_text, style_menu_current)
-          #Highlight selected char
-          if entry_pos==entry_num_current and curses_mode=='input_numbers':              
-              style_menu_current=style_menu_edit
-              entry_text_content=(list_entries[entry_num_current]['item_content']).rjust(lastentry2+1)
-              entry_text_content_selected_char=entry_text_content[entry_pos2].upper()
-              screen.addstr(title_end_pos+margin+entry_num,int(curses_size[1]/2)+50-data_margin_num-(lastentry2-entry_pos2)+1, entry_text_content_selected_char, style_menu_current)
               
-        #Entry type "input alphanumeric"
+        #Entry type "input_alphanumeric"
         elif list_entries[entry_num_current]['item_type']=='input_alphanumeric':
           #currently selected entry
           if entry_pos==entry_num_current:
             if entry_pos_old!=entry_pos: entry_pos2=0
             lastentry2=int(list_entries[entry_num_current]['item_subtype'])-1
             #Go in/out of "change option" mode
-            if curses_mode==None and curses_action=='enter': curses_mode='input_alphanumeric';curses_action_valid=['up','down','left','right','esc','del','space','backspace'];curses_action_valid.extend(list_numbers);curses_action_valid.extend(list_alphabet);curses_action_valid.extend(list_special_chars)
+            enable_space=list_entries[entry_num_current]['enable_space']
+            enable_numbers=list_entries[entry_num_current]['enable_numbers']
+            enable_alphabet=list_entries[entry_num_current]['enable_alphabet']
+            enable_special_chars=list_entries[entry_num_current]['enable_special_chars']
+            if curses_mode==None and curses_action=='enter':
+              curses_mode='input_alphanumeric';
+              curses_action_valid=['up','down','left','right','esc'];
+              if enable_space=='true': curses_action_valid.extend(['del','space','backspace']);
+              if enable_numbers=='true': curses_action_valid.extend(list_numbers);
+              if enable_alphabet=='true': curses_action_valid.extend(list_alphabet);
+              if enable_special_chars=='true': curses_action_valid.extend(list_special_chars)
             elif curses_mode=='input_alphanumeric' and (curses_action=='enter' or curses_action=='esc'): curses_mode=None;curses_action_valid=curses_action_valid_default;entry_pos2=0
             curses_action_valid.append('enter')
             if curses_mode=='input_alphanumeric':
@@ -674,8 +622,8 @@ if curses_action=='save':
       selected=list_entries[count]['selected_option']
       value=str(list_entries[count]['item_options'][selected]['option_value'])
       add_entry=True
-    #Number input & alphanumeric input entries
-    elif list_entries[count]['item_type']=='input_numbers' or list_entries[count]['item_type']=='input_alphanumeric':
+    #Alphanumeric input entries
+    elif list_entries[count]['item_type']=='input_alphanumeric':
       name=str(list_entries[count]['item_name'])
       value=list_entries[count]['item_content']
       add_entry=True
