@@ -159,10 +159,22 @@ item_count+=1
 
 #AlarmSystemSoundFile
 item_options('Alarm system, select sound','AlarmSystemSoundFile')
-option('English - Warning','WARNING_ENG_WARNING_WARNING.wav');
-option('German - Warning','WARNING_GER_WARNING_WARNING.wav');
-option('Russian - Watch EKRAN','WARNING_RUS_WATCH_EKRAN.wav');
+option('Chinese - Warning','WARNING_CHN_WARNING.wav');
+option('English - Alert','WARNING_ENG_ALERT.wav');
+option('English - Threat','WARNING_ENG_THREAT.wav');
+option('English - Warning','WARNING_ENG_WARNING.wav');
+option('German - Warning','WARNING_GER_WARNING.wav');
+option('Russian - Main hydraulics failure','WARNING_RUS_MAIN_HYDRAULICS_FAILURE.wav');
+option('Russian - Main transmission fire','WARNING_RUS_MAIN_TRANSMISSION_FIRE.wav');
 option('Russian - Threat','WARNING_RUS_THREAT.wav');
+option('Russian - Warning','WARNING_RUS_WARNING.wav');
+option('Russian - Watch EKRAN','WARNING_RUS_WATCH_EKRAN.wav');
+option('Sound - 01','WARNING_SOUND_01.wav');
+option('Sound - 02','WARNING_SOUND_02.wav');
+option('Sound - 03','WARNING_SOUND_03.wav');
+option('Sound - 04','WARNING_SOUND_04.wav');
+option('Sound - 05','WARNING_SOUND_05.wav');
+
 item_count+=1
 
 #AlarmSystemSoundEnable

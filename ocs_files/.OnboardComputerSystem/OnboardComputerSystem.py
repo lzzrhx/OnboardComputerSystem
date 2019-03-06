@@ -112,6 +112,7 @@ class alarm_animation(threading.Thread):
     threading.Thread.__init__(self)
   def run(self):
     global alarm_animation_running
+    global alarm_sound_play
     
     #Alarm messages
     default_alarm_message='[  M A S T E R   C A U T I O N  ]'
@@ -144,7 +145,7 @@ class alarm_animation(threading.Thread):
           sleep(0.8)
           sys.stdout.write('\n')
         elif alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_lat_low_raised is True or alarm_lat_high_raised is True or alarm_lon_low_raised is True or alarm_lon_high_raised is True or alarm_spd_low_raised is True or alarm_spd_high_raised is True or alarm_dist_raised is True or alarm_baro_low_raised is True or alarm_baro_high_raised is True or alarm_temp1_low_raised is True or alarm_temp1_high_raised is True or alarm_temp2_low_raised is True or alarm_temp2_high_raised is True or alarm_timezone_raised is True or alarm_time_raised is True or alarm_sunrise_raised is True or alarm_sunset_raised is True):
-          #if alarm_system_sound_enable is True: playsound(sound_dir+alarm_system_sound_file)
+          if alarm_system_sound_enable is True: alarm_sound_play=True
           if alarm_animation_running is False: alarm_animation_running=True
           sys.stdout.write('%{c}'+default_alarm_message+'\n')
           sleep(0.8)
@@ -304,7 +305,30 @@ class alarm_animation(threading.Thread):
             sys.stdout.write('\n')
         else:
           if alarm_animation_running is True: alarm_animation_running=False
+          if alarm_sound_play is True: alarm_sound_play=False
       sleep(0.8)
+
+
+
+
+
+#Alarm sound
+alarm_sound_play=False
+start_alarm_sound=0
+class alarm_sound(threading.Thread):
+  def __init__(self):
+    threading.Thread.__init__(self)
+  def run(self):
+    while True:
+      if killer.kill_now or error_raised:
+        break
+      if start_alarm_sound==1:
+        if alarm_sound_play is True:
+          playsound(sound_dir+alarm_system_sound_file)
+        else:
+          sleep(0.2)
+      else:
+        sleep(1)
 
 
 
@@ -1362,6 +1386,7 @@ class alarm_system(threading.Thread):
       global start_output_conky
       global start_output_data
       global start_alarm_animation
+      global start_alarm_sound
       alarm_anchor_first=True
       alarm_timezone_first=True
       alarm_anchor_time=0
@@ -1596,6 +1621,8 @@ class alarm_system(threading.Thread):
           
           if start_alarm_animation==0:
             start_alarm_animation=1
+          if start_alarm_sound==0:
+            start_alarm_sound=1
           if start_output_conky==0:
             start_output_conky=1
           if start_output_data==0:
@@ -1721,6 +1748,7 @@ if __name__ == '__main__' and error_raised is not True:
   update_databases().start()
   alarm_system().start()
   alarm_animation().start()
+  alarm_sound().start()
   while True:
     sleep(1)
     if killer.kill_now:
