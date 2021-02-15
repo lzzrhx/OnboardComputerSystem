@@ -1,7 +1,5 @@
 # Onboard Computer System
 
-http://perpetual.voyage/ocs
-
 
 ![ocs_screenshot_01](image_files/ocs_screenshot_01.png?raw=true "ocs_screenshot_01")
 
@@ -52,3 +50,11 @@ http://perpetual.voyage/ocs
 ------
 
 ![ocs_screenshot_13](image_files/ocs_screenshot_13.png?raw=true "ocs_screenshot_13")
+
+------
+
+![ocs_diagram_01_bmp180](image_files/ocs_diagram_01_bmp180.png?raw=true "ocs_diagram_01_bmp180")
+
+------
+
+![ocs_diagram_02_ds18b20](image_files/ocs_diagram_02_ds18b20.png?raw=true "ocs_diagram_02_ds18b20")

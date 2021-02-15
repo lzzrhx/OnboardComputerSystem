@@ -1,4 +1,4 @@
-#include "/home/operator/.OnboardComputerSystem/console-colors"
+#include "/home/admin/.OnboardComputerSystem/console-colors"
 *font: xft:ProggyCleanTT:size=14:antialias=true
 Xft.autohint: 0
 Xft.lcdfilter:  lcddefault

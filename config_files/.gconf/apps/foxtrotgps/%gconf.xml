@@ -2,19 +2,19 @@
 <gconf>
 	<entry name="repos" mtime="1549718026" type="list" ltype="string">
 		<li type="string">
-			<stringvalue>OSM|http://tile.openstreetmap.org/%d/%d/%d.png|/home/operator/.maps/OSM|0</stringvalue>
+			<stringvalue>OSM|http://tile.openstreetmap.org/%d/%d/%d.png|/home/admin/.maps/OSM|0</stringvalue>
 		</li>
 		<li type="string">
-			<stringvalue>Maps-for-free.com|maps-for-free|/home/operator/.maps/maps4free|0</stringvalue>
+			<stringvalue>Maps-for-free.com|maps-for-free|/home/admin/.maps/maps4free|0</stringvalue>
 		</li>
 		<li type="string">
-			<stringvalue>OpenCycleMap|http://tile.opencyclemap.org/cycle/%d/%d/%d.png|/home/operator/.maps/opencyclemap|0</stringvalue>
+			<stringvalue>OpenCycleMap|http://tile.opencyclemap.org/cycle/%d/%d/%d.png|/home/admin/.maps/opencyclemap|0</stringvalue>
 		</li>
 		<li type="string">
-			<stringvalue>Google Maps (testing only)|http://mt0.google.com/vt/lyrs=m&amp;hl=en&amp;x=%d&amp;y=%d&amp;z=%d|/home/operator/.maps/googlemaps|1</stringvalue>
+			<stringvalue>Google Maps (testing only)|http://mt0.google.com/vt/lyrs=m&amp;hl=en&amp;x=%d&amp;y=%d&amp;z=%d|/home/admin/.maps/googlemaps|1</stringvalue>
 		</li>
 		<li type="string">
-			<stringvalue>Google Sat (testing only)|http://mt0.google.com/vt/lyrs=s&amp;hl=en&amp;x=%d&amp;y=%d&amp;z=%d|/home/operator/.maps/googlesat|1</stringvalue>
+			<stringvalue>Google Sat (testing only)|http://mt0.google.com/vt/lyrs=s&amp;hl=en&amp;x=%d&amp;y=%d&amp;z=%d|/home/admin/.maps/googlesat|1</stringvalue>
 		</li>
 	</entry>
 	<entry name="latlon_unit" mtime="1549718063" type="int" value="1"/>

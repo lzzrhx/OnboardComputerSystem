@@ -28,13 +28,13 @@ use_spacer none
 text_buffer_size 256
 
 TEXT
-${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '1{p;q}' /home/operator/.datatext} 
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '1{p;q}' /home/admin/.datatext} 
 
-${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '2{p;q}' /home/operator/.datatext} 
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '2{p;q}' /home/admin/.datatext} 
 
-${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '3{p;q}' /home/operator/.datatext} 
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '3{p;q}' /home/admin/.datatext} 
 
-${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '4{p;q}' /home/operator/.datatext} 
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '4{p;q}' /home/admin/.datatext} 
 
 ${color #A9A28F}${font ProggyCleanTT:size=22}$alignc ---------------------------------------------------- 
 
@@ -42,10 +42,10 @@ ${color #A9A28F}${font ProggyCleanTT:size=22}$alignc * O N B O A R D * C O M P U
 
 ${color #A9A28F}${font ProggyCleanTT:size=22}$alignc ---------------------------------------------------- 
 
-${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '5{p;q}' /home/operator/.datatext} 
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '5{p;q}' /home/admin/.datatext} 
 
-${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '6{p;q}' /home/operator/.datatext} 
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '6{p;q}' /home/admin/.datatext} 
 
-${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '7{p;q}' /home/operator/.datatext} 
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '7{p;q}' /home/admin/.datatext} 
 
-${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '8{p;q}' /home/operator/.datatext} 
+${color #A9A28F}${font ProggyCleanTT:size=20}$alignc ${execp sed -n '8{p;q}' /home/admin/.datatext} 

@@ -1199,7 +1199,7 @@ class read_data(threading.Thread):
             temp2formatfull='-'
           
           #Format distance travelled
-          distformat='{0:.2f}'.format(disttotal*0.000539956803)
+          distformat='{0:.1f}'.format(disttotal*0.000539956803)
           distformatfull='{0} NM'.format(distformat)
           
           #Format uptime

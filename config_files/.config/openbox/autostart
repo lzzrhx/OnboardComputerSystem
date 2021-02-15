@@ -5,7 +5,7 @@ xsetroot -solid "#101010" &
 (sleep 6 && unclutter -idle 1) &
 (sleep 6 && tint2) &
 (sleep 9 && conky) &
-(sleep 9 && /home/operator/.OnboardComputerSystem/OnboardComputerSystem) &
-(sleep 10 && twofing --wait) &
-#(sleep 15 && /home/operator/Scripts/vnc.sh) &
+(sleep 9 && /home/admin/.OnboardComputerSystem/OnboardComputerSystem) &
+(sleep 10 && LONG_CLICK_INTERVAL=500 LONG_CLICK_FUZZ=100 evdev-rce) &
+#(sleep 15 && /home/admin/Scripts/vnc.sh) &
 (sleep 20 && kplex)

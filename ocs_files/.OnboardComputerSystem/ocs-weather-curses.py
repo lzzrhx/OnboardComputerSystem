@@ -74,7 +74,7 @@ while True:
   itemnumformatfull='%05d' %(itemnum)
   #Format time
   itemtime=str(row[1])
-  itemtimeformatfull=datetime.fromtimestamp(float(itemtime)).strftime('%d.%m.%Y %H:%M')
+  itemtimeformatfull=datetime.fromtimestamp(float(itemtime)).strftime('%d.%m.%Y %H:%M')+' UTC'
   #Format item title
   item_title='ENTRY NO. '+itemnumformatfull+' - '+itemtimeformatfull
   entry_width=len(item_title)
