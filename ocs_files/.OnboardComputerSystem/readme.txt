@@ -1,10 +1,10 @@
-# ONBOARD COMPUTER SYSTEM #
+* * * ONBOARD COMPUTER SYSTEM * * *
 
-# Links
+# Links:
 * GitHub: https://github.com/LASER-WOLF/OnboardComputerSystem
 * Youtube (old video): https://youtu.be/lWSdrCgaLQ4
 
-# Current Features
+# Current Features:
 * Chartplotter
 * GRIB weather data visualization
 * NMEA multiplexer
@@ -17,7 +17,7 @@
 * PDF reader
 * And more..
 
-# Parts List
+# Parts List:
 * 12v to 5v converter: LM2596 Buck Step-down Power Converter Module
 * Computer: Raspberry Pi 3 Model B+
 * Case: Raspberry Pi 3 B+ Case black
@@ -31,11 +31,17 @@
 * Amplifier: PAM8403 + 3W 4ohm rectangle speaker pair (from ebay) + MPOW ground loop isolator
 * Other stuff: USB hub, AIS antenna, junction box, GPIO cables
 
-# UI - Right-click:
+
+
+
+
+----- User Interface -----
+
+# Right-click:
 * Long-click on the touchscreen acts as a right-click
 * Right-click on the desktop for a comprehensive menu
 
-# UI - The main menu is at the top of the screen, with the following buttons:
+# The main menu is at the top of the screen, with the following buttons:
 * OCPN (CTRL+ALT+O) - OpenCPN chartplotter
 * GRIB (CTRL+ALT+G) - zyGrib weather data visualization
 * LOG (CTRL+ALT+L) - View location history
@@ -45,18 +51,18 @@
 * CONF (CTRL+ALT+C) - System settings
 * OFF - Left click to power off, right-click to reboot
 
-# UI - Under the main menu is the taskbar:
+# Under the main menu is the taskbar:
 * Single click item to open/minimize
 * Right-click item to close
 
-# UI - At the bottom of the screen is the GPS info:
+# At the bottom of the screen is the GPS info:
 * The first (and last) item is GPS fix [ FX ] means there's a 3D fix, [ NO ] means there's no 3D fix
 * TIME - Date and time
 * SPD - Speed (in knots)
 * COG - Course Above Ground (Shows course based on GPS data (only works when moving))
 * LOG - Total distance travelled
 
-# UI - If there's no active windows open:
+# If there's no active windows open:
 * UPTIME - System uptime
 * SUNRISE - The time of sunrise for current GPS position
 * SUNSET - The time of sunset for current GPS position
@@ -68,6 +74,12 @@
 * LON - Longitude
 * LON - Longitude
 * AVG SPD - Total average speed (in knots)
+
+
+
+
+
+----- Usage -----
 
 # Usage - Commands:
 * System settings: $ ocs-config-curses
@@ -99,6 +111,12 @@
 * Showing location history (requires a Google Maps API key): https://github.com/LASER-WOLF/OnboardComputerSystem/blob/master/example_files/PHP/location.php
 * Showing weather history (requires Charts.js from http://www.chartjs.org/): https://github.com/LASER-WOLF/OnboardComputerSystem/blob/master/example_files/PHP/weather.php
 
+
+
+
+
+----- Installation -----
+
 # Hardware setup:
 * BMP180 wiring diagram: https://github.com/LASER-WOLF/OnboardComputerSystem/blob/master/image_files/ocs_diagram_01_bmp180.png
 * DS18B20 wiring diagram: https://github.com/LASER-WOLF/OnboardComputerSystem/blob/master/image_files/ocs_diagram_02_ds18b20.png
@@ -126,7 +144,7 @@ $ sudo apt-get install rpi-update
 $ sudo rpi-update
 $ sudo reboot
 
-# Setup Wi-Fi
+# Setup Wi-Fi:
 $ sudo apt-get install wicd-curses
 $ sudo systemctl disable dhcpcd
 $ wicd-curses
@@ -163,7 +181,7 @@ $ sudo nano /boot/config.txt
 $ sudo nano /boot/cmdline.txt
 * Add the following at the end of the line: logo.nologo
 
-# Enable long-click on touchscreen as right-click ( from: https://fmirkes.github.io/articles/20190827.html )
+# Enable long-click on touchscreen as right-click ( from: https://fmirkes.github.io/articles/20190827.html ):
 $ sudo apt install libevdev2 libevdev-dev
 $ git clone https://github.com/PeterCxy/evdev-right-click-emulation.git
 $ cd evdev-right-click-emulation
@@ -217,7 +235,7 @@ $ sudo rm -rf ~/Adafruit_Python_BMP/
 $ sudo modprobe w1-gpio
 $ sudo modprobe w1-therm
 
-# Reboot
+# Reboot:
 $ sudo reboot
 
 # Clone the OnboardComputerSystem git repository:
@@ -355,7 +373,7 @@ $ sudo apt-get install scrot
 # Install feh (image viewer):
 $ sudo apt-get install feh
 
-# Install PCManFM (file manager)
+# Install PCManFM (file manager):
 $ mkdir -p ~/.config/pcmanfm/default/
 $ cp OnboardComputerSystem/config_files/.config/pcmanfm/default/pcmanfm.conf .config/pcmanfm/default/pcmanfm.conf
 $ cp -r OnboardComputerSystem/config_files/.config/libfm/ .config/libfm/
