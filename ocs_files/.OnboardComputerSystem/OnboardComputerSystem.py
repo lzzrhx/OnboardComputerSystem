@@ -11,7 +11,7 @@ from time import time, sleep
 from datetime import datetime, timedelta
 from math import isnan
 from os import path, system
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from playsound import playsound
 import threading
 import sqlite3
@@ -560,7 +560,7 @@ class read_config(threading.Thread):
           
             #Read config file
             config_filename='OnboardComputerSystem.conf'
-            config = SafeConfigParser()
+            config = ConfigParser()
             config.optionxform = lambda option: option
             config.read(ocs_dir+config_filename)
             
