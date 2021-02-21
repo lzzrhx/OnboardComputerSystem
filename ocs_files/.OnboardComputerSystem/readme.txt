@@ -30,7 +30,7 @@
 * Added built in stereo amplifier
 * Removed on-screen keyboard (added hardware keyboard (Logitech K830) to the install instead)
 * Removed character LCD
-* Removed 9 DOF sensor (replaced with only BMP180, same GPIO pins though)
+* Removed 10 DOF sensor (replaced with only BMP180, same GPIO pins though)
 * Removed webcam
 * Removed buzzer
 
