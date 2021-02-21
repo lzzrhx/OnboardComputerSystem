@@ -17,19 +17,36 @@
 * PDF reader
 * And more..
 
+# Changelog from the first version:
+* Optimized/improved all code (OnboardComputerSystem.py)
+* Added notification message system (for boot up sequence/alarms/errors)
+* Added alarm system (ocs-alarm-curses.py)
+* Added configuration/settings UI (ocs-config-curses.py)
+* Added AIS (dAISy AIS receiver with multiplexer on local wi-fi and submission to marinetraffic.com)
+* Added Nethack to the install instructions
+* Added Cataclysm DDA to the install instructions
+* Added ScummVM to the install instructions
+* Bigger screen (15.6")
+* Added built in stereo amplifier
+* Removed on-screen keyboard (added hardware keyboard (Logitech K830) to the install instead)
+* Removed character LCD
+* Removed 9 DOF sensor (replaced with only BMP180, same GPIO pins though)
+* Removed webcam
+* Removed buzzer
+
 # Parts List:
-* 12v to 5v converter: LM2596 Buck Step-down Power Converter Module
-* Computer: Raspberry Pi 3 Model B+
-* Case: Raspberry Pi 3 B+ Case black
-* SD: Sandisk microSDXC Ultra 128GB
-* Screen: Chalkboard Electronics 15.6" Touchscreen
-* GPS: GlobalSat MR-350 S4 + GlobalSat 11-BR305-USB2 (USB adapter)
-* AIS: dAISy AIS Receiver
-* Temperature sensors: (2x) DS18B20
-* Barometric pressure sensor: BMP180
-* Keyboard: Logitech K830
-* Amplifier: PAM8403 + 3W 4ohm rectangle speaker pair (from ebay) + MPOW ground loop isolator
-* Other stuff: USB hub, AIS antenna, junction box, GPIO cables
+* 12v to 5v converter: LM2596 (3.50$)
+* Computer: Raspberry Pi 3 Model B+ (35$)
+* SD: Sandisk microSDXC Ultra 128GB (12$)
+* Screen: Chalkboard Electronics 15.6" touchscreen ($150$)
+* GPS: GlobalSat MR-350 S4 + GlobalSat 11-BR305-USB2 (USB adapter) (40$ + 30$)
+* AIS: dAISy AIS receiver (60$)
+* Temperature sensors: (2x) DS18B20 (4$)
+* Barometric pressure sensor: BMP180 ($1.50$)
+* Keyboard: Logitech K830 (80$)
+* Amplifier: PAM8403 + 3W 4ohm rectangle speaker pair (from ebay) + MPOW ground loop isolator (2$+8$+9$)
+* Other stuff: USB hub, AIS antenna, junction box, Raspberry Pi 3 B+ case, GPIO cables, microSD-card extension cable, (2x) USB extension cable (approx. 80$)
+* Total price: approx. 500$ (without screen & keyboard & with cheaper GPS (GlobalSat BU-353): approx. 250$)
 
 
 
@@ -74,6 +91,24 @@
 * LON - Longitude
 * LON - Longitude
 * AVG SPD - Total average speed (in knots)
+
+# Color palette
+* 202020 - 32  32  32
+* A9A28F - 169 162 143
+* 807A6C - 128 122 108
+* 555555 - 85  85  85
+* 805A57 - 128 90  87
+* 976B67 - 151 107 103
+* 638057 - 99  128 87
+* 759766 - 117 151 102
+* 807B57 - 128 123 87
+* 979267 - 151 146 103
+* 576480 - 87  100 128
+* 677797 - 103 119 151
+* 795780 - 121 87  128
+* 8F6797 - 143 103 151
+* 57807D - 87  128 125
+* 679794 - 103 151 148
 
 
 
@@ -124,7 +159,7 @@
 # Write the Raspbian image to the SD-card:
 * Download the "Raspberry Pi OS Lite" image from https://www.raspberrypi.org/software/operating-systems/
 * Download the "Raspberry Pi Imager" from https://www.raspberrypi.org/software/
-* Install Raspberry Pi OS to microSD-card
+* Install Raspberry Pi OS Lite to microSD-card
 * Insert the microSD-card into the Pi
 * Power on the Pi
 * Login with the default user "pi" and the password "raspberry"
@@ -132,10 +167,9 @@
 # Configure raspi-config:
 $ sudo raspi-config
 * System Options -> S1 Wireless LAN
-* System Options -> S2 Audio
-* System Options -> S4 Hostname
+* System Options -> S2 Audio -> Headphones
+* System Options -> S4 Hostname -> "OnboardComputerSystem"
 * Localisation Options -> L3 Keyboard
-$ ping google.com
 
 # Perform update:
 $ sudo apt-get update
@@ -144,17 +178,17 @@ $ sudo apt-get install rpi-update
 $ sudo rpi-update
 $ sudo reboot
 
+# Set timezone to UTC:
+$ sudo timedatectl set-timezone UTC
+
+# Enable SSH:
+$ sudo systemctl enable ssh
+
 # Setup Wi-Fi:
 $ sudo apt-get install wicd-curses
 $ sudo systemctl disable dhcpcd
 $ wicd-curses
 * Set static IP: 192.168.1.99
-
-# Enable SSH:
-$ sudo systemctl enable ssh
-
-# Set timezone to UTC:
-$ sudo timedatectl set-timezone UTC
 
 # Change username:
 $ sudo adduser admin
@@ -182,7 +216,7 @@ $ sudo nano /boot/cmdline.txt
 * Add the following at the end of the line: logo.nologo
 
 # Enable long-click on touchscreen as right-click ( from: https://fmirkes.github.io/articles/20190827.html ):
-$ sudo apt install libevdev2 libevdev-dev
+$ sudo apt install libevdev2 libevdev-dev build-essential git
 $ git clone https://github.com/PeterCxy/evdev-right-click-emulation.git
 $ cd evdev-right-click-emulation
 $ make all
@@ -239,7 +273,6 @@ $ sudo modprobe w1-therm
 $ sudo reboot
 
 # Clone the OnboardComputerSystem git repository:
-$ sudo apt-get install build-essential git
 $ git clone https://github.com/LASER-WOLF/OnboardComputerSystem
 $ chmod -R 777 OnboardComputerSystem/
 $ cp -r OnboardComputerSystem/ocs_files/.OnboardComputerSystem/ .OnboardComputerSystem/
@@ -410,6 +443,7 @@ $ cp OnboardComputerSystem/config_files/zygrib.ini .zygrib/config/zygrib.ini
 
 # Install OpenCPN:
 $ mkdir Charts
+$ cp -r OnboardComputerSystem/config_files/.opencpn/ .opencpn/
 $ sudo apt-get install build-essential cmake gettext git-core gpsd gpsd-clients libgps-dev wx-common libwxgtk3.0-dev libglu1-mesa-dev libgtk2.0-dev libgtk-3-dev wx3.0-headers libbz2-dev libtinyxml-dev libportaudio2 portaudio19-dev libcurl4-openssl-dev libexpat1-dev libcairo2-dev libsqlite3-dev libarchive-dev libsndfile1-dev liblzma-dev libexif-dev libelf-dev libwxgtk-webview3.0-gtk3-dev
 $ git clone git://github.com/OpenCPN/OpenCPN.git
 $ cd OpenCPN
@@ -422,7 +456,7 @@ $ cd
 $ rm -rf ~/OpenCPN/
 
 # Setup PiSNES (SNES emulator):
-$ sudo apt-get install libsdl1.2debian
+$ sudo apt-get install libsdl1.2debian libgles2-mesa-dev
 
 # Install ScummVM (emulator):
 $ sudo apt-get install scummvm
@@ -439,13 +473,29 @@ $ nano .bashrc
 * Add the line: export GIT_CURL_VERBOSE=1
 
 # Install Cataclysm DDA (video game):
-$ sudo apt-get install libglib2.0-dev ccache clang liblua5.2-0 libncurses5-dev libncursesw5-dev build-essential astyle
+$ sudo apt-get install libglib2.0-dev ccache clang liblua5.2-0 libncurses5-dev libncursesw5-dev build-essential git astyle gnutls-bin
 $ git clone https://github.com/CleverRaven/Cataclysm-DDA.git
 $ cd Cataclysm-DDA
 $ make clean
 $ make CLAN=1 CCACHE=1 RELEASE=1
 $ cd
-$ mv Cataclysm-DDA/ Apps/Cataclysm-DDA/
+$ mv Cataclysm-DDA/ Apps/
+
+# (optional) Setup synchronization of the OCS databases with a server:
+$ nano Scripts/update-server.sh
+* Change the script to match your server settings
+* Test the script:
+$ Scripts/update-server.sh
+* Generate SSH keys (for passwordless login):
+$ ssh-keygen -t rsa
+* Press ENTER, ENTER and ENTER
+* Then add the SSH key to the server:
+$ ssh-copy-id -i ~/.ssh/id_rsa.pub username@website.com
+* Run the update-server.sh script again (you shouldn't need a password this time):
+$ Scripts/update-server.sh
+* Setup update-server.sh to run automatically once every hour (see "~/OnboardComputerSystem/example_files/crontab" for an example):
+$ crontab -e
+* Add the line: 0 * * * * /home/operator/Scripts/update-server.sh
 
 # Remove the OnboardComputerSystem folder (we have copied everything we need from it):
 $ rm -rf ~/OnboardComputerSystem/

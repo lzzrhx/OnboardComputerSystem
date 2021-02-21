@@ -117,6 +117,7 @@ class alarm_animation(threading.Thread):
     #Alarm messages
     default_alarm_message='[  M A S T E R   C A U T I O N  ]'
     alarm_disclaimer_message='[  W A R N I N G :   U S E   S Y S T E M   A T   O W N   R I S K  ]'
+    alarm_disclaimer_message2='[  D I S A B L E   D I S C L A I M E R   M E S S A G E   I N   S Y S T E M   C O N F I G  ]'
     alarm_message_anchor='[  A N C H O R   A L A R M  ]'
     alarm_message_cog='[  C O U R S E   A L A R M  ]'
     alarm_message_lat='[  L A T I T U D E   A L A R M  ]'
@@ -142,6 +143,26 @@ class alarm_animation(threading.Thread):
         if alarm_system_disclaimer_activate is True:
           if alarm_animation_running is False: alarm_animation_running=True
           sys.stdout.write('%{c}'+alarm_disclaimer_message+'\n')
+          sleep(0.8)
+          sys.stdout.write('\n')
+          sleep(0.8)
+          sys.stdout.write('%{c}'+alarm_disclaimer_message+'\n')
+          sleep(0.8)
+          sys.stdout.write('\n')
+          sleep(0.8)
+          sys.stdout.write('%{c}'+alarm_disclaimer_message+'\n')
+          sleep(0.8)
+          sys.stdout.write('\n')
+          sleep(0.8)
+          sys.stdout.write('%{c}'+alarm_disclaimer_message+'\n')
+          sleep(0.8)
+          sys.stdout.write('\n')
+          sleep(0.8)
+          sys.stdout.write('%{c}'+alarm_disclaimer_message2+'\n')
+          sleep(0.8)
+          sys.stdout.write('\n')
+          sleep(0.8)
+          sys.stdout.write('%{c}'+alarm_disclaimer_message2+'\n')
           sleep(0.8)
           sys.stdout.write('\n')
         elif alarm_system_activate is True and (alarm_anchor_raised is True or alarm_cog_raised is True or alarm_lat_low_raised is True or alarm_lat_high_raised is True or alarm_lon_low_raised is True or alarm_lon_high_raised is True or alarm_spd_low_raised is True or alarm_spd_high_raised is True or alarm_dist_raised is True or alarm_baro_low_raised is True or alarm_baro_high_raised is True or alarm_temp1_low_raised is True or alarm_temp1_high_raised is True or alarm_temp2_low_raised is True or alarm_temp2_high_raised is True or alarm_timezone_raised is True or alarm_time_raised is True or alarm_sunrise_raised is True or alarm_sunset_raised is True):

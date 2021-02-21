@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <OpenCPNWatchdogConfiguration version="1.9042" creator="Opencpn Watchdog plugin" author="Sean D&apos;Epagnier">
-    <Alarm Type="Anchor" Latitude="59.2625" Longitude="10.4139" Radius="25" AutoSync="1" Enabled="0" GraphicsEnabled="0" Sound="1" SoundFile="/home/operator/.OnboardComputerSystem/sounds/WARNING_RUS_WATCH_EKRAN.wav" Command="1" CommandFile="" MessageBox="0" Repeat="1" RepeatSeconds="10" AutoReset="0" />
+    <Alarm Type="Anchor" Latitude="59.2625" Longitude="10.4139" Radius="25" AutoSync="1" Enabled="0" GraphicsEnabled="0" Sound="1" SoundFile="/home/admin/.OnboardComputerSystem/sounds/WARNING_RUS_WATCH_EKRAN.wav" Command="1" CommandFile="" MessageBox="0" Repeat="1" RepeatSeconds="10" AutoReset="0" />
 </OpenCPNWatchdogConfiguration>
