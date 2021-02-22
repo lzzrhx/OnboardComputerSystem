@@ -2,7 +2,8 @@
 
 # Links:
 * GitHub: https://github.com/LASER-WOLF/OnboardComputerSystem
-* Youtube (old video): https://youtu.be/lWSdrCgaLQ4
+* New video - Raspberry Pi "Onboard Computer System" for sailing vessels - Mk. II (2021): https://vimeo.com/515065253
+* Old video - Raspberry Pi "Onboard Computer System" for sailing vessels: https://youtu.be/lWSdrCgaLQ4
 
 # Current Features:
 * Chartplotter

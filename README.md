@@ -1,6 +1,8 @@
 # Onboard Computer System
 
-info/instructions: [readme.txt](ocs_files/.OnboardComputerSystem/readme.txt)
+Video: [Raspberry Pi “Onboard Computer System” for sailing vessels - Mk. II](https://vimeo.com/515065253)
+
+Info/instructions: [readme.txt](ocs_files/.OnboardComputerSystem/readme.txt)
 
 ![ocs_screenshot_01](image_files/ocs_screenshot_01.png?raw=true "ocs_screenshot_01")
 
