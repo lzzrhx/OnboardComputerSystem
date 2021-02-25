@@ -8,4 +8,4 @@ xsetroot -solid "#101010" &
 (sleep 9 && /home/admin/.OnboardComputerSystem/OnboardComputerSystem) &
 (sleep 10 && LONG_CLICK_INTERVAL=500 LONG_CLICK_FUZZ=100 evdev-rce) &
 #(sleep 15 && /home/admin/Scripts/vnc.sh) &
-(sleep 20 && kplex)
+(sleep 60 && kplex)
