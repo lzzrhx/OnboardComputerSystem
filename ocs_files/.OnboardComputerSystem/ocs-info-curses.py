@@ -13,7 +13,7 @@ import locale
 locale.setlocale(locale.LC_ALL,"")
 
 #Set values
-main_title='INFO'
+main_title='OCS INFO'
 margin=2
 data_margin=5
 title_width=50
@@ -100,39 +100,44 @@ while True:
   gpsspdmaxlabel='MAX SPEED'
   gpsspdmaxformat='{0:.1f}'.format((float(gpsspdmax) * 1.9438444924574))
   gpsspdmaxformatfull='{0} KN'.format(gpsspdmaxformat)
+  #Format Average speed
+  gpsspdavg=float(row[6])
+  gpsspdavglabel='AVG SPEED'
+  gpsspdavgformat='{0:.1f}'.format((float(gpsspdavg) * 1.9438444924574))
+  gpsspdavgformatfull='{0} KN'.format(gpsspdavgformat)
   #Format Course Over Ground
-  gpscog=float(row[6])
+  gpscog=float(row[8])
   gpscoglabel='COURSE OVER GROUND'
   gpscogformat=int(gpscog)
   gpscogformatfull='{0}°'.format(gpscogformat)
   #Format uptime
-  uptime=float(row[7])
+  uptime=float(row[9])
   uptimelabel='UPTIME'
   uptimemin, uptimesec = divmod(uptime, 60)
   uptimehour, uptimemin = divmod(uptimemin, 60)
   uptimeday, uptimehour = divmod(uptimehour, 24)
   uptimeformatfull="%02d DAYS - %02d HOURS - %02d MINUTES" % (uptimeday, uptimehour, uptimemin)
   #Format max uptime
-  uptimemax=float(row[8])
+  uptimemax=float(row[10])
   uptimemaxlabel='MAX UPTIME'
   uptimemaxmin, uptimemaxsec = divmod(uptimemax, 60)
   uptimemaxhour, uptimemaxmin = divmod(uptimemaxmin, 60)
   uptimemaxday, uptimemaxhour = divmod(uptimemaxhour, 24)
   uptimemaxformatfull="%02d DAYS - %02d HOURS - %02d MINUTES" % (uptimemaxday, uptimemaxhour, uptimemaxmin)
   #Format distance travelled
-  dist=float(row[9])
-  diststart=float(row[10])
+  dist=float(row[11])
+  diststart=float(row[12])
   distlabel='TOTAL DISTANCE TRAVELLED'
   distformat='{0:.1f}'.format(float(dist+diststart) * 0.000539956803)
   distformatfull='{0} NM'.format(distformat)
   #Format barometric pressure
-  baro=float(row[11])
+  baro=float(row[13])
   barolabel='BAROMETRIC PRESSURE'
   baroformat='{0}'.format(int(baro/100))
   baroformatfull='{0} MBAR'.format(baroformat)
   #Format temperature
-  temp1=float(row[12])
-  temp2=float(row[13])
+  temp1=float(row[14])
+  temp2=float(row[15])
   temp1label='TEMPERATURE INSIDE'
   temp2label='TEMPERATURE OUTSIDE'
   temp1format='{0:.1f}'.format(float(temp1))
@@ -140,10 +145,10 @@ while True:
   temp2format='{0:.1f}'.format(float(temp2))
   temp2formatfull='{0}°C'.format(temp2format)
   #Format sunrise
-  sunrise=str(row[14])
+  sunrise=str(row[16])
   sunriselabel='SUNRISE'
   #Format sunset
-  sunset=str(row[15])
+  sunset=str(row[17])
   sunsetlabel='SUNSET'
   #Output data
   #list_entries['data'].extend ([{'title': data_margin+itemtimelabel+':'+(itemtimeformatfull+data_margin).rjust(entry_width-len(itemtimelabel)-2)}]);
@@ -151,6 +156,7 @@ while True:
   list_entries['data'].extend ([{'title': data_margin+gpslatlabel+':'+(gpslatformatfull+data_margin).rjust(entry_width-len(gpslatlabel)-2)}]);
   list_entries['data'].extend ([{'title': data_margin+gpslonlabel+':'+(gpslonformatfull+data_margin).rjust(entry_width-len(gpslonlabel)-2)}]);
   list_entries['data'].extend ([{'title': data_margin+gpsspdlabel+':'+(gpsspdformatfull+data_margin).rjust(entry_width-len(gpsspdlabel)-2)}]);
+  list_entries['data'].extend ([{'title': data_margin+gpsspdavglabel+':'+(gpsspdavgformatfull+data_margin).rjust(entry_width-len(gpsspdavglabel)-2)}]);
   list_entries['data'].extend ([{'title': data_margin+gpscoglabel+':'+(gpscogformatfull+data_margin).rjust(entry_width-len(gpscoglabel)-2)}]);
   list_entries['data'].extend ([{'title': data_margin+distlabel+':'+(distformatfull+data_margin).rjust(entry_width-len(distlabel)-2)}]);
   list_entries['data'].extend ([{'title': data_margin+barolabel+':'+(baroformatfull+data_margin).rjust(entry_width-len(barolabel)-2)}]);
@@ -162,7 +168,7 @@ while True:
   list_entries['data'].extend ([{'title': data_margin+uptimemaxlabel+':'+(uptimemaxformatfull+data_margin).rjust(entry_width-len(uptimemaxlabel)-2)}]);
 conn.close()
 
-updatetime='(UPDATED '+itemtimeformatfull+')'
+updatetime='(UPDATED '+itemtimeformatfull+' UTC)'
 
 #Show title
 title_text='* '+main_title+' *'
