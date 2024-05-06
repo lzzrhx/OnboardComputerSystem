@@ -1,6 +1,6 @@
 # Onboard Computer System
 
-Video: [Raspberry Pi “Onboard Computer System” for sailing vessels - Mk. II](https://vimeo.com/515065253)
+Video: [Raspberry Pi “Onboard Computer System” for sailing vessels - Mk. II](https://youtu.be/9TLbTUpSJaA)
 
 Info/instructions: [readme.txt](https://raw.githubusercontent.com/LASER-WOLF/OnboardComputerSystem/master/ocs_files/.OnboardComputerSystem/readme.txt)
 
