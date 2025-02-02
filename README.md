@@ -2,7 +2,7 @@
 
 Video: [Raspberry Pi “Onboard Computer System” for sailing vessels - Mk. II](https://youtu.be/9TLbTUpSJaA)
 
-Info/instructions: [readme.txt](https://raw.githubusercontent.com/lzzrhx/OnboardComputerSystem/master/ocs_files/.OnboardComputerSystem/readme.txt)
+Info/instructions: [readme.txt](ocs_files/.OnboardComputerSystem/readme.txt)
 
 ![ocs_screenshot_01](image_files/ocs_screenshot_01.png?raw=true "ocs_screenshot_01")
 
